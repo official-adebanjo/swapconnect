@@ -214,7 +214,7 @@ const ComputersPage: React.FC = () => {
 
     const calculateValue = async () => {
       // Only calculate if we have minimum required fields
-      if (!formData.brand || !formData.model || !formData.ram || !formData.storageSize || !formData.purchaseYear || !formData.storageType) {
+      if (!formData.brand || !formData.model || !formData.ram || !formData.storageSize  || !formData.storageType) {
         toast.error(         "Please fill in all required fields (Brand, Model, Storage, RAM, Phone Age");
         return;
 
@@ -245,9 +245,9 @@ const ComputersPage: React.FC = () => {
           },
         };
 
-        if (!token) {
-          return;
-        }
+        // if (!token) {
+        //   return;
+        // }
         const response: any = await api.post(
           "/api/bid/calculator",
           payload,
@@ -289,7 +289,12 @@ const ComputersPage: React.FC = () => {
 
    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      alert("hi");
+      // if (!token) {
+      //   toast.error("Please log in to get final estimate.", { duration: 3000,});
+      //   return;
+      // }
+      toast.success("estimating value, please wait...", {duration: 2000,});
+      // console.log("Form submitted with data:", formData);
       await calculateValue();
     };
 
