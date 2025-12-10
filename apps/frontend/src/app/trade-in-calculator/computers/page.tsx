@@ -40,114 +40,113 @@ const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
   }
 };
 
-
 const currentYear = new Date().getFullYear();
 const startYear = 2018;
 
 // Fields for computer trade-in form
 const computerFields: TradeInField[] = [
   {
-    label: 'Brand',
-    name: 'brand',
-    type: 'select',
+    label: "Brand",
+    name: "brand",
+    type: "select",
     required: true,
     options: [
-      { value: 'Apple', label: 'Apple' },
-      { value: 'Dell', label: 'Dell' },
-      { value: 'HP', label: 'HP' },
-      { value: 'Lenovo', label: 'Lenovo' },
-      { value: 'Acer', label: 'Acer' },
-      { value: 'Asus', label: 'Asus' },
-      { value: 'Microsoft', label: 'Microsoft' },
-      { value: 'Other', label: 'Other' },
+      { value: "Apple", label: "Apple" },
+      { value: "Dell", label: "Dell" },
+      { value: "HP", label: "HP" },
+      { value: "Lenovo", label: "Lenovo" },
+      { value: "Acer", label: "Acer" },
+      { value: "Asus", label: "Asus" },
+      { value: "Microsoft", label: "Microsoft" },
+      { value: "Other", label: "Other" },
     ],
-    placeholder: 'Select Brand',
+    placeholder: "Select Brand",
   },
   {
-    label: 'Model',
-    name: 'model',
-    type: 'text',
+    label: "Model",
+    name: "model",
+    type: "text",
     required: true,
-    placeholder: 'Enter Model (e.g., MacBook Pro 13, ThinkPad X1)',
+    placeholder: "Enter Model (e.g., MacBook Pro 13, ThinkPad X1)",
   },
   {
-    label: 'Processor',
-    name: 'processor',
-    type: 'text',
+    label: "Processor",
+    name: "processor",
+    type: "text",
     required: true,
-    placeholder: 'e.g. Intel i5, M1, AMD Ryzen 5',
+    placeholder: "e.g. Intel i5, M1, AMD Ryzen 5",
   },
   {
-    label: 'RAM Size',
-    name: 'ram',
-    type: 'select',
+    label: "RAM Size",
+    name: "ram",
+    type: "select",
     required: true,
     options: [
-      { value: '4GB', label: '4GB' },
-      { value: '8GB', label: '8GB' },
-      { value: '16GB', label: '16GB' },
-      { value: '32GB', label: '32GB' },
-      { value: '64GB', label: '64GB' },
-      { value: 'Other', label: 'Other' },
+      { value: "4GB", label: "4GB" },
+      { value: "8GB", label: "8GB" },
+      { value: "16GB", label: "16GB" },
+      { value: "32GB", label: "32GB" },
+      { value: "64GB", label: "64GB" },
+      { value: "Other", label: "Other" },
     ],
-    placeholder: 'Select RAM Size',
+    placeholder: "Select RAM Size",
   },
   {
-    label: 'Storage Type',
-    name: 'storageType',
-    type: 'select',
+    label: "Storage Type",
+    name: "storageType",
+    type: "select",
     required: true,
     options: [
-      { value: 'HDD', label: 'HDD' },
-      { value: 'SSD', label: 'SSD' },
-      { value: 'Hybrid', label: 'Hybrid (HDD + SSD)' },
-      { value: 'eMMC', label: 'eMMC' },
-      { value: 'Other', label: 'Other' },
+      { value: "HDD", label: "HDD" },
+      { value: "SSD", label: "SSD" },
+      { value: "Hybrid", label: "Hybrid (HDD + SSD)" },
+      { value: "eMMC", label: "eMMC" },
+      { value: "Other", label: "Other" },
     ],
-    placeholder: 'Select Storage Type',
+    placeholder: "Select Storage Type",
   },
   {
-    label: 'Storage Size',
-    name: 'storageSize',
-    type: 'text',
+    label: "Storage Size",
+    name: "storageSize",
+    type: "text",
     required: true,
-    placeholder: 'e.g. 256GB, 512GB, 1TB',
+    placeholder: "e.g. 256GB, 512GB, 1TB",
   },
   {
-    label: 'Screen Size',
-    name: 'screenSize',
-    type: 'text',
+    label: "Screen Size",
+    name: "screenSize",
+    type: "text",
     required: true,
-    placeholder: 'e.g. 13 inch, 15.6 inch',
+    placeholder: "e.g. 13 inch, 15.6 inch",
   },
   {
-    label: 'Operating System',
-    name: 'operatingSystem',
-    type: 'select',
+    label: "Operating System",
+    name: "operatingSystem",
+    type: "select",
     required: true,
     options: [
-      { value: 'Windows 11', label: 'Windows 11' },
-      { value: 'Windows 10', label: 'Windows 10' },
-      { value: 'macOS', label: 'macOS' },
-      { value: 'Linux', label: 'Linux' },
-      { value: 'Chrome OS', label: 'Chrome OS' },
-      { value: 'Other', label: 'Other' },
+      { value: "Windows 11", label: "Windows 11" },
+      { value: "Windows 10", label: "Windows 10" },
+      { value: "macOS", label: "macOS" },
+      { value: "Linux", label: "Linux" },
+      { value: "Chrome OS", label: "Chrome OS" },
+      { value: "Other", label: "Other" },
     ],
-    placeholder: 'Select Operating System',
+    placeholder: "Select Operating System",
   },
   {
-    label: 'Purchase Year',
-    name: 'purchaseYear',
-    type: 'select',
+    label: "Purchase Year",
+    name: "purchaseYear",
+    type: "select",
     required: true,
     options: [
       ...Array.from({ length: currentYear - startYear + 1 }, (_, i) => {
         const year = currentYear - i;
         return { value: String(year), label: String(year) };
       }),
-      { value: 'Before ' + startYear, label: 'Before ' + startYear },
+      { value: "Before " + startYear, label: "Before " + startYear },
     ],
-    placeholder: 'Select Purchase Year',
+    placeholder: "Select Purchase Year",
   },
 ];
 
@@ -199,7 +198,7 @@ const ComputersPage: React.FC = () => {
 
   // Calculate estimated value when form data changes
   useEffect(() => {
-    if (hasCalculated){
+    if (hasCalculated) {
       setHascCalculated(false);
       setEstimatedValue(0);
       setCalculationBreakdown(null);
@@ -212,91 +211,104 @@ const ComputersPage: React.FC = () => {
     formData.storageType,
   ]);
 
-    const calculateValue = async () => {
-      // Only calculate if we have minimum required fields
-      if (!formData.brand || !formData.model || !formData.ram || !formData.storageSize  || !formData.storageType) {
-        toast.error(         "Please fill in all required fields (Brand, Model, Storage, RAM, Phone Age");
-        return;
+  const calculateValue = async () => {
+    // Only calculate if we have minimum required fields
+    if (
+      !formData.brand ||
+      !formData.model ||
+      !formData.ram ||
+      !formData.storageSize ||
+      !formData.storageType
+    ) {
+      toast.error(
+        "Please fill in all required fields (Brand, Model, Storage, RAM, Phone Age"
+      );
+      return;
+    }
 
-      }
+    setIsCalculating(true);
 
-      setIsCalculating(true);
+    try {
+      const payload = {
+        deviceType: "computer",
+        deviceDetails: {
+          brand: formData.brand,
+          model: formData.model,
+          processor: formData.processor,
+          ram: formData.ram,
+          storageType: formData.storageType,
+          storageSize: formData.storageSize,
+          screenSize: formData.screenSize,
+          operatingSystem: formData.operatingSystem,
+          purchaseYear: formData.purchaseYear,
+        },
+        conditionDetails: {
+          autoOnOff: formData.autoOnOff,
+          bodyCondition: formData.bodyCondition,
+          screenCondition: formData.screenCondition,
+          repairVisits: formData.repairVisits,
+          biometricFunction: formData.biometricFunction,
+        },
+      };
 
-      try {
-        const payload = {
-          deviceType: "computer",
-          deviceDetails: {
-            brand: formData.brand,
-            model: formData.model,
-            processor: formData.processor,
-            ram: formData.ram,
-            storageType: formData.storageType,
-            storageSize: formData.storageSize,
-            screenSize: formData.screenSize,
-            operatingSystem: formData.operatingSystem,
-            purchaseYear: formData.purchaseYear,
-          },
-          conditionDetails: {
-            autoOnOff: formData.autoOnOff,
-            bodyCondition: formData.bodyCondition,
-            screenCondition: formData.screenCondition,
-            repairVisits: formData.repairVisits,
-            biometricFunction: formData.biometricFunction,
-          },
-        };
+      // if (!token) {
+      //   return;
+      // }
+      const response: any = await api.post(
+        "/api/bid/calculator",
+        payload,
+        token
+      );
 
-        // if (!token) {
-        //   return;
-        // }
-        const response: any = await api.post(
-          "/api/bid/calculator",
-          payload,
-          token
-        );
+      if (response.success) {
+        console.log(response);
+        const calculatedValue =
+          response.data?.estimatedValue || response.estimatedValue || 0;
+        const breakdown = response.data?.breakdown || response.breakdown;
+        setEstimatedValue(calculatedValue);
+        setCalculationBreakdown(breakdown);
+        setHascCalculated(true);
 
-        if (response.success) {
-          console.log(response);
-          const calculatedValue = response.data?.estimatedValue || response.estimatedValue || 0;
-          const breakdown = response.data?.breakdown || response.breakdown;
-          setEstimatedValue(calculatedValue);
-          setCalculationBreakdown(breakdown);
-          setHascCalculated(true);
-
-          if (calculatedValue > 0) {
-            toast.success( Your computer is estimated to be worth ${formatPrice(calculatedValue)}!, { duration: 5000,});
-          } else {
-            toast.error(            "Unable to calculate value. Please check your device details."
-            );
-          }
+        if (calculatedValue > 0) {
+          toast.success(
+            `Your computer is estimated to be worth ${formatPrice(
+              calculatedValue
+            )}!, { duration: 5000,}`
+          );
         } else {
-          console.error("Calculation failed:", response.error);
-          toast.error("Failed to calculate trade-in value. Please try again.");
+          toast.error(
+            "Unable to calculate value. Please check your device details."
+          );
         }
-      } catch (error) {
-        console.error("Error calculating value:", error);
-         toast.error(
+      } else {
+        console.error("Calculation failed:", response.error);
+        toast.error("Failed to calculate trade-in value. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error calculating value:", error);
+      toast.error(
         "An error occurred while calculating the value. Please try again."
       );
-      } finally {
-        setIsCalculating(false);
-      }
-    };
+    } finally {
+      setIsCalculating(false);
+    }
+  };
 
-    // Debounce the calculation
+  // Debounce the calculation
   //   const timeoutId = setTimeout(calculateValue, 500);
   //   return () => clearTimeout(timeoutId);
   // }, [formData, token]);
 
-   const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      // if (!token) {
-      //   toast.error("Please log in to get final estimate.", { duration: 3000,});
-      //   return;
-      // }
-      toast.success("estimating value, please wait...", {duration: 2000,});
-      // console.log("Form submitted with data:", formData);
-      await calculateValue();
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // if (!token) {
+    //   toast.error("Please log in to get final estimate.", { duration: 3000,});
+    //   return;
+    // }
+    toast.success("estimating value, please wait...", { duration: 2000 });
+    // console.log("Form submitted with data:", formData);
+    await calculateValue();
+  };
 
   const itemsPerPage = 3;
   const endIndex = startIndex + itemsPerPage;
@@ -342,96 +354,96 @@ const ComputersPage: React.FC = () => {
       <h2 className="mb-8 p-3 text-center text-2xl font-bold text-white bg-green-700 rounded-md">
         Computers Trade-In Calculator
       </h2>
-      <form onSubmit={handleSubmit} >
-                <div className="flex flex-col md:flex-row gap-8">
-
-        {/* Trade-in form */}
-        <div className="w-full md:w-8/12 lg:w-3/4">
-          <TradeInForm
-            fields={computerFields}
-            formData={formData}
-            onChange={handleChange}
-          />
-        </div>
-
-        {/* Sidebar */}
-        <div className="w-full md:w-4/12 lg:w-1/4">
-          <div className="rounded-lg border border-yellow-600 shadow-md p-4 bg-white">
-            <h4 className="text-xl font-semibold mb-2">
-              Estimated Trade-In Value
-            </h4>
-            <p className="text-sm text-gray-600 mb-4">
-              Note: Values are estimated and may vary after physical inspection.
-            </p>
-            <div className="relative w-full h-40 mb-4">
-              <Image
-                src="https://res.cloudinary.com/ds83mhjcm/image/upload/v1720178194/SwapConnect/swap/laptop_swap_e3epz6.png"
-                alt="Trade-in illustration"
-                fill
-                className="object-contain rounded-md"
-              />
-            </div>
-            <strong className="block mt-3 text-gray-800">
-              Estimated Value
-            </strong>
-            <div className="bg-gray-200 p-3 rounded-md mt-2 text-gray-700 min-h-[60px] flex items-center justify-center">
-              {isCalculating ? (
-                <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                  <span className="text-sm">Calculating...</span>
-                </div>
-              ) : (
-                <span
-                  className={`text-lg font-bold ${
-                    hasCalculated && estimatedValue > 0
-                      ? "text-green-600"
-                      : "text-gray-600"
-                  }`}
-                >
-                  {getEstimateDisplayText()}
-                </span>
-              )}
-            </div>
-
-            {calculationBreakdown && hasCalculated && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-md">
-                <h5 className="text-sm font-semibold text-blue-800 mb-2">
-                  Calculation Breakdown
-                </h5>
-                <div className="text-xs text-blue-700 space-y-1">
-                  <div>
-                    Base Value:{" "}
-                    {formatPrice(calculationBreakdown.baseValue || 0)}
-                  </div>
-                  {calculationBreakdown.conditionMultiplier && (
-                    <div>
-                      Condition Factor:{" "}
-                      {(calculationBreakdown.conditionMultiplier * 100).toFixed(
-                        0
-                      )}
-                      %
-                    </div>
-                  )}
-                  <div className="font-semibold border-t pt-1">
-                    Final Value:{" "}
-                    {formatPrice(
-                      calculationBreakdown.finalValue || estimatedValue
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <Link
-              href="/trade-in-calculator"
-              className="flex items-center text-yellow-600 hover:text-yellow-700 mt-4 text-sm font-medium"
-            >
-              see other categories <FaChevronRight className="ml-1 text-xs" />
-              <FaChevronRight className="text-xs" />
-              <FaChevronRight className="text-xs" />
-            </Link>
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Trade-in form */}
+          <div className="w-full md:w-8/12 lg:w-3/4">
+            <TradeInForm
+              fields={computerFields}
+              formData={formData}
+              onChange={handleChange}
+            />
           </div>
-        </div>
+
+          {/* Sidebar */}
+          <div className="w-full md:w-4/12 lg:w-1/4">
+            <div className="rounded-lg border border-yellow-600 shadow-md p-4 bg-white">
+              <h4 className="text-xl font-semibold mb-2">
+                Estimated Trade-In Value
+              </h4>
+              <p className="text-sm text-gray-600 mb-4">
+                Note: Values are estimated and may vary after physical
+                inspection.
+              </p>
+              <div className="relative w-full h-40 mb-4">
+                <Image
+                  src="https://res.cloudinary.com/ds83mhjcm/image/upload/v1720178194/SwapConnect/swap/laptop_swap_e3epz6.png"
+                  alt="Trade-in illustration"
+                  fill
+                  className="object-contain rounded-md"
+                />
+              </div>
+              <strong className="block mt-3 text-gray-800">
+                Estimated Value
+              </strong>
+              <div className="bg-gray-200 p-3 rounded-md mt-2 text-gray-700 min-h-[60px] flex items-center justify-center">
+                {isCalculating ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                    <span className="text-sm">Calculating...</span>
+                  </div>
+                ) : (
+                  <span
+                    className={`text-lg font-bold ${
+                      hasCalculated && estimatedValue > 0
+                        ? "text-green-600"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    {getEstimateDisplayText()}
+                  </span>
+                )}
+              </div>
+
+              {calculationBreakdown && hasCalculated && (
+                <div className="mt-4 p-3 bg-blue-50 rounded-md">
+                  <h5 className="text-sm font-semibold text-blue-800 mb-2">
+                    Calculation Breakdown
+                  </h5>
+                  <div className="text-xs text-blue-700 space-y-1">
+                    <div>
+                      Base Value:{" "}
+                      {formatPrice(calculationBreakdown.baseValue || 0)}
+                    </div>
+                    {calculationBreakdown.conditionMultiplier && (
+                      <div>
+                        Condition Factor:{" "}
+                        {(
+                          calculationBreakdown.conditionMultiplier * 100
+                        ).toFixed(0)}
+                        %
+                      </div>
+                    )}
+                    <div className="font-semibold border-t pt-1">
+                      Final Value:{" "}
+                      {formatPrice(
+                        calculationBreakdown.finalValue || estimatedValue
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <Link
+                href="/trade-in-calculator"
+                className="flex items-center text-yellow-600 hover:text-yellow-700 mt-4 text-sm font-medium"
+              >
+                see other categories <FaChevronRight className="ml-1 text-xs" />
+                <FaChevronRight className="text-xs" />
+                <FaChevronRight className="text-xs" />
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Bottom section */}
