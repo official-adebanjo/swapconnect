@@ -174,9 +174,9 @@ const MobilePhonesPage: React.FC = () => {
         },
       };
 
-      if (!token) {
-        return;
-      }
+      // if (!token) {
+      //   return;
+      // }
 
       const response: any = await api.post(
         "/api/bid/calculator",
@@ -224,7 +224,7 @@ const MobilePhonesPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("hi");
+      toast.success("estimating value, please wait...", {duration: 2000,});
     await calculateValue();
   };
 
