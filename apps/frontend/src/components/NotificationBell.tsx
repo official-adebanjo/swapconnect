@@ -24,7 +24,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
   useEffect(() => {
     if (!userId) return; // ✅ Guard clause to avoid fetching without ID
 
-    fetch(`${API_URL}/api/notifications?userId=${encodeURIComponent(userId)}`, {
+    fetch(`${API_URL}/notifications?userId=${encodeURIComponent(userId)}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -14,14 +14,42 @@ import type { ComputerFormData, TradeInField, Product } from "@/types/trade-in";
 import { FaChevronRight } from "react-icons/fa";
 import { api } from "@/lib/api";
 
+interface CalculationBreakdown {
+  baseValue?: number;
+  conditionMultiplier?: number;
+  finalValue?: number;
+}
+
+interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  estimatedValue?: number;
+  breakdown?: CalculationBreakdown;
+}
+
+interface ProductApiData {
+  id: number;
+  name: string;
+  imageUrl?: string;
+  price: number;
+  description?: string;
+  stock: number;
+  Category?: {
+    name: string;
+  };
+}
+
 const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
   try {
-    const response = await api.get<{ data: any[] }>(
-      "/api/products/top?limit=6",
+    const response = await api.get<ApiResponse<{ data: ProductApiData[] }>>(
+      "/products/top?limit=6",
       token
     );
     if (response.success && response.data?.data) {
-      return response.data.data.map((product: any) => ({
+      // Check for the nested 'data' property
+      return response.data.data.map((product: ProductApiData) => ({
+        // Access the nested 'data' array
         id: product.id.toString(),
         name: product.name,
         image: product.imageUrl || "/placeholder.svg?height=200&width=200",
@@ -158,8 +186,9 @@ const ComputersPage: React.FC = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [estimatedValue, setEstimatedValue] = useState<number>(0);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [calculationBreakdown, setCalculationBreakdown] = useState<any>(null);
-  const [hasCalculated, setHascCalculated] = useState(false);
+  const [calculationBreakdown, setCalculationBreakdown] =
+    useState<CalculationBreakdown | null>(null);
+  const [hasCalculated, setHasCalculated] = useState(false);
   const [formData, setFormData] = useState<ComputerFormData>({
     brand: "",
     model: "",
@@ -199,7 +228,7 @@ const ComputersPage: React.FC = () => {
   // Calculate estimated value when form data changes
   useEffect(() => {
     if (hasCalculated) {
-      setHascCalculated(false);
+      setHasCalculated(false);
       setEstimatedValue(0);
       setCalculationBreakdown(null);
     }
@@ -252,28 +281,28 @@ const ComputersPage: React.FC = () => {
       };
 
       // if (!token) {
-      //   return;
+      // return;
       // }
-      const response: any = await api.post(
-        "/api/bid/calculator",
-        payload,
-        token
-      );
+      const response = await api.post<
+        ApiResponse<{ estimatedValue: number; breakdown: CalculationBreakdown }>
+      >("/bid/calculator", payload, token);
 
       if (response.success) {
         console.log(response);
-        const calculatedValue =
-          response.data?.estimatedValue || response.estimatedValue || 0;
-        const breakdown = response.data?.breakdown || response.breakdown;
+        const calculatedValue: number =
+          response.data?.estimatedValue ?? response.estimatedValue ?? 0;
+        const breakdown =
+          response.data?.breakdown ?? response.breakdown ?? null;
         setEstimatedValue(calculatedValue);
         setCalculationBreakdown(breakdown);
-        setHascCalculated(true);
+        setHasCalculated(true);
 
         if (calculatedValue > 0) {
           toast.success(
             `Your computer is estimated to be worth ${formatPrice(
               calculatedValue
-            )}!, { duration: 5000,}`
+            )}!`,
+            { duration: 5000 }
           );
         } else {
           toast.error(
@@ -295,15 +324,15 @@ const ComputersPage: React.FC = () => {
   };
 
   // Debounce the calculation
-  //   const timeoutId = setTimeout(calculateValue, 500);
-  //   return () => clearTimeout(timeoutId);
+  // const timeoutId = setTimeout(calculateValue, 500);
+  // return () => clearTimeout(timeoutId);
   // }, [formData, token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // if (!token) {
-    //   toast.error("Please log in to get final estimate.", { duration: 3000,});
-    //   return;
+    // toast.error("Please log in to get final estimate.", { duration: 3000,});
+    // return;
     // }
     toast.success("estimating value, please wait...", { duration: 2000 });
     // console.log("Form submitted with data:", formData);

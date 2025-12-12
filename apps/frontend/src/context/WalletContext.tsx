@@ -24,7 +24,7 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchBalance = async () => {
     if (!token) return;
     try {
-      const response = await fetch(`${API_URL}/api/wallet/transactions`, {
+      const response = await fetch(`${API_URL}/wallet/transactions`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

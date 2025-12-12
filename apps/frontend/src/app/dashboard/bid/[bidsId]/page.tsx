@@ -49,7 +49,7 @@ export default function BidDetailPage() {
 
     const fetchBidDetail = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/bid/${bidId}`, {
+        const response = await fetch(`${API_URL}/bid/${bidId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export default function BidDetailPage() {
 
     setActionLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/bid/${bidId}/accept`, {
+      const response = await fetch(`${API_URL}/bid/${bidId}/accept`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ export default function BidDetailPage() {
 
     setActionLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/bid/${bidId}/reject`, {
+      const response = await fetch(`${API_URL}/bid/${bidId}/reject`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

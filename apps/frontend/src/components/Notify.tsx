@@ -20,7 +20,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
   useEffect(() => {
     if (!token || !userId) return; // ✅ Both vars used here
 
-    fetch(`${API_URL}/api/notifications?userId=${encodeURIComponent(userId)}`, {
+    fetch(`${API_URL}/notifications?userId=${encodeURIComponent(userId)}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

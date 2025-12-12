@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { api } from '@/lib/api';
+import { create } from "zustand";
+import { api } from "@/lib/api";
 
 export interface Product {
   createdAt: string | number | Date;
@@ -38,17 +38,17 @@ const useProductStore = create<ProductStore>((set) => ({
   fetchProducts: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await api.get<Product[]>('/api/products');
+      const response = await api.get<Product[]>("/products");
 
       if (response.success && response.data) {
         set({ products: response.data, loading: false });
       } else {
-        throw new Error(response.error || 'Failed to fetch products');
+        throw new Error(response.error || "Failed to fetch products");
       }
     } catch (error) {
       set({
         error:
-          error instanceof Error ? error.message : 'An unknown error occurred',
+          error instanceof Error ? error.message : "An unknown error occurred",
         loading: false,
       });
     }

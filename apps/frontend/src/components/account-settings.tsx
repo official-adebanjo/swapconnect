@@ -34,7 +34,7 @@ export default function AccountSettings() {
       try {
         setError(null);
         const response = await api.get<{ twoFactorEnabled?: boolean }>(
-          "/api/users/",
+          "/users/",
           token
         );
 
@@ -65,7 +65,7 @@ export default function AccountSettings() {
 
     setToggling(true);
     try {
-      const response = await api.post("/api/users/2fa/toggle", {}, token);
+      const response = await api.post("/users/2fa/toggle", {}, token);
 
       if (response.success) {
         // If enabling 2FA, show OTP input
@@ -73,7 +73,7 @@ export default function AccountSettings() {
           setShowOTPInput(true);
           setSendingOTP(true);
           // Initiate 2FA to send OTP
-          await api.post("/api/users/2fa/initiate", {}, token);
+          await api.post("/users/2fa/initiate", {}, token);
           setSendingOTP(false);
         } else {
           // If disabling, update state immediately
@@ -98,7 +98,7 @@ export default function AccountSettings() {
     setVerifying(true);
     try {
       const response = await api.post(
-        "/api/users/2fa/verify",
+        "/users/2fa/verify",
         {
           verificationCode: otpCode.trim(),
         },
@@ -127,7 +127,7 @@ export default function AccountSettings() {
 
     setSendingOTP(true);
     try {
-      const response = await api.post("/api/users/2fa/initiate", {}, token);
+      const response = await api.post("/users/2fa/initiate", {}, token);
       if (response.success) {
         setError(null);
       } else {

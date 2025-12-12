@@ -56,7 +56,7 @@ function BidTable() {
 
     const fetchBids = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/bid/users`, {
+        const response = await fetch(`${API_URL}/bid/users`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

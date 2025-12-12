@@ -70,7 +70,7 @@ export default function Wallet() {
     setError(null);
     try {
       const response = await fetch(
-        `${API_URL}/api/wallet/transactions?_t=${Date.now()}`,
+        `${API_URL}/wallet/transactions?_t=${Date.now()}`,
         {
           method: 'GET',
           headers: {

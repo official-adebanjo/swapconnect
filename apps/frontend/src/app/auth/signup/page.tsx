@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import type React from 'react';
-import { useState, useEffect, useCallback, type FormEvent } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa';
-import toast, { Toaster } from 'react-hot-toast';
-import dynamic from 'next/dynamic';
+import type React from "react";
+import { useState, useEffect, useCallback, type FormEvent } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { FaEye, FaEyeSlash, FaCheck } from "react-icons/fa";
+import toast, { Toaster } from "react-hot-toast";
+import dynamic from "next/dynamic";
 
-import CenterCard from '@/app/auth/CenterCard';
-import { api } from '@/lib/api';
-import { useUserStore } from '@/stores/AuthStore';
-import type { AuthUser } from '@/stores/AuthStore';
+import CenterCard from "@/app/auth/CenterCard";
+import { api } from "@/lib/api";
+import { useUserStore } from "@/stores/AuthStore";
+import type { AuthUser } from "@/stores/AuthStore";
 
 // OTP Components
 const OTPInput = dynamic(
-  () => import('otp-input-react').then((mod) => mod.OTPInput || mod.default),
+  () => import("otp-input-react").then((mod) => mod.OTPInput || mod.default),
   { ssr: false }
 );
 const ResendOTP = dynamic(
-  () => import('otp-input-react').then((mod) => mod.ResendOTP),
+  () => import("otp-input-react").then((mod) => mod.ResendOTP),
   { ssr: false }
 );
 
@@ -62,15 +62,15 @@ const validatePassword = (password: string) => {
 };
 
 const Signup: React.FC = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false); // New state for checkbox
   const [showOtpPopup, setShowOtpPopup] = useState(false);
-  const [emailForVerification, setEmailForVerification] = useState('');
+  const [emailForVerification, setEmailForVerification] = useState("");
   const [otp, setOtp] = useState<number | null>(null);
 
   const router = useRouter();
@@ -82,103 +82,103 @@ const Signup: React.FC = () => {
 
   const handleGoogleSignIn = useCallback(() => {
     if (!isTermsAccepted) {
-      toast.error('You must accept the terms and privacy policy to continue.');
+      toast.error("You must accept the terms and privacy policy to continue.");
       return;
     }
 
-    toast.loading('Redirecting to Google...', { id: 'google-redirect' });
+    toast.loading("Redirecting to Google...", { id: "google-redirect" });
     try {
-      window.location.href = `${backendUrl}/api/auth/google/register`;
+      window.location.href = `${backendUrl}/auth/google/register`;
     } catch (error) {
-      console.error('Error initiating Google sign-in redirect:', error);
-      toast.error('Failed to start Google sign-up. Please try again.', {
-        id: 'google-redirect',
+      console.error("Error initiating Google sign-in redirect:", error);
+      toast.error("Failed to start Google sign-up. Please try again.", {
+        id: "google-redirect",
       });
     }
   }, [backendUrl, isTermsAccepted]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    const token = searchParams.get('token');
-    const error = searchParams.get('error');
+    const token = searchParams.get("token");
+    const error = searchParams.get("error");
 
     if (error) {
-      toast.error(`Google Sign-up failed: ${error}`, { id: 'google-auth' });
-      router.replace('/auth/signup');
+      toast.error(`Google Sign-up failed: ${error}`, { id: "google-auth" });
+      router.replace("/auth/signup");
       return;
     }
 
     if (token) {
-      toast.loading('Finalizing Google sign-up...', { id: 'google-auth' });
-      localStorage.setItem('authToken', token);
+      toast.loading("Finalizing Google sign-up...", { id: "google-auth" });
+      localStorage.setItem("authToken", token);
 
       const fetchUserData = async () => {
         try {
-          const userResponse = await api.get<UserResponse>('/auth/me', token);
+          const userResponse = await api.get<UserResponse>("/auth/me", token);
 
           if (userResponse.success && userResponse.data) {
             const data = userResponse.data as unknown as AuthUser;
             const user: AuthUser = {
               id: Number(data.id) || 0,
-              firstName: data.firstName || '',
-              lastName: data.lastName || '',
-              email: data.email || '',
-              phone: typeof data.phone === 'string' ? data.phone : null,
-              role: typeof data.role === 'string' ? data.role : '',
+              firstName: data.firstName || "",
+              lastName: data.lastName || "",
+              email: data.email || "",
+              phone: typeof data.phone === "string" ? data.phone : null,
+              role: typeof data.role === "string" ? data.role : "",
               verified: Boolean(data.verified),
               suspended: Boolean(data.suspended),
               suspensionReason:
-                typeof data.suspensionReason === 'string'
+                typeof data.suspensionReason === "string"
                   ? data.suspensionReason
                   : null,
               createdAt:
-                typeof data.createdAt === 'string' ? data.createdAt : '',
+                typeof data.createdAt === "string" ? data.createdAt : "",
               updatedAt:
-                typeof data.updatedAt === 'string' ? data.updatedAt : '',
-              address: typeof data.address === 'string' ? data.address : null,
+                typeof data.updatedAt === "string" ? data.updatedAt : "",
+              address: typeof data.address === "string" ? data.address : null,
               accountNumber:
-                typeof data.accountNumber === 'string'
+                typeof data.accountNumber === "string"
                   ? data.accountNumber
                   : null,
               bankName:
-                typeof data.bankName === 'string' ? data.bankName : null,
+                typeof data.bankName === "string" ? data.bankName : null,
               bankCode:
-                typeof data.bankCode === 'string' ? data.bankCode : null,
-              uid: typeof data.uid === 'string' ? data.uid : null,
+                typeof data.bankCode === "string" ? data.bankCode : null,
+              uid: typeof data.uid === "string" ? data.uid : null,
               walletId:
-                typeof data.walletId === 'string' ||
-                typeof data.walletId === 'number'
+                typeof data.walletId === "string" ||
+                typeof data.walletId === "number"
                   ? data.walletId
-                  : '',
+                  : "",
               referralCode:
-                typeof data.referralCode === 'string'
+                typeof data.referralCode === "string"
                   ? data.referralCode
                   : null,
               // Optional frontend fields
               displayName:
-                typeof data.displayName === 'string' ? data.displayName : null,
+                typeof data.displayName === "string" ? data.displayName : null,
               photoURL:
-                typeof data.photoURL === 'string' ? data.photoURL : null,
-              avatar: typeof data.avatar === 'string' ? data.avatar : null,
+                typeof data.photoURL === "string" ? data.photoURL : null,
+              avatar: typeof data.avatar === "string" ? data.avatar : null,
             };
 
             loginUser(user, token);
-            toast.success('Signed up with Google successfully!', {
-              id: 'google-auth',
+            toast.success("Signed up with Google successfully!", {
+              id: "google-auth",
             });
-            router.replace('/dashboard');
+            router.replace("/dashboard");
           } else {
-            throw new Error(userResponse.error || 'Failed to fetch user data.');
+            throw new Error(userResponse.error || "Failed to fetch user data.");
           }
         } catch (err: unknown) {
           const errorMessage =
-            err instanceof Error ? err.message : 'An unknown error occurred.';
-          console.error('Error fetching user data after Google sign-up:', err);
+            err instanceof Error ? err.message : "An unknown error occurred.";
+          console.error("Error fetching user data after Google sign-up:", err);
           toast.error(`Failed to complete Google sign-up: ${errorMessage}`, {
-            id: 'google-auth',
+            id: "google-auth",
           });
-          localStorage.removeItem('authToken');
-          router.replace('/auth/signup');
+          localStorage.removeItem("authToken");
+          router.replace("/auth/signup");
         }
       };
 
@@ -188,38 +188,38 @@ const Signup: React.FC = () => {
 
   const handleVerifyOtp = async () => {
     if (!emailForVerification || otp === null || otp.toString().length !== 6) {
-      toast.error('Enter a valid 6-digit OTP.');
+      toast.error("Enter a valid 6-digit OTP.");
       return;
     }
 
     setIsProcessing(true);
-    toast.loading('Verifying OTP...', { id: 'verify' });
+    toast.loading("Verifying OTP...", { id: "verify" });
 
     try {
       const res = await api.post<
         { message: string },
         { email: string; code: string }
-      >('/api/auth/verify-email', {
+      >("/auth/verify-email", {
         email: emailForVerification.trim(),
         code: otp.toString(),
       });
 
       if (
         res.status === 200 &&
-        res.message === 'Account verified successfully'
+        res.message === "Account verified successfully"
       ) {
-        toast.success('Email verified successfully! You can now login.', {
-          id: 'verify',
+        toast.success("Email verified successfully! You can now login.", {
+          id: "verify",
         });
         setShowOtpPopup(false);
-        setTimeout(() => router.push('/auth/login'), 1500);
+        setTimeout(() => router.push("/auth/login"), 1500);
       } else {
-        toast.error(res.message || 'Unexpected response from server.', {
-          id: 'verify',
+        toast.error(res.message || "Unexpected response from server.", {
+          id: "verify",
         });
       }
     } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'response' in err) {
+      if (err && typeof err === "object" && "response" in err) {
         const errorResponse = err as {
           response?: { status: number };
         };
@@ -227,18 +227,18 @@ const Signup: React.FC = () => {
         const status = errorResponse.response?.status;
 
         if (status === 400) {
-          toast.error('Invalid OTP.', { id: 'verify' });
+          toast.error("Invalid OTP.", { id: "verify" });
         } else if (status === 404) {
-          toast.error('Account with this email not found.', { id: 'verify' });
+          toast.error("Account with this email not found.", { id: "verify" });
         } else if (status === 500) {
-          toast.error('Server error. Please try again later.', {
-            id: 'verify',
+          toast.error("Server error. Please try again later.", {
+            id: "verify",
           });
         } else {
-          toast.error('An unexpected error occurred.', { id: 'verify' });
+          toast.error("An unexpected error occurred.", { id: "verify" });
         }
       } else {
-        toast.error('An unknown error occurred.', { id: 'verify' });
+        toast.error("An unknown error occurred.", { id: "verify" });
       }
     } finally {
       setIsProcessing(false);
@@ -248,14 +248,14 @@ const Signup: React.FC = () => {
   const sendOtpToEmail = useCallback(
     async (email: string) => {
       setIsProcessing(true);
-      toast.loading('Sending OTP...', { id: 'otp-send' });
+      toast.loading("Sending OTP...", { id: "otp-send" });
 
       try {
         const res = await fetch(
-          `${backendUrl}/api/auth/send-verification-otp`,
+          `${backendUrl}/auth/send-verification-otp`,
           {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email }),
           }
         );
@@ -265,16 +265,16 @@ const Signup: React.FC = () => {
         if (res.ok) {
           setEmailForVerification(email);
           setShowOtpPopup(true);
-          toast.success(result.message || 'OTP sent successfully.', {
-            id: 'otp-send',
+          toast.success(result.message || "OTP sent successfully.", {
+            id: "otp-send",
           });
         } else {
-          toast.error(result.message || 'Failed to send OTP.', {
-            id: 'otp-send',
+          toast.error(result.message || "Failed to send OTP.", {
+            id: "otp-send",
           });
         }
       } catch {
-        toast.error('Network error while sending OTP.', { id: 'otp-send' });
+        toast.error("Network error while sending OTP.", { id: "otp-send" });
       } finally {
         setIsProcessing(false);
       }
@@ -288,49 +288,49 @@ const Signup: React.FC = () => {
 
       if (!isTermsAccepted) {
         toast.error(
-          'You must accept the terms and privacy policy to continue.'
+          "You must accept the terms and privacy policy to continue."
         );
         return;
       }
 
       if (!isPasswordValid) {
-        toast.error('Password does not meet the required criteria.', {
-          id: 'signup-toast',
+        toast.error("Password does not meet the required criteria.", {
+          id: "signup-toast",
         });
         return;
       }
 
       setIsProcessing(true);
-      toast.loading('Creating account...', { id: 'signup-toast' });
+      toast.loading("Creating account...", { id: "signup-toast" });
 
       try {
-        const res = await fetch(`${backendUrl}/api/auth/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const res = await fetch(`${backendUrl}/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ firstName, lastName, email, password }),
         });
         const data = await res.json();
 
         if (res.status === 201 && data.user) {
           toast.success(
-            'Account created successfully! Please verify your email.',
+            "Account created successfully! Please verify your email.",
             {
-              id: 'signup-toast',
+              id: "signup-toast",
             }
           );
           setEmailForVerification(email);
           setShowOtpPopup(true);
         } else {
           toast.error(
-            data.message?.includes('already exists')
-              ? 'Account with this email already exists. Please login.'
-              : data.message || 'Account creation failed.',
-            { id: 'signup-toast' }
+            data.message?.includes("already exists")
+              ? "Account with this email already exists. Please login."
+              : data.message || "Account creation failed.",
+            { id: "signup-toast" }
           );
         }
       } catch {
-        toast.error('A network error occurred. Please try again.', {
-          id: 'signup-toast',
+        toast.error("A network error occurred. Please try again.", {
+          id: "signup-toast",
         });
       } finally {
         setIsProcessing(false);
@@ -348,7 +348,7 @@ const Signup: React.FC = () => {
   );
 
   const inputClass =
-    'w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none disabled:bg-gray-200';
+    "w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none disabled:bg-gray-200";
 
   const renderResendTimer = (props?: { remainingTime?: number }) => {
     const remaining = props?.remainingTime ?? 0;
@@ -392,10 +392,7 @@ const Signup: React.FC = () => {
           Setup your account on Swapconnect to get started
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
@@ -429,7 +426,7 @@ const Signup: React.FC = () => {
 
           <div className="relative">
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -442,7 +439,7 @@ const Signup: React.FC = () => {
               onClick={() => setShowPassword((prev) => !prev)}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-600"
               tabIndex={-1}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
@@ -451,14 +448,14 @@ const Signup: React.FC = () => {
           <ul className="flex flex-col md:flex-row flex-wrap gap-2 text-xs text-left">
             <li
               className={`flex items-center gap-1 ${
-                passwordValidation.length ? 'text-green-600' : 'text-red-500'
+                passwordValidation.length ? "text-green-600" : "text-red-500"
               }`}
             >
               {passwordValidation.length && <FaCheck />} Minimum 8 characters
             </li>
             <li
               className={`flex items-center gap-1 ${
-                passwordValidation.uppercase ? 'text-green-600' : 'text-red-500'
+                passwordValidation.uppercase ? "text-green-600" : "text-red-500"
               }`}
             >
               {passwordValidation.uppercase && <FaCheck />} At least one
@@ -466,7 +463,7 @@ const Signup: React.FC = () => {
             </li>
             <li
               className={`flex items-center gap-1 ${
-                passwordValidation.lowercase ? 'text-green-600' : 'text-red-500'
+                passwordValidation.lowercase ? "text-green-600" : "text-red-500"
               }`}
             >
               {passwordValidation.lowercase && <FaCheck />} At least one
@@ -474,14 +471,14 @@ const Signup: React.FC = () => {
             </li>
             <li
               className={`flex items-center gap-1 ${
-                passwordValidation.number ? 'text-green-600' : 'text-red-500'
+                passwordValidation.number ? "text-green-600" : "text-red-500"
               }`}
             >
               {passwordValidation.number && <FaCheck />} At least one number
             </li>
             <li
               className={`flex items-center gap-1 ${
-                passwordValidation.special ? 'text-green-600' : 'text-red-500'
+                passwordValidation.special ? "text-green-600" : "text-red-500"
               }`}
             >
               {passwordValidation.special && <FaCheck />} At least one special
@@ -497,18 +494,12 @@ const Signup: React.FC = () => {
               onChange={(e) => setIsTermsAccepted(e.target.checked)}
               className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            <label
-              htmlFor="terms"
-              className="text-sm text-gray-600"
-            >
-              I agree to the{' '}
-              <Link
-                href="/terms"
-                className="text-green-600 hover:underline"
-              >
+            <label htmlFor="terms" className="text-sm text-gray-600">
+              I agree to the{" "}
+              <Link href="/terms" className="text-green-600 hover:underline">
                 Terms of Service
-              </Link>{' '}
-              and{' '}
+              </Link>{" "}
+              and{" "}
               <Link
                 href="/privacy-policy"
                 className="text-green-600 hover:underline"
@@ -529,7 +520,7 @@ const Signup: React.FC = () => {
                 Processing...
               </span>
             ) : (
-              'Create Account'
+              "Create Account"
             )}
           </button>
 
@@ -557,11 +548,8 @@ const Signup: React.FC = () => {
         </form>
 
         <p className="mt-4 text-xs text-gray-600 text-center">
-          Already have an account?{' '}
-          <Link
-            href="/auth/login"
-            className="text-blue-600 hover:underline"
-          >
+          Already have an account?{" "}
+          <Link href="/auth/login" className="text-blue-600 hover:underline">
             Login
           </Link>
         </p>
@@ -575,11 +563,11 @@ const Signup: React.FC = () => {
               Verify your email
             </h5>
             <p className="text-sm text-gray-600 mb-4 text-center">
-              Enter the 6-digit OTP sent to{' '}
+              Enter the 6-digit OTP sent to{" "}
               <strong>{emailForVerification}</strong>
             </p>
             <OTPInput
-              value={otp !== null ? otp.toString() : ''}
+              value={otp !== null ? otp.toString() : ""}
               onChange={(value) =>
                 setOtp(value ? Number.parseInt(value, 10) : null)
               }
@@ -603,7 +591,7 @@ const Signup: React.FC = () => {
                 className="flex-1 bg-blue-600 text-white py-2 cursor-pointer px-4 rounded-md font-semibold hover:bg-blue-700 disabled:opacity-50"
                 disabled={isProcessing || otp?.toString().length !== 6}
               >
-                {isProcessing ? 'Verifying...' : 'Verify OTP'}
+                {isProcessing ? "Verifying..." : "Verify OTP"}
               </button>
               <button
                 onClick={() => setShowOtpPopup(false)}

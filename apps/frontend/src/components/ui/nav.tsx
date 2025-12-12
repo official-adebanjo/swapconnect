@@ -76,7 +76,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
       // setUserError(null); // Assigned but never used
 
       try {
-        const response = await fetch(`${API_URL}/api/users`, {
+        const response = await fetch(`${API_URL}/users`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

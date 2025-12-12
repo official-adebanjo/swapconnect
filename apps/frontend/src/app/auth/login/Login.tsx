@@ -128,14 +128,11 @@ const Login: React.FC = () => {
       toast.loading("Sending OTP...", { id: "otp-send" });
 
       try {
-        const res = await fetch(
-          `${backendUrl}/api/auth/send-verification-otp`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          }
-        );
+        const res = await fetch(`${backendUrl}/auth/send-verification-otp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
 
         const result: { message: string } = await res.json();
 
@@ -165,7 +162,7 @@ const Login: React.FC = () => {
 
     try {
       const res = await api.post(
-        "/api/users/2fa/initiate",
+        "/users/2fa/initiate",
         {},
         localStorage.getItem("tempToken") || ""
       );
@@ -191,11 +188,11 @@ const Login: React.FC = () => {
   const onSubmit: SubmitHandler<LoginFormInputs> = async (formData) => {
     setIsProcessing(true);
     toast.loading("Signing in...", { id: "login" });
-    // console.log("Calling login API:", backendUrl + "/api/auth/login");
+    // console.log("Calling login API:", backendUrl + "/auth/login");
 
     try {
       const res = await api.post<AuthResponse, LoginFormInputs>(
-        "/api/auth/login",
+        "/auth/login",
         formData
       );
 
@@ -271,7 +268,7 @@ const Login: React.FC = () => {
           ? "http://localhost:3000"
           : "/dashboard"; // Default live URL redirect
 
-      window.location.href = `${backendUrl}/api/auth/google/login?redirect=${encodeURIComponent(
+      window.location.href = `${backendUrl}/auth/google/login?redirect=${encodeURIComponent(
         redirectUrl
       )}`;
     } catch (error) {
@@ -295,7 +292,7 @@ const Login: React.FC = () => {
       const res = await api.post<
         { message: string },
         { email: string; code: string }
-      >("/api/auth/verify-email", {
+      >("/auth/verify-email", {
         email: emailForVerification.trim(),
         code: otp.toString(),
       });
@@ -357,7 +354,7 @@ const Login: React.FC = () => {
         AuthResponse,
         { verificationCode: string }
       >(
-        "/api/users/2fa/verify",
+        "/users/2fa/verify",
         {
           verificationCode: twoFactorOtp.toString(),
         },

@@ -50,7 +50,7 @@ function ProductsTable() {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/api/products/user/${user.id}/?page=${page}&limit=10`,
+          `${API_URL}/products/user/${user.id}/?page=${page}&limit=10`,
           {
             method: "GET",
             headers: {
@@ -113,7 +113,7 @@ function ProductsTable() {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `${API_URL}/api/products/${selectedProductId}`,
+        `${API_URL}/products/${selectedProductId}`,
         {
           method: "DELETE",
           headers: {

@@ -42,7 +42,7 @@ const VerifyDepositPage = () => {
 
       try {
         const response = await fetch(
-          `${API_URL}/api/transactions/verify-deposit?reference=${reference}`,
+          `${API_URL}/transactions/verify-deposit?reference=${reference}`,
           {
             method: "GET",
             headers: {

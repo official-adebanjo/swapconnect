@@ -81,7 +81,7 @@ function SupportPage() {
     const fetchExistingConversation = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/api/conversations/my-conversation`,
+          `${API_URL}/conversations/my-conversation`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

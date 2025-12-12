@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { api } from '@/lib/api';
-import { useAuthToken } from '@/hooks/useAuthToken';
+import { useState, useEffect, useCallback } from "react";
+import { api } from "@/lib/api";
+import { useAuthToken } from "@/hooks/useAuthToken";
 import type {
   Notification,
   NotificationResponse,
   UnreadCountResponse,
   NotificationPreferences,
-} from '@/types/notification';
+} from "@/types/notification";
 
 export function useNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -28,19 +28,19 @@ export function useNotifications() {
 
       try {
         setError(null);
-        const response = await api.get<NotificationResponse['data']>(
-          `/api/notifications?page=${page}&limit=${limit}&unreadOnly=${unreadOnly}`,
+        const response = await api.get<NotificationResponse["data"]>(
+          `/notifications?page=${page}&limit=${limit}&unreadOnly=${unreadOnly}`,
           token
         );
 
         if (response.success && response.data) {
           setNotifications(response.data.notifications);
         } else {
-          setError(response.error || 'Failed to fetch notifications');
+          setError(response.error || "Failed to fetch notifications");
         }
       } catch (err) {
-        setError('Error fetching notifications');
-        console.error('Error fetching notifications:', err);
+        setError("Error fetching notifications");
+        console.error("Error fetching notifications:", err);
       } finally {
         setLoading(false);
       }
@@ -52,8 +52,8 @@ export function useNotifications() {
     if (!token) return;
 
     try {
-      const response = await api.get<UnreadCountResponse['data']>(
-        '/api/notifications/unread-count',
+      const response = await api.get<UnreadCountResponse["data"]>(
+        "/notifications/unread-count",
         token
       );
 
@@ -61,7 +61,7 @@ export function useNotifications() {
         setUnreadCount(response.data.unreadCount);
       }
     } catch (err) {
-      console.error('Error fetching unread count:', err);
+      console.error("Error fetching unread count:", err);
     }
   }, [token]);
 
@@ -70,7 +70,7 @@ export function useNotifications() {
 
     try {
       const response = await api.get<{ data: NotificationPreferences }>(
-        '/api/notifications/preferences',
+        "/notifications/preferences",
         token
       );
 
@@ -78,7 +78,7 @@ export function useNotifications() {
         setPreferences(response.data.data);
       }
     } catch (err) {
-      console.error('Error fetching notification preferences:', err);
+      console.error("Error fetching notification preferences:", err);
       setPreferences({
         emailNotifications: false,
         pushNotifications: false,
@@ -92,7 +92,7 @@ export function useNotifications() {
 
       try {
         const response = await api.put(
-          `/api/notifications/${notificationId}/read`,
+          `/notifications/${notificationId}/read`,
           {},
           token
         );
@@ -106,7 +106,7 @@ export function useNotifications() {
           setUnreadCount((prev) => Math.max(0, prev - 1));
         }
       } catch (err) {
-        console.error('Error marking notification as read:', err);
+        console.error("Error marking notification as read:", err);
       }
     },
     [token]
@@ -116,11 +116,7 @@ export function useNotifications() {
     if (!token) return;
 
     try {
-      const response = await api.put(
-        '/api/notifications/mark-all-read',
-        {},
-        token
-      );
+      const response = await api.put("/notifications/mark-all-read", {}, token);
 
       if (response.success) {
         setNotifications((prev) =>
@@ -129,7 +125,7 @@ export function useNotifications() {
         setUnreadCount(0);
       }
     } catch (err) {
-      console.error('Error marking all notifications as read:', err);
+      console.error("Error marking all notifications as read:", err);
     }
   }, [token]);
 
@@ -139,7 +135,7 @@ export function useNotifications() {
 
       try {
         const response = await api.delete(
-          `/api/notifications/${notificationId}`,
+          `/notifications/${notificationId}`,
           token
         );
 
@@ -151,7 +147,7 @@ export function useNotifications() {
           fetchUnreadCount();
         }
       } catch (err) {
-        console.error('Error deleting notification:', err);
+        console.error("Error deleting notification:", err);
       }
     },
     [token, fetchUnreadCount]
@@ -163,7 +159,7 @@ export function useNotifications() {
 
       try {
         const response = await api.put(
-          '/api/notifications/preferences',
+          "/notifications/preferences",
           newPreferences,
           token
         );
@@ -174,7 +170,7 @@ export function useNotifications() {
         }
         return false;
       } catch (err) {
-        console.error('Error updating notification preferences:', err);
+        console.error("Error updating notification preferences:", err);
         return false;
       }
     },

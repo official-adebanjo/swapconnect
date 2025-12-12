@@ -32,7 +32,7 @@ function OrderTable() {
 
     const fetchOrders = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/orders/user`, {
+        const response = await fetch(`${API_URL}/orders/user`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

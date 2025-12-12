@@ -87,7 +87,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
       formData.append('message', `Swap offer for ${targetProductName}`);
       formData.append('image', imageFile);
 
-      const response = await fetch(`${API_URL}/api/bid/swap-offer`, {
+      const response = await fetch(`${API_URL}/bid/swap-offer`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

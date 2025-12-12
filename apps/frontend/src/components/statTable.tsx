@@ -21,7 +21,7 @@ function StatTable() {
       try {
         // const token = localStorage.getItem("token");
         const response = await fetch(
-          `${API_URL}/api/users/dashboard-analytics`,
+          `${API_URL}/users/dashboard-analytics`,
           {
             method: "GET",
             headers: {

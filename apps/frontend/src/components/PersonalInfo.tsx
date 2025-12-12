@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { User, Mail, Phone, MapPin, Save, Loader2 } from 'lucide-react';
-import { api } from '@/lib/api';
-import { useAuthToken } from '@/hooks/useAuthToken';
+import { useState, useEffect } from "react";
+import { User, Mail, Phone, MapPin, Save, Loader2 } from "lucide-react";
+import { api } from "@/lib/api";
+import { useAuthToken } from "@/hooks/useAuthToken";
 
 interface UserData {
   firstName: string;
@@ -18,14 +18,14 @@ interface UserData {
 
 export default function PersonalInfo({ userId }: { userId: string }) {
   const [userData, setUserData] = useState<UserData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    country: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    country: "",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -38,27 +38,27 @@ export default function PersonalInfo({ userId }: { userId: string }) {
 
     const fetchUserData = async () => {
       try {
-        const response = await api.get('/api/users', token);
+        const response = await api.get("/users", token);
 
         if (!response.success) {
-          throw new Error(response.error || 'Failed to fetch user data');
+          throw new Error(response.error || "Failed to fetch user data");
         }
 
         if (response.data) {
           setUserData({
-            firstName: response.data.firstName || '',
-            lastName: response.data.lastName || '',
-            email: response.data.email || '',
-            phone: response.data.phone || '',
-            address: response.data.address || '',
-            city: response.data.city || '',
-            state: response.data.state || '',
-            country: response.data.country || '',
+            firstName: response.data.firstName || "",
+            lastName: response.data.lastName || "",
+            email: response.data.email || "",
+            phone: response.data.phone || "",
+            address: response.data.address || "",
+            city: response.data.city || "",
+            state: response.data.state || "",
+            country: response.data.country || "",
           });
         }
       } catch (err) {
-        setError('Failed to load user data');
-        console.error('Error fetching user data:', err);
+        setError("Failed to load user data");
+        console.error("Error fetching user data:", err);
       } finally {
         setLoading(false);
       }
@@ -79,17 +79,17 @@ export default function PersonalInfo({ userId }: { userId: string }) {
     setError(null);
 
     try {
-      const response = await api.patch('/api/users', userData, token);
+      const response = await api.patch("/users", userData, token);
 
       if (!response.success) {
-        throw new Error(response.error || 'Failed to update user data');
+        throw new Error(response.error || "Failed to update user data");
       }
 
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
-      setError('Failed to save changes');
-      console.error('Error updating user data:', err);
+      setError("Failed to save changes");
+      console.error("Error updating user data:", err);
     } finally {
       setSaving(false);
     }
@@ -99,10 +99,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
     return (
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-center py-8">
-          <Loader2
-            className="animate-spin text-[#037F44]"
-            size={24}
-          />
+          <Loader2 className="animate-spin text-[#037F44]" size={24} />
           <span className="ml-2 text-gray-600">Loading...</span>
         </div>
       </div>
@@ -112,10 +109,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center gap-3 mb-6">
-        <User
-          className="text-[#037F44]"
-          size={24}
-        />
+        <User className="text-[#037F44]" size={24} />
         <h2 className="text-xl font-semibold text-gray-800">
           Personal Information
         </h2>
@@ -136,7 +130,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
           <input
             type="text"
             value={userData.firstName}
-            onChange={(e) => handleInputChange('firstName', e.target.value)}
+            onChange={(e) => handleInputChange("firstName", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#037F44] focus:border-transparent"
             placeholder="Enter your first name"
           />
@@ -150,7 +144,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
           <input
             type="text"
             value={userData.lastName}
-            onChange={(e) => handleInputChange('lastName', e.target.value)}
+            onChange={(e) => handleInputChange("lastName", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#037F44] focus:border-transparent"
             placeholder="Enter your last name"
           />
@@ -165,7 +159,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
           <input
             type="email"
             value={userData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
+            onChange={(e) => handleInputChange("email", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#037F44] focus:border-transparent"
             placeholder="Enter your email"
           />
@@ -180,7 +174,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
           <input
             type="tel"
             value={userData.phone}
-            onChange={(e) => handleInputChange('phone', e.target.value)}
+            onChange={(e) => handleInputChange("phone", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#037F44] focus:border-transparent"
             placeholder="Enter your phone number"
           />
@@ -195,7 +189,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
           <input
             type="text"
             value={userData.address}
-            onChange={(e) => handleInputChange('address', e.target.value)}
+            onChange={(e) => handleInputChange("address", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#037F44] focus:border-transparent"
             placeholder="Enter your address"
           />
@@ -209,7 +203,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
           <input
             type="text"
             value={userData.city}
-            onChange={(e) => handleInputChange('city', e.target.value)}
+            onChange={(e) => handleInputChange("city", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#037F44] focus:border-transparent"
             placeholder="Enter your city"
           />
@@ -223,7 +217,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
           <input
             type="text"
             value={userData.state}
-            onChange={(e) => handleInputChange('state', e.target.value)}
+            onChange={(e) => handleInputChange("state", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#037F44] focus:border-transparent"
             placeholder="Enter your state/province"
           />
@@ -237,7 +231,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
           <input
             type="text"
             value={userData.country}
-            onChange={(e) => handleInputChange('country', e.target.value)}
+            onChange={(e) => handleInputChange("country", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#037F44] focus:border-transparent"
             placeholder="Enter your country"
           />
@@ -252,10 +246,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
           className="flex items-center gap-2 bg-[#037F44] text-white px-6 py-2 rounded-md hover:bg-[#025c32] transition disabled:opacity-50"
         >
           {saving ? (
-            <Loader2
-              className="animate-spin"
-              size={16}
-            />
+            <Loader2 className="animate-spin" size={16} />
           ) : saved ? (
             <span className="text-green-200">✓ Saved</span>
           ) : (

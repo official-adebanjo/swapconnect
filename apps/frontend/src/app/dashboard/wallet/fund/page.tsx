@@ -55,7 +55,7 @@ const FundWalletPage = () => {
     try {
       const userId = JSON.parse(atob(token.split(".")[1])).id;
 
-      const response = await fetch(`${API_URL}/api/transactions/deposit`, {
+      const response = await fetch(`${API_URL}/transactions/deposit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

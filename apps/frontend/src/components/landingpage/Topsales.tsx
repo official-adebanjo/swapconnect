@@ -43,10 +43,7 @@ export default function Topsales() {
       setLoading(true);
       setError(null);
 
-      const response = await api.get<Product[]>(
-        "/api/products/top?limit=8",
-        token
-      );
+      const response = await api.get<Product[]>("/products/top?limit=8", token);
 
       if (response.success && response.data) {
         setProducts(response.data);

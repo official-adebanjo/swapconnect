@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import type React from 'react';
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { api } from '@/lib/api';
-import { useAuthToken } from '@/hooks/useAuthToken';
+import type React from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { api } from "@/lib/api";
+import { useAuthToken } from "@/hooks/useAuthToken";
 
 interface Product {
   id: number;
@@ -44,10 +44,10 @@ export default function CategoryProductsDisplay({
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('newest');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
   const token = useAuthToken();
@@ -77,18 +77,18 @@ export default function CategoryProductsDisplay({
           pages: number;
           page: number;
         };
-      }>(`/api/products/category/${categoryName}?${queryParams}`, token);
+      }>(`/products/category/${categoryName}?${queryParams}`, token);
 
       if (response.success && response.data) {
         setProducts(response.data || []);
         setTotalPages(response.pagination?.pages || 1);
         setTotalProducts(response.pagination?.total || 0);
       } else {
-        throw new Error(response.error || 'Failed to fetch products');
+        throw new Error(response.error || "Failed to fetch products");
       }
     } catch (err) {
-      console.error('Error fetching products:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load products');
+      console.error("Error fetching products:", err);
+      setError(err instanceof Error ? err.message : "Failed to load products");
       setProducts([]);
     } finally {
       setLoading(false);
@@ -96,9 +96,9 @@ export default function CategoryProductsDisplay({
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
       minimumFractionDigits: 0,
     }).format(price);
   };
@@ -110,10 +110,10 @@ export default function CategoryProductsDisplay({
   };
 
   const handleFilterReset = () => {
-    setSearchTerm('');
-    setMinPrice('');
-    setMaxPrice('');
-    setSortBy('newest');
+    setSearchTerm("");
+    setMinPrice("");
+    setMaxPrice("");
+    setSortBy("newest");
     setCurrentPage(1);
   };
 
@@ -147,10 +147,7 @@ export default function CategoryProductsDisplay({
     <div className="space-y-6">
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <form
-          onSubmit={handleSearch}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSearch} className="space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <input
@@ -244,15 +241,15 @@ export default function CategoryProductsDisplay({
                   <Image
                     src={
                       product.imageUrl ||
-                      '/placeholder.svg?height=192&width=256&query=product'
+                      "/placeholder.svg?height=192&width=256&query=product"
                     }
                     alt={product.name}
                     fill
-                    style={{ objectFit: 'contain' }}
+                    style={{ objectFit: "contain" }}
                     className="p-4 group-hover:scale-105 transition-transform duration-200"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.src = '/placeholder.svg?height=192&width=256';
+                      target.src = "/placeholder.svg?height=192&width=256";
                     }}
                   />
 
@@ -391,8 +388,8 @@ export default function CategoryProductsDisplay({
                 onClick={() => setCurrentPage(pageNum)}
                 className={`px-3 py-2 border rounded-lg transition-colors ${
                   currentPage === pageNum
-                    ? 'bg-green-600 text-white border-green-600'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? "bg-green-600 text-white border-green-600"
+                    : "border-gray-300 hover:bg-gray-50"
                 }`}
               >
                 {pageNum}

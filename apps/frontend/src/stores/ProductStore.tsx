@@ -23,7 +23,7 @@ const useProductStore = create<ProductStore>((set) => ({
   fetchProducts: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get<Product[]>("/api/products");
+      const response = await axios.get<Product[]>("/products");
       set({ products: response.data, loading: false });
     } catch (error) {
       set({ error, loading: false });

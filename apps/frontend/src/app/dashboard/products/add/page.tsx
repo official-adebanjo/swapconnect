@@ -79,7 +79,7 @@ function Page() {
       // Append the image file with the correct field name
       formData.append('file', imageFile);
 
-      const res = await fetch(`${API_URL}/api/products`, {
+      const res = await fetch(`${API_URL}/products`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

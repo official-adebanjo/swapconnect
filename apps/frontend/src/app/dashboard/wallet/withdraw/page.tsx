@@ -47,7 +47,7 @@ export default function WithdrawPage() {
     const fetchBalance = async () => {
       if (!token) return;
       try {
-        const response = await fetch(`${API_URL}/api/wallet/transactions`, {
+        const response = await fetch(`${API_URL}/wallet/transactions`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -75,7 +75,7 @@ export default function WithdrawPage() {
     setLoading(true);
     try {
       // const data = banks.find((b) => b.id == bank); // ❌ Assigned but never used
-      const response = await fetch(`${API_URL}/api/transactions/withdraw`, {
+      const response = await fetch(`${API_URL}/transactions/withdraw`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +105,7 @@ export default function WithdrawPage() {
     const fetchBanks = async () => {
       setBanksLoading(true);
       try {
-        const response = await fetch(`${API_URL}/api/transactions/banks`, {
+        const response = await fetch(`${API_URL}/transactions/banks`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -162,7 +162,7 @@ export default function WithdrawPage() {
 
     try {
       const response = await fetch(
-        `${API_URL}/api/transactions/withdraw/verify`,
+        `${API_URL}/transactions/withdraw/verify`,
         {
           method: "POST",
           headers: {

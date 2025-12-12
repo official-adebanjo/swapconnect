@@ -31,7 +31,7 @@ export default function EditProductPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${API_URL}/api/products/${productId}`, {
+        const response = await fetch(`${API_URL}/products/${productId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -77,7 +77,7 @@ export default function EditProductPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_URL}/api/products/${productId}`, {
+      const response = await fetch(`${API_URL}/products/${productId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -37,7 +37,7 @@ export default function OrderDetailsPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${API_URL}/api/orders/${orderId}`, {
+        const response = await fetch(`${API_URL}/orders/${orderId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export default function OrderDetailsPage() {
     if (!token || !orderId) return;
     try {
       const response = await fetch(
-        `${API_URL}/api/orders/${orderId}/${action}`,
+        `${API_URL}/orders/${orderId}/${action}`,
         {
           method: 'POST',
           headers: {

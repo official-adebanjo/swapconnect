@@ -28,7 +28,7 @@ function ReferralTable() {
     const fetchData = async () => {
       try {
         // Fetch referral code
-        const userRes = await fetch(`${API_URL}/api/users/`, {
+        const userRes = await fetch(`${API_URL}/users/`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -42,7 +42,7 @@ function ReferralTable() {
 
         // Fetch earnings and total referrals
         const analyticsRes = await fetch(
-          `${API_URL}/api/users/dashboard-analytics`,
+          `${API_URL}/users/dashboard-analytics`,
           {
             method: "GET",
             headers: {

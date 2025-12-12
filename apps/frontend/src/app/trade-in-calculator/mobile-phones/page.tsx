@@ -28,6 +28,32 @@ interface Product {
   tag: string;
 }
 
+interface CalculationBreakdown {
+  baseValue?: number;
+  conditionMultiplier?: number;
+  finalValue?: number;
+}
+
+interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  estimatedValue?: number;
+  breakdown?: CalculationBreakdown;
+}
+
+interface ProductApiData {
+  id: number;
+  name: string;
+  imageUrl?: string;
+  price: number;
+  description?: string;
+  stock: number;
+  Category?: {
+    name: string;
+  };
+}
+
 interface MobileFormData {
   brand: string;
   model: string;
@@ -47,12 +73,12 @@ interface MobileFormData {
 // Function to fetch recently uploaded products from the backend
 const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
   try {
-    const response: any = await api.get<{ data: any[] }>(
-      "/api/products/top?limit=6",
+    const response = await api.get<ApiResponse<ProductApiData[]>>(
+      "/products/top?limit=6",
       token
     );
     if (response.success && response.data) {
-      return response.data.map((product: any) => ({
+      return response.data.map((product: ProductApiData) => ({
         id: product.id.toString(),
         name: product.name,
         image: product.imageUrl || "/placeholder.svg?height=200&width=200",
@@ -79,7 +105,8 @@ const MobilePhonesPage: React.FC = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [estimatedValue, setEstimatedValue] = useState<number>(0);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [calculationBreakdown, setCalculationBreakdown] = useState<any>(null);
+  const [calculationBreakdown, setCalculationBreakdown] =
+    useState<CalculationBreakdown | null>(null);
   const [hasCalculated, setHasCalculated] = useState(false);
   const [formData, setFormData] = useState<MobileFormData>({
     brand: "",
@@ -178,17 +205,16 @@ const MobilePhonesPage: React.FC = () => {
       //   return;
       // }
 
-      const response: any = await api.post(
-        "/api/bid/calculator",
-        payload,
-        token
-      );
+      const response = await api.post<
+        ApiResponse<{ estimatedValue: number; breakdown: CalculationBreakdown }>
+      >("/bid/calculator", payload, token);
 
       if (response.success) {
         console.log(response);
-        const calculatedValue =
-          response.data?.estimatedValue || response.estimatedValue || 0;
-        const breakdown = response.data?.breakdown || response.breakdown;
+        const calculatedValue: number =
+          response.data?.estimatedValue ?? response.estimatedValue ?? 0;
+        const breakdown =
+          response.data?.breakdown ?? response.breakdown ?? null;
 
         setEstimatedValue(calculatedValue);
         setCalculationBreakdown(breakdown);
@@ -224,7 +250,7 @@ const MobilePhonesPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-      toast.success("estimating value, please wait...", {duration: 2000,});
+    toast.success("estimating value, please wait...", { duration: 2000 });
     await calculateValue();
   };
 
