@@ -42,7 +42,7 @@ interface ProductApiData {
 
 const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
   try {
-    const response = await api.get<ApiResponse<{ data: ProductApiData[] }>>(
+    const response = await api.get<{ data: ProductApiData[] }>(
       "/products/top?limit=6",
       token
     );
@@ -50,7 +50,7 @@ const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
       // Check for the nested 'data' property
       return response.data.data.map((product: ProductApiData) => ({
         // Access the nested 'data' array
-        id: product.id.toString(),
+        id: product.id,
         name: product.name,
         image: product.imageUrl || "/placeholder.svg?height=200&width=200",
         price: product.price,
@@ -284,13 +284,16 @@ const ComputersPage: React.FC = () => {
       // return;
       // }
       const response = await api.post<
-        ApiResponse<{ estimatedValue: number; breakdown: CalculationBreakdown }>
+        { estimatedValue: number; breakdown: CalculationBreakdown },
+        typeof payload
       >("/bid/calculator", payload, token);
 
       if (response.success) {
         console.log(response);
         const calculatedValue: number =
-          response.data?.estimatedValue ?? response.estimatedValue ?? 0;
+          response.data?.estimatedValue ??
+          (response.estimatedValue as number) ??
+          0;
         const breakdown =
           response.data?.breakdown ?? response.breakdown ?? null;
         setEstimatedValue(calculatedValue);
