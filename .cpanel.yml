@@ -1,0 +1,22 @@
+---
+deployment:
+  tasks:
+    # IMPORTANT: Replace 'your_cpanel_user' and 'your_app_root' with the
+    # actual path from your cPanel Node.js App setup.
+    # Example: /home/swapconn/swapconnect_app
+    - export DEPLOYPATH=/home/frwzozxi/swapconnect
+
+    # Task 1: Navigate to the frontend app directory and install dependencies.
+    # The REPO_PATH variable is provided by cPanel's deployment environment.
+    - echo "Step 1: Installing frontend dependencies..."
+    - cd ${REPO_PATH}apps/frontend && npm install
+
+    # Task 2: Build the Next.js application.
+    # This uses your existing 'npm run build' script.
+    - echo "Step 2: Building the Next.js application..."
+    - cd ${REPO_PATH}apps/frontend && npm run build
+
+    # Task 3: Copy the standalone build output to the deployment directory.
+    # The 'rsync' command efficiently syncs the files, deleting old ones.
+    - echo "Step 3: Deploying files to ${DEPLOYPATH}..."
+    - /bin/rsync -a --delete ${REPO_PATH}apps/frontend/.next/standalone/ ${DEPLOYPATH}
