@@ -20,14 +20,6 @@ interface CalculationBreakdown {
   finalValue?: number;
 }
 
-interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  estimatedValue?: number;
-  breakdown?: CalculationBreakdown;
-}
-
 interface ProductApiData {
   id: number;
   name: string;
