@@ -16,6 +16,15 @@ deployment:
     - echo "Step 2: Building project with Turborepo..."
     - cd ${REPO_PATH} && yarn build
 
+    # Task 2.5: Prepare standalone directory structure
+    # Copy the custom server.js to the standalone root
+    - cp ${REPO_PATH}server.js ${REPO_PATH}apps/frontend/.next/standalone/server.js
+    # Ensure static assets are in the correct location for the nested server/app
+    - mkdir -p ${REPO_PATH}apps/frontend/.next/standalone/apps/frontend/.next/static
+    - cp -r ${REPO_PATH}apps/frontend/.next/static/* ${REPO_PATH}apps/frontend/.next/standalone/apps/frontend/.next/static/
+    - mkdir -p ${REPO_PATH}apps/frontend/.next/standalone/apps/frontend/public
+    - cp -r ${REPO_PATH}apps/frontend/public/* ${REPO_PATH}apps/frontend/.next/standalone/apps/frontend/public/
+
     # Task 3: Copy the standalone build output to the deployment directory.
     # The output is located in apps/frontend/.next/standalone.
     # The 'rsync' command efficiently syncs the files, deleting old ones.
