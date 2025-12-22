@@ -1,36 +1,31 @@
 ---
 deployment:
   tasks:
-    # IMPORTANT: Replace 'your_cpanel_user' and 'your_app_root' with the
-    # actual path from your cPanel Node.js App setup.
-    # Example: /home/swapconn/swapconnect_app
     - export DEPLOYPATH=/home/frwzozxi/swapconnect
 
-    # Task 1: Install all monorepo dependencies from the root using Yarn.
-    # Your project uses Yarn workspaces, so 'yarn install' must be run from the root.
-    - echo "Step 1: Installing monorepo dependencies..."
+    # Step 1: Install & Build
+    - echo "Step 1: Installing and Building..."
     - cd ${REPO_PATH} && yarn install --frozen-lockfile
-
-    # Task 2: Build the entire project using Turborepo.
-    # This will correctly build the 'frontend' app.
-    - echo "Step 2: Building project with Turborepo..."
     - cd ${REPO_PATH} && yarn build
 
-    # Task 2.5: Prepare standalone directory structure
-    # Copy the custom server.js to the standalone root
-    - cp ${REPO_PATH}server.js ${REPO_PATH}apps/frontend/.next/standalone/server.js
-    # Ensure static assets are in the correct location for the nested server/app
-    - mkdir -p ${REPO_PATH}apps/frontend/.next/standalone/apps/frontend/.next/static
-    - cp -r ${REPO_PATH}apps/frontend/.next/static/* ${REPO_PATH}apps/frontend/.next/standalone/apps/frontend/.next/static/
-    - mkdir -p ${REPO_PATH}apps/frontend/.next/standalone/apps/frontend/public
-    - cp -r ${REPO_PATH}apps/frontend/public/* ${REPO_PATH}apps/frontend/.next/standalone/apps/frontend/public/
+    # Step 2: Debug - Check if Next.js actually created the standalone folder
+    - echo "Checking if Next.js standalone folder exists..."
+    - ls -d ${REPO_PATH}/apps/frontend/.next/standalone || echo "STANDALONE FOLDER NOT FOUND"
 
-    # Task 3: Copy the standalone build output to the deployment directory.
-    # The output is located in apps/frontend/.next/standalone.
-    # The 'rsync' command efficiently syncs the files, deleting old ones.
-    - echo "Step 3: Deploying files to ${DEPLOYPATH}..."
-    - /bin/rsync -a --delete ${REPO_PATH}apps/frontend/.next/standalone/ ${DEPLOYPATH}
+    # Step 3: Prepare standalone directory structure
+    # NOTE: Added / between REPO_PATH and server.js
+    - echo "Copying custom wrapper server.js..."
+    - cp ${REPO_PATH}/server.js ${REPO_PATH}/apps/frontend/.next/standalone/server.js
 
-    # Task 4: Restart the Phusion Passenger service for the Node.js app.
-    - echo "Step 4: Restarting Node.js application..."
+    # Step 4: Map static assets for Monorepo/Turborepo structure
+    - mkdir -p ${REPO_PATH}/apps/frontend/.next/standalone/apps/frontend/.next/static
+    - cp -r ${REPO_PATH}/apps/frontend/.next/static/* ${REPO_PATH}/apps/frontend/.next/standalone/apps/frontend/.next/static/
+    - mkdir -p ${REPO_PATH}/apps/frontend/.next/standalone/apps/frontend/public
+    - cp -r ${REPO_PATH}/apps/frontend/public/* ${REPO_PATH}/apps/frontend/.next/standalone/apps/frontend/public/
+
+    # Step 5: Sync to Live Folder
+    - echo "Step 5: Deploying files to ${DEPLOYPATH}..."
+    - /bin/rsync -a --delete ${REPO_PATH}/apps/frontend/.next/standalone/ ${DEPLOYPATH}
+
+    # Step 6: Restart
     - /sbin/passenger-config restart-app ${DEPLOYPATH}
