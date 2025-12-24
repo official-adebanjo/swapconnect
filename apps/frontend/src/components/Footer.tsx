@@ -7,12 +7,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { toast } from "react-hot-toast";
 
 const socialLinks = [
-  { icon: "fab fa-twitter", href: "#" },
-  { icon: "fab fa-whatsapp", href: "#" },
-  { icon: "fab fa-facebook-f", href: "#" },
-  { icon: "fab fa-linkedin-in", href: "#" },
-  { icon: "fab fa-instagram", href: "#" },
-  { icon: "fab fa-threads", href: "#" },
+  { icon: "fab fa-whatsapp", href: "https://wa.me/2348101641196", label: "WhatsApp" },
+  { icon: "fab fa-facebook-f", href: "https://www.facebook.com/SwapConnect", label: "Facebook" },
+  { icon: "fab fa-instagram", href: "https://www.instagram.com/swap_connect", label: "Instagram" },
+  { icon: "fas fa-envelope", href: "mailto:swapconnecttech@gmail.com", label: "Email" },
 ];
 
 const quickLinks = [
