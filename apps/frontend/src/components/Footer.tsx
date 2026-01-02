@@ -7,10 +7,26 @@ import { useRouter, usePathname } from "next/navigation";
 import { toast } from "react-hot-toast";
 
 const socialLinks = [
-  { icon: "fab fa-whatsapp", href: "https://wa.me/2348101641196", label: "WhatsApp" },
-  { icon: "fab fa-facebook-f", href: "https://www.facebook.com/SwapConnect", label: "Facebook" },
-  { icon: "fab fa-instagram", href: "https://www.instagram.com/swap_connect", label: "Instagram" },
-  { icon: "fas fa-envelope", href: "mailto:swapconnecttech@gmail.com", label: "Email" },
+  {
+    icon: "fab fa-whatsapp",
+    href: "https://wa.me/2348101641196",
+    label: "WhatsApp",
+  },
+  {
+    icon: "fab fa-facebook-f",
+    href: "https://www.facebook.com/SwapConnect",
+    label: "Facebook",
+  },
+  {
+    icon: "fab fa-instagram",
+    href: "https://www.instagram.com/swap_connect",
+    label: "Instagram",
+  },
+  {
+    icon: "fas fa-envelope",
+    href: "mailto:swapconnecttech@gmail.com",
+    label: "Email",
+  },
 ];
 
 const quickLinks = [
@@ -59,7 +75,7 @@ const Footer: React.FC = () => {
               className="mb-4"
               onClick={handleClick}
             />
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-text-secondary text-sm mb-4">
               SwapConnect is your trusted platform for swapping, buying, and
               selling quality tech devices and accessories. Enjoy seamless
               transactions, verified products, and unbeatable deals—all in one
@@ -74,7 +90,7 @@ const Footer: React.FC = () => {
                   rel="noopener noreferrer"
                 >
                   <i
-                    className={`${item.icon} text-xl text-black hover:text-green-700 transition-colors`}
+                    className={`${item.icon} text-xl text-foreground hover:text-green-700 transition-colors`}
                   />
                 </a>
               ))}
@@ -86,13 +102,15 @@ const Footer: React.FC = () => {
             <div className="flex flex-row gap-6">
               {/* Quick Links */}
               <div className="w-full sm:w-1/2">
-                <h5 className="font-bold text-lg mb-4">Quick links</h5>
+                <h5 className="font-bold text-lg mb-4 text-foreground">
+                  Quick links
+                </h5>
                 <ul className="space-y-2">
                   {quickLinks.map((link) => (
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="text-black hover:text-yellow-600 transition-colors text-base"
+                        className="text-foreground hover:text-yellow-600 transition-colors text-base"
                       >
                         {link.label}
                       </Link>
@@ -102,13 +120,15 @@ const Footer: React.FC = () => {
               </div>
               {/* Categories */}
               <div className="w-full sm:w-1/2">
-                <h5 className="font-bold text-lg mb-4">Categories</h5>
+                <h5 className="font-bold text-lg mb-4 text-foreground">
+                  Categories
+                </h5>
                 <ul className="space-y-2">
                   {categories.map((cat) => (
                     <li key={cat.href}>
                       <Link
                         href={cat.href}
-                        className="text-black hover:text-green-700 transition-colors text-base"
+                        className="text-foreground hover:text-green-700 transition-colors text-base"
                       >
                         {cat.label}
                       </Link>
@@ -121,7 +141,7 @@ const Footer: React.FC = () => {
 
           {/* Fourth Column: Newsletter */}
           <div className="md:w-1/3">
-            <h5 className="font-bold text-lg mb-4">
+            <h5 className="font-bold text-lg mb-4 text-foreground">
               Sign Up to Our Newsletter to Get Updates
             </h5>
             <form
@@ -141,7 +161,7 @@ const Footer: React.FC = () => {
                 <input
                   type="email"
                   placeholder="Enter email"
-                  className="bg-gray-300 rounded-l-full px-4 py-2 flex-1 outline-none border-none"
+                  className="bg-gray-300 dark:bg-gray-600 text-foreground placeholder:text-text-muted rounded-l-full px-4 py-2 flex-1 outline-none border-none"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

@@ -6,15 +6,25 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx}",
     "./stores/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: "media", // or 'class' if you're using a toggle
+  darkMode: "class", // Changed from 'media' to 'class' for manual control
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", "Nunito", "sans-serif"], // use CSS variable here too
+        sans: ["var(--font-sans)", "Nunito", "sans-serif"],
       },
       colors: {
-        background: "rgb(var(--background) / <alpha-value>)",
-        foreground: "rgb(var(--foreground) / <alpha-value>)",
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        "page-bg": "var(--page-bg)",
+        "card-bg": "var(--card-bg)",
+        "border-color": "var(--border)",
+        "text-primary": "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
+        "text-muted": "var(--text-muted)",
+        "brand-primary": "var(--brand-primary)",
+        "brand-primary-hover": "var(--brand-primary-hover)",
+        "brand-light": "var(--brand-light)",
+        "brand-lighter": "var(--brand-lighter)",
       },
     },
   },

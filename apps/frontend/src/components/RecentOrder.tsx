@@ -33,10 +33,10 @@ const recentOrders = [
 function RecentOrder() {
   return (
     <div>
-      <div className="bg-white rounded-[12px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+      <div className="bg-white dark:bg-card-bg rounded-[12px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
         <div className="flex justify-between items-center mb-4">
           <div className="flex flex-col">
-            <span className="font-semibold text-[18px] text-black">
+            <span className="font-semibold text-[18px] text-foreground">
               Recent Orders
             </span>
             <div className="flex items-center gap-2 mb-4">
@@ -83,11 +83,13 @@ function RecentOrder() {
           <tbody>
             {recentOrders.map((order) => (
               <tr key={order.id} className="border-b border-[#F0F0F0] ">
-                <td className="px-2 py-2 text-[#3E344F]">{order.id}</td>
-                <td className="px-2 py-2 text-[#3E344F]">{order.product}</td>
-                <td className="px-2 py-2 text-[#3E344F]">{order.qty ?? 1}</td>
-                <td className="px-2 py-2 text-[#3E344F]">{order.date}</td>
-                <td className="px-2 py-2 text-[#3E344F]">{order.amount}</td>
+                <td className="px-2 py-2 text-text-primary">{order.id}</td>
+                <td className="px-2 py-2 text-text-primary">{order.product}</td>
+                <td className="px-2 py-2 text-text-primary">
+                  {order.qty ?? 1}
+                </td>
+                <td className="px-2 py-2 text-text-primary">{order.date}</td>
+                <td className="px-2 py-2 text-text-primary">{order.amount}</td>
                 <td
                   className={`px-2 py-2 font-semibold text-[12px] rounded-lg text-center w-[30px] h-[10px]  ${
                     order.status === "Approved"

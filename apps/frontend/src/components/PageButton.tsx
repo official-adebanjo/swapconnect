@@ -17,7 +17,7 @@ function PageButton({
         <button
           disabled={page == 1}
           onClick={() => setPage(page - 1)}
-          className="text-black border rounded px-3 py-1 mr-2 disabled:opacity-50"
+          className="text-foreground border border-border-color rounded px-3 py-1 mr-2 disabled:opacity-50"
         >
           PREV
         </button>
@@ -27,7 +27,7 @@ function PageButton({
         <button
           disabled={page == totalPages}
           onClick={() => setPage(page + 1)}
-          className="text-black border rounded px-3 py-1 ml-2 disabled:opacity-50"
+          className="text-foreground border border-border-color rounded px-3 py-1 ml-2 disabled:opacity-50"
         >
           NEXT
         </button>

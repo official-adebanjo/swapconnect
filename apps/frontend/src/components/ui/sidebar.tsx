@@ -29,7 +29,7 @@ const menuItems = [
 // ];
 
 const Sidebar: React.FC = () => (
-  <aside className="fixed flex flex-col h-screen w-[220px] bg-white text-[#848484] p-8 shadow-[2px_0_8px_rgba(0,0,0,0.05)] z-100 justify-between">
+  <aside className="fixed flex flex-col h-screen w-[220px] bg-card-bg text-text-secondary p-8 shadow-[2px_0_8px_rgba(0,0,0,0.05)] dark:shadow-[2px_0_8px_rgba(255,255,255,0.05)] z-100 justify-between border-r border-border-color">
     <div>
       <div className="flex justify-center items-center mb-10">
         <Link href="/">
@@ -48,7 +48,7 @@ const Sidebar: React.FC = () => (
             <li key={item.label}>
               <Link
                 href={item.url}
-                className="flex items-center cursor-pointer py-3 px-8 text-[17px] transition-colors duration-200 hover:text-[#037F44]"
+                className="flex items-center cursor-pointer py-3 px-8 text-[17px] transition-colors duration-200 hover:text-brand-primary"
               >
                 <span className="mr-[16px] text-[20px]">
                   <item.icon size={20} />
@@ -65,7 +65,7 @@ const Sidebar: React.FC = () => (
         <li>
           <Link
             href="/dashboard/support"
-            className="flex items-center cursor-pointer py-3 text-[17px] transition-colors duration-200 hover:text-[#037F44]"
+            className="flex items-center cursor-pointer py-3 text-[17px] transition-colors duration-200 hover:text-brand-primary"
           >
             <span className="text-[20px] mr-[16px]">
               <HelpCircle size={20} />
@@ -75,7 +75,7 @@ const Sidebar: React.FC = () => (
         </li>
         <li>
           <button
-            className="flex items-center w-full cursor-pointer py-3 text-[17px] transition-colors duration-200 hover:text-[#037F44] bg-transparent border-none outline-none"
+            className="flex items-center w-full cursor-pointer py-3 text-[17px] transition-colors duration-200 hover:text-brand-primary bg-transparent border-none outline-none"
             onClick={() => {
               localStorage.removeItem("token");
               window.location.replace("/auth/login");

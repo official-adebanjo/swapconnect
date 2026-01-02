@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type React from 'react';
-import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type React from "react";
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
   faShoppingCart,
@@ -14,23 +14,23 @@ import {
   faSignOutAlt,
   faTachometerAlt,
   // faTimes,
-} from '@fortawesome/free-solid-svg-icons';
-import { create } from 'zustand';
-import { useRouter } from 'next/navigation';
+} from "@fortawesome/free-solid-svg-icons";
+import { create } from "zustand";
+import { useRouter } from "next/navigation";
 
 // Static assets as URLs
-const logoFull = '/logo.png';
+const logoFull = "/logo.png";
 const menuIcon =
-  'https://res.cloudinary.com/ds83mhjcm/image/upload/v1747647290/SwapConnect/menu-icon_hh6lo7.svg';
+  "https://res.cloudinary.com/ds83mhjcm/image/upload/v1747647290/SwapConnect/menu-icon_hh6lo7.svg";
 const cancelIcon =
-  'https://res.cloudinary.com/ds83mhjcm/image/upload/v1747647290/SwapConnect/menu-cancel-icon_mzesfv.svg';
+  "https://res.cloudinary.com/ds83mhjcm/image/upload/v1747647290/SwapConnect/menu-cancel-icon_mzesfv.svg";
 
 // Default user icon path (create this file in public/images/)
-const DEFAULT_USER_ICON = '/images/user-icon.webp';
+const DEFAULT_USER_ICON = "/images/user-icon.webp";
 
 // Stores
-import { useUserStore } from '@/stores/AuthStore';
-import useCartStore from '../stores/CartStore';
+import { useUserStore } from "@/stores/AuthStore";
+import useCartStore from "../stores/CartStore";
 
 // Zustand store for navbar expanded state
 interface NavbarStoreState {
@@ -45,78 +45,78 @@ const useNavbarStore = create<NavbarStoreState>((set) => ({
 }));
 
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/swap', label: 'Swap' },
-  { href: '/about', label: 'About Us' },
-  { href: '/shop', label: 'Shop' },
+  { href: "/", label: "Home" },
+  { href: "/swap", label: "Swap" },
+  { href: "/about", label: "About Us" },
+  { href: "/shop", label: "Shop" },
 ];
 
 // --- Mock Data for Search ---
 // In a real application, this would come from an API
 const mockSearchableItems = [
   {
-    id: '1',
-    title: 'Latest iPhone 15',
-    category: 'phone',
-    url: '/shop/iphone-15',
+    id: "1",
+    title: "Latest iPhone 15",
+    category: "phone",
+    url: "/shop/iphone-15",
   },
   {
-    id: '2',
-    title: 'Samsung Galaxy S24 Ultra',
-    category: 'phone',
-    url: '/shop/galaxy-s24-ultra',
+    id: "2",
+    title: "Samsung Galaxy S24 Ultra",
+    category: "phone",
+    url: "/shop/galaxy-s24-ultra",
   },
   {
-    id: '3',
-    title: 'PlayStation 5 Console',
-    category: 'gaming',
-    url: '/shop/ps5',
+    id: "3",
+    title: "PlayStation 5 Console",
+    category: "gaming",
+    url: "/shop/ps5",
   },
   {
-    id: '4',
-    title: 'Xbox Series X',
-    category: 'gaming',
-    url: '/shop/xbox-series-x',
+    id: "4",
+    title: "Xbox Series X",
+    category: "gaming",
+    url: "/shop/xbox-series-x",
   },
   {
-    id: '5',
-    title: 'MacBook Pro M3',
-    category: 'laptop',
-    url: '/shop/macbook-pro-m3',
+    id: "5",
+    title: "MacBook Pro M3",
+    category: "laptop",
+    url: "/shop/macbook-pro-m3",
   },
   {
-    id: '6',
-    title: 'Dell XPS 15',
-    category: 'laptop',
-    url: '/shop/dell-xps-15',
+    id: "6",
+    title: "Dell XPS 15",
+    category: "laptop",
+    url: "/shop/dell-xps-15",
   },
-  { id: '7', title: 'About SwapConnect', category: 'page', url: '/about' },
-  { id: '8', title: 'How Swapping Works', category: 'guide', url: '/swap' },
+  { id: "7", title: "About SwapConnect", category: "page", url: "/about" },
+  { id: "8", title: "How Swapping Works", category: "guide", url: "/swap" },
   {
-    id: '9',
-    title: 'Gaming Headphones',
-    category: 'accessory',
-    url: '/shop/gaming-headphones',
+    id: "9",
+    title: "Gaming Headphones",
+    category: "accessory",
+    url: "/shop/gaming-headphones",
   },
 ];
 // --- End Mock Data ---
 
 const getValidAvatarUrl = (avatarUrl: string | null | undefined): string => {
   // Return default if no avatar or invalid avatar
-  if (!avatarUrl || typeof avatarUrl !== 'string' || avatarUrl.trim() === '') {
+  if (!avatarUrl || typeof avatarUrl !== "string" || avatarUrl.trim() === "") {
     return DEFAULT_USER_ICON;
   }
 
   // Check if it's a problematic external URL (vectorstock, etc.)
   if (
-    avatarUrl.includes('vectorstock.com') ||
-    avatarUrl.includes('placeholder')
+    avatarUrl.includes("vectorstock.com") ||
+    avatarUrl.includes("placeholder")
   ) {
     return DEFAULT_USER_ICON;
   }
 
   // If it's a relative path, ensure it starts with /
-  if (!avatarUrl.startsWith('http') && !avatarUrl.startsWith('/')) {
+  if (!avatarUrl.startsWith("http") && !avatarUrl.startsWith("/")) {
     return `/${avatarUrl}`;
   }
 
@@ -134,7 +134,7 @@ const Navbar: React.FC = () => {
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
   // --- Search State ---
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<
     typeof mockSearchableItems
   >([]);
@@ -157,12 +157,12 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     logoutUser();
-    router.push('/auth/login');
+    router.push("/auth/login");
   };
 
   // --- Search Handlers ---
   const performSearch = (query: string) => {
-    if (query.trim() === '') {
+    if (query.trim() === "") {
       setSearchResults([]);
       setShowSearchPopup(false);
       return;
@@ -187,7 +187,7 @@ const Navbar: React.FC = () => {
   };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       performSearch(searchQuery);
     }
   };
@@ -195,12 +195,12 @@ const Navbar: React.FC = () => {
   const handleSearchResultClick = (url: string) => {
     router.push(url);
     setShowSearchPopup(false); // Close popup after navigating
-    setSearchQuery(''); // Clear search query
+    setSearchQuery(""); // Clear search query
   };
 
   const closeSearchPopup = () => {
     setShowSearchPopup(false);
-    setSearchQuery(''); // Clear search query when closing popup
+    setSearchQuery(""); // Clear search query when closing popup
   };
   // --- End Search Handlers ---
 
@@ -223,9 +223,9 @@ const Navbar: React.FC = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -234,17 +234,13 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className=" fixed top-0 left-0 w-full bg-white shadow-sm z-50">
+      <nav className=" fixed top-0 left-0 w-full bg-white dark:bg-card-bg shadow-sm z-50">
         <div className="container max-w-6xl mx-auto flex items-center justify-between py-2 px-4">
           {/* Logo on the left */}
           <div className="flex items-center flex-shrink-0">
-            <Link
-              href="/"
-              onClick={handleSelect}
-              className="flex items-center"
-            >
+            <Link href="/" onClick={handleSelect} className="flex items-center">
               <Image
-                src={logoFull || '/placeholder.svg'}
+                src={logoFull || "/placeholder.svg"}
                 alt="Logo"
                 className="object-contain"
                 width={100}
@@ -261,7 +257,7 @@ const Navbar: React.FC = () => {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="nav-link text-black font-medium transition-colors duration-300 hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 py-1"
+                    className="nav-link text-foreground font-medium transition-colors duration-300 hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 py-1"
                   >
                     {link.label}
                   </Link>
@@ -271,7 +267,7 @@ const Navbar: React.FC = () => {
                 <li>
                   <Link
                     href="/auth/login"
-                    className="nav-link text-black font-medium transition-colors duration-300 hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 py-1"
+                    className="nav-link text-foreground font-medium transition-colors duration-300 hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 py-1"
                   >
                     Login
                   </Link>
@@ -282,10 +278,7 @@ const Navbar: React.FC = () => {
 
           {/* Right section with icons (desktop only) */}
           <div className="hidden lg:flex items-center space-x-4 flex-shrink-0">
-            <Link
-              href="/cart"
-              className="relative p-1"
-            >
+            <Link href="/cart" className="relative p-1">
               <FontAwesomeIcon
                 icon={faShoppingCart}
                 className="text-green-700 w-5 h-5"
@@ -296,16 +289,13 @@ const Navbar: React.FC = () => {
                 </span>
               )}
             </Link>
-            <button
-              className="p-1"
-              aria-label="Notifications"
-            >
+            <button className="p-1" aria-label="Notifications">
               <FontAwesomeIcon
                 icon={faBell}
                 className="text-green-700 w-5 h-5"
               />
             </button>
-            <div className="relative flex items-center border rounded px-2 py-1 bg-white">
+            <div className="relative flex items-center border border-border-color rounded px-2 py-1 bg-white dark:bg-card-bg">
               <input
                 ref={searchInputRef}
                 type="text"
@@ -313,12 +303,9 @@ const Navbar: React.FC = () => {
                 value={searchQuery}
                 onChange={handleSearchInputChange}
                 onKeyDown={handleSearchKeyDown}
-                className="outline-none border-none bg-transparent text-sm w-24 focus:w-40 transition-all duration-300" // Expand on focus
+                className="outline-none border-none bg-transparent text-foreground placeholder:text-text-muted text-sm w-24 focus:w-40 transition-all duration-300" // Expand on focus
               />
-              <button
-                onClick={handleSearchClick}
-                aria-label="Perform search"
-              >
+              <button onClick={handleSearchClick} aria-label="Perform search">
                 <FontAwesomeIcon
                   icon={faSearch}
                   className="text-green-700 ml-2 w-4 h-4"
@@ -329,16 +316,16 @@ const Navbar: React.FC = () => {
               {showSearchPopup && searchResults.length > 0 && (
                 <div
                   ref={searchPopupRef}
-                  className="absolute top-full left-0 mt-2 w-full min-w-[200px] max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-lg z-50 py-1"
+                  className="absolute top-full left-0 mt-2 w-full min-w-[200px] max-h-60 overflow-y-auto bg-white dark:bg-card-bg border border-border-color rounded-md shadow-lg z-50 py-1"
                 >
                   {searchResults.map((result) => (
                     <Link
                       key={result.id}
                       href={result.url}
                       onClick={() => handleSearchResultClick(result.url)}
-                      className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-150"
+                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
                     >
-                      <span className="font-medium">{result.title}</span>{' '}
+                      <span className="font-medium">{result.title}</span>{" "}
                       <span className="text-gray-500 text-xs">
                         ({result.category})
                       </span>
@@ -355,10 +342,10 @@ const Navbar: React.FC = () => {
               )}
               {showSearchPopup &&
                 searchResults.length === 0 &&
-                searchQuery.trim() !== '' && (
+                searchQuery.trim() !== "" && (
                   <div
                     ref={searchPopupRef}
-                    className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white border border-gray-200 rounded-md shadow-lg z-50 py-3 px-4 text-sm text-gray-600"
+                    className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white dark:bg-card-bg border border-border-color rounded-md shadow-lg z-50 py-3 px-4 text-sm text-text-secondary"
                   >
                     No results found for &quot;{searchQuery}&quot;.
                     <div className="border-t border-gray-100 my-1"></div>
@@ -374,18 +361,15 @@ const Navbar: React.FC = () => {
 
             {/* User Icon/Dropdown (Desktop) */}
             {isLoggedIn && (
-              <div
-                className="relative"
-                ref={userDropdownRef}
-              >
+              <div className="relative" ref={userDropdownRef}>
                 <button
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                   className="rounded-full overflow-hidden w-9 h-9 flex items-center justify-center border-2 border-transparent hover:border-green-700 transition-all duration-200"
                   aria-label="User menu"
                 >
                   <Image
-                    src={userImageSrc || '/placeholder.svg'}
-                    alt={user?.displayName || 'User'}
+                    src={userImageSrc || "/placeholder.svg"}
+                    alt={user?.displayName || "User"}
                     width={36}
                     height={36}
                     className="object-cover w-full h-full"
@@ -398,52 +382,43 @@ const Navbar: React.FC = () => {
                   />
                 </button>
                 {isUserDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                    <p className="block px-4 py-2 text-sm text-gray-700 font-semibold truncate">
-                      {user?.displayName || user?.email || 'User'}
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-card-bg rounded-md shadow-lg py-1 z-50">
+                    <p className="block px-4 py-2 text-sm text-text-primary font-semibold truncate">
+                      {user?.displayName || user?.email || "User"}
                     </p>
                     <div className="border-t border-gray-100 my-1"></div>
                     <Link
                       href="/dashboard/orders"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >
-                      <FontAwesomeIcon
-                        icon={faShoppingBag}
-                        className="mr-2"
-                      />
+                      <FontAwesomeIcon icon={faShoppingBag} className="mr-2" />
                       Orders
                     </Link>
                     <Link
                       href="/dashboard"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >
                       <FontAwesomeIcon
                         icon={faTachometerAlt}
                         className="mr-2"
-                      />{' '}
+                      />{" "}
                       Dashboard
                     </Link>
                     <Link
                       href="/dashboard/settings"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >
-                      <FontAwesomeIcon
-                        icon={faCog}
-                        className="mr-2"
-                      />
+                      <FontAwesomeIcon icon={faCog} className="mr-2" />
                       Settings
                     </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                     >
-                      <FontAwesomeIcon
-                        icon={faSignOutAlt}
-                        className="mr-2"
-                      />{' '}
+                      <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />{" "}
                       Logout
                     </button>
                   </div>
@@ -454,10 +429,7 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Cart & Hamburger */}
           <div className="flex items-center lg:hidden">
-            <Link
-              href="/cart"
-              className="relative mr-4 p-1"
-            >
+            <Link href="/cart" className="relative mr-4 p-1">
               <FontAwesomeIcon
                 icon={faShoppingCart}
                 className="text-green-700 w-5 h-5"
@@ -471,15 +443,15 @@ const Navbar: React.FC = () => {
             {isLoggedIn && (
               <button
                 onClick={() => {
-                  router.push('/profile');
+                  router.push("/profile");
                   handleSelect();
                 }}
                 className="rounded-full overflow-hidden w-8 h-8 flex items-center justify-center border-2 border-transparent hover:border-green-700 transition-all duration-200 mr-2"
                 aria-label="User profile"
               >
                 <Image
-                  src={userImageSrc || '/placeholder.svg'}
-                  alt={user?.displayName || 'User'}
+                  src={userImageSrc || "/placeholder.svg"}
+                  alt={user?.displayName || "User"}
                   width={32}
                   height={32}
                   className="object-cover w-full h-full"
@@ -495,12 +467,12 @@ const Navbar: React.FC = () => {
 
             <button
               className="custom-toggler p-0 ml-2"
-              aria-label={expanded ? 'Close menu' : 'Open menu'}
+              aria-label={expanded ? "Close menu" : "Open menu"}
               onClick={handleToggle}
             >
               <Image
                 src={expanded ? cancelIcon : menuIcon}
-                alt={expanded ? 'Close menu' : 'Open menu'}
+                alt={expanded ? "Close menu" : "Open menu"}
                 width={24}
                 height={24}
                 className="menu-icon"
@@ -516,7 +488,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu Overlay */}
       {expanded && (
-        <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-95 z-40 flex flex-col pt-16 px-6">
+        <div className="fixed top-0 left-0 w-full h-full bg-white dark:bg-background bg-opacity-95 dark:bg-opacity-95 z-40 flex flex-col pt-16 px-6">
           <ul className="flex flex-col space-y-4 mb-6">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -547,10 +519,7 @@ const Navbar: React.FC = () => {
                   className="nav-link text-lg font-medium block py-2"
                   onClick={handleSelect}
                 >
-                  <FontAwesomeIcon
-                    icon={faTachometerAlt}
-                    className="mr-2"
-                  />{' '}
+                  <FontAwesomeIcon icon={faTachometerAlt} className="mr-2" />{" "}
                   Dashboard
                 </Link>
               </li>
@@ -561,10 +530,7 @@ const Navbar: React.FC = () => {
                   onClick={handleLogout}
                   className="w-full text-left nav-link text-lg font-medium block py-2 text-red-600"
                 >
-                  <FontAwesomeIcon
-                    icon={faSignOutAlt}
-                    className="mr-2"
-                  />{' '}
+                  <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />{" "}
                   Logout
                 </button>
               </li>
@@ -572,7 +538,7 @@ const Navbar: React.FC = () => {
           </ul>
 
           {/* Mobile Search Bar inside expanded menu */}
-          <div className="relative flex items-center border rounded px-2 py-1 bg-white mb-4">
+          <div className="relative flex items-center border border-border-color rounded px-2 py-1 bg-white dark:bg-card-bg mb-4">
             <input
               ref={searchInputRef} // Attach ref for mobile search
               type="text"
@@ -580,12 +546,9 @@ const Navbar: React.FC = () => {
               value={searchQuery}
               onChange={handleSearchInputChange}
               onKeyDown={handleSearchKeyDown}
-              className="outline-none border-none bg-transparent text-base w-full"
+              className="outline-none border-none bg-transparent text-foreground placeholder:text-text-muted text-base w-full"
             />
-            <button
-              onClick={handleSearchClick}
-              aria-label="Perform search"
-            >
+            <button onClick={handleSearchClick} aria-label="Perform search">
               <FontAwesomeIcon
                 icon={faSearch}
                 className="text-green-700 ml-2"
@@ -604,7 +567,7 @@ const Navbar: React.FC = () => {
                     onClick={() => handleSearchResultClick(result.url)}
                     className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-150"
                   >
-                    <span className="font-medium">{result.title}</span>{' '}
+                    <span className="font-medium">{result.title}</span>{" "}
                     <span className="text-gray-500 text-xs">
                       ({result.category})
                     </span>
@@ -621,7 +584,7 @@ const Navbar: React.FC = () => {
             )}
             {showSearchPopup &&
               searchResults.length === 0 &&
-              searchQuery.trim() !== '' && (
+              searchQuery.trim() !== "" && (
                 <div
                   ref={searchPopupRef}
                   className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white border border-gray-200 rounded-md shadow-lg z-50 py-3 px-4 text-sm text-gray-600"
@@ -658,8 +621,8 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Search Bar (when menu is closed) */}
       {!expanded && (
-        <div className="lg:hidden fixed top-[60px] left-0 w-full bg-white shadow-sm z-40 px-4 py-2">
-          <div className="relative flex items-center border rounded px-2 py-1 bg-white">
+        <div className="lg:hidden fixed top-[60px] left-0 w-full bg-white dark:bg-card-bg shadow-sm z-40 px-4 py-2">
+          <div className="relative flex items-center border border-border-color rounded px-2 py-1 bg-white dark:bg-card-bg">
             <input
               ref={searchInputRef} // Attach ref for mobile search (when menu is closed)
               type="text"
@@ -667,12 +630,9 @@ const Navbar: React.FC = () => {
               value={searchQuery}
               onChange={handleSearchInputChange}
               onKeyDown={handleSearchKeyDown}
-              className="outline-none border-none bg-transparent text-base w-full"
+              className="outline-none border-none bg-transparent text-foreground placeholder:text-text-muted text-base w-full"
             />
-            <button
-              onClick={handleSearchClick}
-              aria-label="Perform search"
-            >
+            <button onClick={handleSearchClick} aria-label="Perform search">
               <FontAwesomeIcon
                 icon={faSearch}
                 className="text-green-700 ml-2"
@@ -691,7 +651,7 @@ const Navbar: React.FC = () => {
                     onClick={() => handleSearchResultClick(result.url)}
                     className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-150"
                   >
-                    <span className="font-medium">{result.title}</span>{' '}
+                    <span className="font-medium">{result.title}</span>{" "}
                     <span className="text-gray-500 text-xs">
                       ({result.category})
                     </span>
@@ -708,7 +668,7 @@ const Navbar: React.FC = () => {
             )}
             {showSearchPopup &&
               searchResults.length === 0 &&
-              searchQuery.trim() !== '' && (
+              searchQuery.trim() !== "" && (
                 <div
                   ref={searchPopupRef}
                   className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white border border-gray-200 rounded-md shadow-lg z-50 py-3 px-4 text-sm text-gray-600"

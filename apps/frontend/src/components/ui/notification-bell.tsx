@@ -1,69 +1,69 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Bell, X, Check, CheckCheck, Trash2 } from 'lucide-react';
-import { useNotifications } from '@/hooks/useNotifications';
-import { formatDistanceToNow } from 'date-fns';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { Bell, X, Check, CheckCheck, Trash2 } from "lucide-react";
+import { useNotifications } from "@/hooks/useNotifications";
+import { formatDistanceToNow } from "date-fns";
+import { useRouter } from "next/navigation";
 
 const getNotificationIcon = (type: string) => {
   switch (type) {
-    case 'order_created':
-    case 'order_accepted':
-    case 'order_shipped':
-    case 'order_completed':
-      return '📦';
-    case 'order_rejected':
-      return '❌';
-    case 'product_approved':
-      return '✅';
-    case 'product_rejected':
-      return '❌';
-    case 'deposit_successful':
-    case 'withdrawal_successful':
-    case 'transfer_received':
-      return '💰';
-    case 'deposit_failed':
-    case 'withdrawal_failed':
-      return '⚠️';
-    case 'swap_offer_received':
-    case 'swap_offer_accepted':
-    case 'bid_accepted':
-      return '🔄';
-    case 'swap_offer_rejected':
-    case 'bid_rejected':
-      return '❌';
-    case 'bid_completed':
-      return '✅';
+    case "order_created":
+    case "order_accepted":
+    case "order_shipped":
+    case "order_completed":
+      return "📦";
+    case "order_rejected":
+      return "❌";
+    case "product_approved":
+      return "✅";
+    case "product_rejected":
+      return "❌";
+    case "deposit_successful":
+    case "withdrawal_successful":
+    case "transfer_received":
+      return "💰";
+    case "deposit_failed":
+    case "withdrawal_failed":
+      return "⚠️";
+    case "swap_offer_received":
+    case "swap_offer_accepted":
+    case "bid_accepted":
+      return "🔄";
+    case "swap_offer_rejected":
+    case "bid_rejected":
+      return "❌";
+    case "bid_completed":
+      return "✅";
     default:
-      return '🔔';
+      return "🔔";
   }
 };
 
 const getNotificationColor = (type: string) => {
   switch (type) {
-    case 'order_accepted':
-    case 'product_approved':
-    case 'deposit_successful':
-    case 'withdrawal_successful':
-    case 'transfer_received':
-    case 'swap_offer_accepted':
-    case 'bid_accepted':
-    case 'bid_completed':
-      return 'border-l-green-500';
-    case 'order_rejected':
-    case 'product_rejected':
-    case 'deposit_failed':
-    case 'withdrawal_failed':
-    case 'swap_offer_rejected':
-    case 'bid_rejected':
-      return 'border-l-red-500';
-    case 'order_created':
-    case 'order_shipped':
-    case 'swap_offer_received':
-      return 'border-l-blue-500';
+    case "order_accepted":
+    case "product_approved":
+    case "deposit_successful":
+    case "withdrawal_successful":
+    case "transfer_received":
+    case "swap_offer_accepted":
+    case "bid_accepted":
+    case "bid_completed":
+      return "border-l-green-500";
+    case "order_rejected":
+    case "product_rejected":
+    case "deposit_failed":
+    case "withdrawal_failed":
+    case "swap_offer_rejected":
+    case "bid_rejected":
+      return "border-l-red-500";
+    case "order_created":
+    case "order_shipped":
+    case "swap_offer_received":
+      return "border-l-blue-500";
     default:
-      return 'border-l-gray-300';
+      return "border-l-gray-300";
   }
 };
 
@@ -90,22 +90,22 @@ export default function NotificationBell() {
       {/* Bell Icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors"
+        className="relative p-2 text-text-secondary hover:text-text-primary transition-colors"
       >
         <Bell size={24} />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {unreadCount > 99 ? '99+' : unreadCount}
+            {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
       </button>
 
       {/* Notification Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-hidden">
+        <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-card-bg border border-border-color rounded-lg shadow-lg z-50 max-h-96 overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800">
+          <div className="flex items-center justify-between p-4 border-b border-border-color">
+            <h3 className="text-lg font-semibold text-text-primary">
               Notifications
             </h3>
             <div className="flex items-center gap-2">
@@ -120,7 +120,7 @@ export default function NotificationBell() {
               )}
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-text-muted hover:text-text-secondary"
               >
                 <X size={20} />
               </button>
@@ -130,20 +130,22 @@ export default function NotificationBell() {
           {/* Notifications List */}
           <div className="max-h-80 overflow-y-auto">
             {loading ? (
-              <div className="p-4 text-center text-gray-500">
+              <div className="p-4 text-center text-text-secondary">
                 Loading notifications...
               </div>
             ) : notifications.length === 0 ? (
-              <div className="p-4 text-center text-gray-500">
+              <div className="p-4 text-center text-text-secondary">
                 No notifications yet
               </div>
             ) : (
               notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors border-l-4 ${getNotificationColor(
+                  className={`p-4 border-b border-border-color hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors border-l-4 ${getNotificationColor(
                     notification.type
-                  )} ${!notification.isRead ? 'bg-blue-50' : ''}`}
+                  )} ${
+                    !notification.isRead ? "bg-blue-50 dark:bg-blue-900/20" : ""
+                  }`}
                   onClick={() =>
                     handleNotificationClick(
                       notification.id,
@@ -161,8 +163,8 @@ export default function NotificationBell() {
                           <h4
                             className={`text-sm font-medium ${
                               !notification.isRead
-                                ? 'text-gray-900'
-                                : 'text-gray-700'
+                                ? "text-text-primary font-semibold"
+                                : "text-text-primary"
                             }`}
                           >
                             {notification.title}
@@ -170,13 +172,13 @@ export default function NotificationBell() {
                           <p
                             className={`text-sm mt-1 ${
                               !notification.isRead
-                                ? 'text-gray-800'
-                                : 'text-gray-600'
+                                ? "text-text-primary"
+                                : "text-text-secondary"
                             }`}
                           >
                             {notification.message}
                           </p>
-                          <p className="text-xs text-gray-500 mt-2">
+                          <p className="text-xs text-text-muted mt-2">
                             {formatDistanceToNow(
                               new Date(notification.createdAt),
                               { addSuffix: true }
@@ -217,11 +219,11 @@ export default function NotificationBell() {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-gray-200 text-center">
+            <div className="p-3 border-t border-border-color text-center">
               <button
                 onClick={() => {
                   setIsOpen(false);
-                  router.push('/dashboard/notifications');
+                  router.push("/dashboard/notifications");
                 }}
                 className="text-sm text-blue-600 hover:text-blue-800 font-medium"
               >

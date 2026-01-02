@@ -17,6 +17,7 @@ import { API_URL } from "../../lib/config";
 import { useAuthToken } from "../../hooks/useAuthToken";
 import { useUserStore } from "@/stores/AuthStore";
 import NotificationBell from "@/components/ui/notification-bell";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const menuItems = [
   { label: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -143,17 +144,18 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
   const displayAvatarUrl = getValidAvatarUrl(user?.avatar || user?.photoURL);
 
   return (
-    <nav className="fixed top-0 right-0 left-0 h-[85px] bg-white flex items-center justify-between md:left-[220px] px-4 md:px-8 z-[101]">
-      {/* Desktop Navbar */}
+    <nav className="fixed top-0 right-0 left-0 h-[85px] bg-card-bg border-b border-border-color flex items-center justify-between md:left-[220px] px-4 md:px-8 z-[101]">
       <div className="hidden md:flex items-center justify-between w-full">
-        <h2 className="text-[24px] font-bold text-[#353535]">{title}</h2>
+        <h2 className="text-[24px] font-bold text-text-primary">{title}</h2>
         <div className="flex items-center gap-[32px]">
+          <ThemeToggle />
+          <div className="h-8 w-px bg-border-color" />
           <div className="flex cursor-pointer" aria-label="Notifications">
             <NotificationBell />
           </div>
-          <div className="h-8 w-px bg-gray-300" />
+          <div className="h-8 w-px bg-border-color" />
           <div className="flex items-center gap-[12px]">
-            <span className="font-normal text-[#3E344F] text-[16px]">
+            <span className="font-normal text-text-primary text-[16px]">
               {userLoading
                 ? "Loading..."
                 : typeof user?.name === "string" && user?.name.trim() !== ""
@@ -193,7 +195,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
               }
             }}
           />
-          <span className="font-normal text-[#353535] text-[16px]">
+          <span className="font-normal text-text-primary text-[16px]">
             {userLoading
               ? "Loading..."
               : typeof user?.name === "string" && user?.name.trim() !== ""
@@ -202,6 +204,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
           </span>
         </div>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <div className="flex cursor-pointer" aria-label="Notifications">
             <NotificationBell />
           </div>
@@ -231,7 +234,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
                   <li key={item.label}>
                     <Link
                       href={item.url}
-                      className="flex items-center gap-3 text-[#353535] text-[16px] font-medium hover:text-[#037F44] transition"
+                      className="flex items-center gap-3 text-text-primary text-[16px] font-medium hover:text-brand-primary transition"
                       onClick={() => setMenuOpen(false)}
                     >
                       <item.icon size={20} />
