@@ -33,7 +33,7 @@ const recentOrders = [
 function RecentOrder() {
   return (
     <div>
-      <div className="bg-white dark:bg-card-bg rounded-[12px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+      <div className="bg-white rounded-[12px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
         <div className="flex justify-between items-center mb-4">
           <div className="flex flex-col">
             <span className="font-semibold text-[18px] text-foreground">

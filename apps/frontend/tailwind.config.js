@@ -6,7 +6,7 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx}",
     "./stores/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: "class", // Changed from 'media' to 'class' for manual control
+
   theme: {
     extend: {
       fontFamily: {

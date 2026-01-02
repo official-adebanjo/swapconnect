@@ -141,6 +141,7 @@ const Navbar: React.FC = () => {
   const [showSearchPopup, setShowSearchPopup] = useState(false);
   const searchPopupRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false); // Mobile search toggle state
   // --- End Search State ---
 
   const handleToggle = () => setExpanded(!expanded);
@@ -234,7 +235,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className=" fixed top-0 left-0 w-full bg-white dark:bg-card-bg shadow-sm z-50">
+      <nav className=" fixed top-0 left-0 w-full bg-white shadow-sm z-50">
         <div className="container max-w-6xl mx-auto flex items-center justify-between py-2 px-4">
           {/* Logo on the left */}
           <div className="flex items-center flex-shrink-0">
@@ -295,7 +296,7 @@ const Navbar: React.FC = () => {
                 className="text-green-700 w-5 h-5"
               />
             </button>
-            <div className="relative flex items-center border border-border-color rounded px-2 py-1 bg-white dark:bg-card-bg">
+            <div className="relative flex items-center border border-border-color rounded px-2 py-1 bg-white">
               <input
                 ref={searchInputRef}
                 type="text"
@@ -316,14 +317,14 @@ const Navbar: React.FC = () => {
               {showSearchPopup && searchResults.length > 0 && (
                 <div
                   ref={searchPopupRef}
-                  className="absolute top-full left-0 mt-2 w-full min-w-[200px] max-h-60 overflow-y-auto bg-white dark:bg-card-bg border border-border-color rounded-md shadow-lg z-50 py-1"
+                  className="absolute top-full left-0 mt-2 w-full min-w-[200px] max-h-60 overflow-y-auto bg-white border border-border-color rounded-md shadow-lg z-50 py-1"
                 >
                   {searchResults.map((result) => (
                     <Link
                       key={result.id}
                       href={result.url}
                       onClick={() => handleSearchResultClick(result.url)}
-                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
+                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 transition-colors duration-150"
                     >
                       <span className="font-medium">{result.title}</span>{" "}
                       <span className="text-gray-500 text-xs">
@@ -345,7 +346,7 @@ const Navbar: React.FC = () => {
                 searchQuery.trim() !== "" && (
                   <div
                     ref={searchPopupRef}
-                    className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white dark:bg-card-bg border border-border-color rounded-md shadow-lg z-50 py-3 px-4 text-sm text-text-secondary"
+                    className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white border border-border-color rounded-md shadow-lg z-50 py-3 px-4 text-sm text-text-secondary"
                   >
                     No results found for &quot;{searchQuery}&quot;.
                     <div className="border-t border-gray-100 my-1"></div>
@@ -382,14 +383,14 @@ const Navbar: React.FC = () => {
                   />
                 </button>
                 {isUserDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-card-bg rounded-md shadow-lg py-1 z-50">
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                     <p className="block px-4 py-2 text-sm text-text-primary font-semibold truncate">
                       {user?.displayName || user?.email || "User"}
                     </p>
                     <div className="border-t border-gray-100 my-1"></div>
                     <Link
                       href="/dashboard/orders"
-                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >
                       <FontAwesomeIcon icon={faShoppingBag} className="mr-2" />
@@ -397,7 +398,7 @@ const Navbar: React.FC = () => {
                     </Link>
                     <Link
                       href="/dashboard"
-                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >
                       <FontAwesomeIcon
@@ -408,7 +409,7 @@ const Navbar: React.FC = () => {
                     </Link>
                     <Link
                       href="/dashboard/settings"
-                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >
                       <FontAwesomeIcon icon={faCog} className="mr-2" />
@@ -429,7 +430,7 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Cart & Hamburger */}
           <div className="flex items-center lg:hidden">
-            <Link href="/cart" className="relative mr-4 p-1">
+            <Link href="/cart" className="relative mr-2 p-1">
               <FontAwesomeIcon
                 icon={faShoppingCart}
                 className="text-green-700 w-5 h-5"
@@ -440,6 +441,19 @@ const Navbar: React.FC = () => {
                 </span>
               )}
             </Link>
+
+            {/* Mobile Search Icon */}
+            <button
+              onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+              className="p-1 mr-2"
+              aria-label="Toggle search"
+            >
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="text-green-700 w-5 h-5"
+              />
+            </button>
+
             {isLoggedIn && (
               <button
                 onClick={() => {
@@ -494,7 +508,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu Overlay */}
       {expanded && (
-        <div className="fixed top-0 left-0 w-full h-full bg-white dark:bg-background bg-opacity-95 dark:bg-opacity-95 z-40 flex flex-col pt-16 px-6">
+        <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-95 z-40 flex flex-col pt-16 px-6">
           <ul className="flex flex-col space-y-4 mb-6">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -544,7 +558,7 @@ const Navbar: React.FC = () => {
           </ul>
 
           {/* Mobile Search Bar inside expanded menu */}
-          <div className="relative flex items-center border border-border-color rounded px-2 py-1 bg-white dark:bg-card-bg mb-4">
+          <div className="relative flex items-center border border-border-color rounded px-2 py-1 bg-white mb-4">
             <input
               ref={searchInputRef} // Attach ref for mobile search
               type="text"
@@ -564,14 +578,14 @@ const Navbar: React.FC = () => {
             {showSearchPopup && searchResults.length > 0 && (
               <div
                 ref={searchPopupRef}
-                className="absolute top-full left-0 mt-2 w-full min-w-[200px] max-h-60 overflow-y-auto bg-white dark:bg-card-bg border border-border-color rounded-md shadow-lg z-50 py-1"
+                className="absolute top-full left-0 mt-2 w-full min-w-[200px] max-h-60 overflow-y-auto bg-white border border-border-color rounded-md shadow-lg z-50 py-1"
               >
                 {searchResults.map((result) => (
                   <Link
                     key={result.id}
                     href={result.url}
                     onClick={() => handleSearchResultClick(result.url)}
-                    className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
+                    className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 transition-colors duration-150"
                   >
                     <span className="font-medium">{result.title}</span>{" "}
                     <span className="text-text-secondary text-xs">
@@ -593,7 +607,7 @@ const Navbar: React.FC = () => {
               searchQuery.trim() !== "" && (
                 <div
                   ref={searchPopupRef}
-                  className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white dark:bg-card-bg border border-border-color rounded-md shadow-lg z-50 py-3 px-4 text-sm text-text-secondary"
+                  className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white border border-border-color rounded-md shadow-lg z-50 py-3 px-4 text-sm text-text-secondary"
                 >
                   No results found for &quot;{searchQuery}&quot;.
                   <div className="border-t border-gray-100 my-1"></div>
@@ -606,29 +620,13 @@ const Navbar: React.FC = () => {
                 </div>
               )}
           </div>
-          <Link
-            href="/cart"
-            className="relative flex items-center mt-auto mb-6"
-            onClick={handleSelect}
-          >
-            <FontAwesomeIcon
-              icon={faShoppingCart}
-              className="text-green-700 text-xl"
-            />
-            <span className="ml-2 text-base">Cart</span>
-            {carts?.length > 0 && (
-              <span className="absolute -top-2 left-6 bg-red-600 text-white text-xs rounded-full px-1.5 py-0.5">
-                {carts.length}
-              </span>
-            )}
-          </Link>
         </div>
       )}
 
       {/* Mobile Search Bar (when menu is closed) */}
-      {!expanded && (
-        <div className="lg:hidden fixed top-[60px] left-0 w-full bg-white dark:bg-card-bg shadow-sm z-40 px-4 py-2">
-          <div className="relative flex items-center border border-border-color rounded px-2 py-1 bg-white dark:bg-card-bg">
+      {!expanded && isMobileSearchOpen && (
+        <div className="lg:hidden fixed top-[60px] left-0 w-full bg-white shadow-sm z-40 px-4 py-2">
+          <div className="relative flex items-center border border-border-color rounded px-2 py-1 bg-white">
             <input
               ref={searchInputRef} // Attach ref for mobile search (when menu is closed)
               type="text"
@@ -648,14 +646,14 @@ const Navbar: React.FC = () => {
             {showSearchPopup && searchResults.length > 0 && (
               <div
                 ref={searchPopupRef}
-                className="absolute top-full left-0 mt-2 w-full min-w-[200px] max-h-60 overflow-y-auto bg-white dark:bg-card-bg border border-border-color rounded-md shadow-lg z-50 py-1"
+                className="absolute top-full left-0 mt-2 w-full min-w-[200px] max-h-60 overflow-y-auto bg-white border border-border-color rounded-md shadow-lg z-50 py-1"
               >
                 {searchResults.map((result) => (
                   <Link
                     key={result.id}
                     href={result.url}
                     onClick={() => handleSearchResultClick(result.url)}
-                    className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
+                    className="block px-4 py-2 text-sm text-text-primary hover:bg-gray-100 transition-colors duration-150"
                   >
                     <span className="font-medium">{result.title}</span>{" "}
                     <span className="text-text-secondary text-xs">
@@ -677,7 +675,7 @@ const Navbar: React.FC = () => {
               searchQuery.trim() !== "" && (
                 <div
                   ref={searchPopupRef}
-                  className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white dark:bg-card-bg border border-border-color rounded-md shadow-lg z-50 py-3 px-4 text-sm text-text-secondary"
+                  className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white border border-border-color rounded-md shadow-lg z-50 py-3 px-4 text-sm text-text-secondary"
                 >
                   No results found for &quot;{searchQuery}&quot;.
                   <div className="border-t border-gray-100 my-1"></div>

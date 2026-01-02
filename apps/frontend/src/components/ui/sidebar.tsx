@@ -29,7 +29,7 @@ const menuItems = [
 // ];
 
 const Sidebar: React.FC = () => (
-  <aside className="fixed flex flex-col h-screen w-[220px] bg-card-bg text-text-secondary p-8 shadow-[2px_0_8px_rgba(0,0,0,0.05)] dark:shadow-[2px_0_8px_rgba(255,255,255,0.05)] z-100 justify-between border-r border-border-color">
+  <aside className="fixed flex flex-col h-screen w-[220px] bg-card-bg text-text-secondary p-8 shadow-[2px_0_8px_rgba(0,0,0,0.05)] z-100 justify-between border-r border-border-color">
     <div>
       <div className="flex justify-center items-center mb-10">
         <Link href="/">

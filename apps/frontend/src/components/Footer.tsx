@@ -161,7 +161,7 @@ const Footer: React.FC = () => {
                 <input
                   type="email"
                   placeholder="Enter email"
-                  className="bg-gray-300 dark:bg-gray-600 text-foreground placeholder:text-text-muted rounded-l-full px-4 py-2 flex-1 outline-none border-none"
+                  className="bg-gray-300 text-foreground placeholder:text-text-muted rounded-l-full px-4 py-2 flex-1 outline-none border-none"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

@@ -102,7 +102,7 @@ export default function NotificationBell() {
 
       {/* Notification Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-card-bg border border-border-color rounded-lg shadow-lg z-50 max-h-96 overflow-hidden">
+        <div className="absolute right-0 mt-2 w-80 bg-white border border-border-color rounded-lg shadow-lg z-50 max-h-96 overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border-color">
             <h3 className="text-lg font-semibold text-text-primary">
@@ -141,11 +141,9 @@ export default function NotificationBell() {
               notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 border-b border-border-color hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors border-l-4 ${getNotificationColor(
+                  className={`p-4 border-b border-border-color hover:bg-gray-50 cursor-pointer transition-colors border-l-4 ${getNotificationColor(
                     notification.type
-                  )} ${
-                    !notification.isRead ? "bg-blue-50 dark:bg-blue-900/20" : ""
-                  }`}
+                  )} ${!notification.isRead ? "bg-blue-50" : ""}`}
                   onClick={() =>
                     handleNotificationClick(
                       notification.id,

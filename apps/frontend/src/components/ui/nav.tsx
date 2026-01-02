@@ -17,7 +17,6 @@ import { API_URL } from "../../lib/config";
 import { useAuthToken } from "../../hooks/useAuthToken";
 import { useUserStore } from "@/stores/AuthStore";
 import NotificationBell from "@/components/ui/notification-bell";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const menuItems = [
   { label: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -148,7 +147,6 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
       <div className="hidden md:flex items-center justify-between w-full">
         <h2 className="text-[24px] font-bold text-text-primary">{title}</h2>
         <div className="flex items-center gap-[32px]">
-          <ThemeToggle />
           <div className="h-8 w-px bg-border-color" />
           <div className="flex cursor-pointer" aria-label="Notifications">
             <NotificationBell />
@@ -204,7 +202,6 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <ThemeToggle />
           <div className="flex cursor-pointer" aria-label="Notifications">
             <NotificationBell />
           </div>
@@ -221,7 +218,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
       {/* Mobile Menu Overlay */}
       {menuOpen && (
         <div className="fixed inset-0 bg-black/40 z-50 flex md:hidden">
-          <div className="bg-white dark:bg-card-bg w-64 h-full shadow-lg p-6 flex flex-col justify-between">
+          <div className="bg-white w-64 h-full shadow-lg p-6 flex flex-col justify-between">
             <div>
               <button
                 className="mb-4 text-[#037F44] font-bold"
