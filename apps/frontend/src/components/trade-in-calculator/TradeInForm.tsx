@@ -19,7 +19,7 @@ const TradeInForm: React.FC<TradeInFormProps> = ({
       <div className="relative mb-3" key={field.name}>
         <label
           htmlFor={field.name}
-          className="block text-text-primary text-sm font-medium mb-1"
+          className="block text-black text-sm font-medium mb-1"
         >
           {field.label}
         </label>
@@ -30,9 +30,9 @@ const TradeInForm: React.FC<TradeInFormProps> = ({
             required={field.required}
             value={formData[field.name as keyof ComputerFormData]}
             onChange={onChange}
-            className="form-select block w-full px-3 py-2 border border-border-color rounded-md shadow-sm bg-white dark:bg-card-bg text-foreground"
+            className="form-select block w-full px-3 py-2 border border-border-color rounded-md shadow-sm bg-white dark:bg-card-bg text-foreground placeholder:text-black invalid:text-black"
           >
-            <option value="" disabled>
+            <option value="" disabled className="text-black">
               {field.placeholder || `Select ${field.label}`}
             </option>
             {field.options?.map((opt) => (
@@ -49,7 +49,7 @@ const TradeInForm: React.FC<TradeInFormProps> = ({
             required={field.required}
             value={formData[field.name as keyof ComputerFormData]}
             onChange={onChange}
-            className="form-input block w-full px-3 py-2 border border-border-color rounded-md shadow-sm bg-white dark:bg-card-bg text-foreground"
+            className="form-input block w-full px-3 py-2 border border-border-color rounded-md shadow-sm bg-white dark:bg-card-bg text-foreground placeholder:text-black"
             placeholder={field.placeholder}
             accept={field.accept}
           />

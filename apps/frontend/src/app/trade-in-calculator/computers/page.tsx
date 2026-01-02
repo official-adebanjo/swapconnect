@@ -392,7 +392,7 @@ const ComputersPage: React.FC = () => {
           {/* Sidebar */}
           <div className="w-full md:w-4/12 lg:w-1/4">
             <div className="rounded-lg border border-yellow-600 shadow-md p-4 bg-white">
-              <h4 className="text-xl font-semibold mb-2">
+              <h4 className="text-xl font-semibold mb-2 dark:text-black">
                 Estimated Trade-In Value
               </h4>
               <p className="text-sm text-gray-600 mb-4">

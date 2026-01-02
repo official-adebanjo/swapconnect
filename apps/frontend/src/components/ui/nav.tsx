@@ -213,7 +213,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
             aria-label="Open menu"
             onClick={() => setMenuOpen(true)}
           >
-            <Menu size={28} color="#353535" />
+            <Menu size={28} className="text-text-primary" />
           </button>
         </div>
       </div>
@@ -221,7 +221,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
       {/* Mobile Menu Overlay */}
       {menuOpen && (
         <div className="fixed inset-0 bg-black/40 z-50 flex md:hidden">
-          <div className="bg-white w-64 h-full shadow-lg p-6 flex flex-col justify-between">
+          <div className="bg-white dark:bg-card-bg w-64 h-full shadow-lg p-6 flex flex-col justify-between">
             <div>
               <button
                 className="mb-4 text-[#037F44] font-bold"

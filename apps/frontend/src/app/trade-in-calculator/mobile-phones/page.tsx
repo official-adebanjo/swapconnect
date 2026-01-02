@@ -70,10 +70,30 @@ interface MobileFormData {
   biometricFunction: string;
 }
 
+interface CalculatorPayload {
+  deviceType: string;
+  deviceDetails: {
+    brand: string;
+    model: string;
+    storage: string;
+    ram: string;
+    batteryCapacity: string;
+    batteryHours: string;
+    phoneAge: string;
+  };
+  conditionDetails: {
+    autoOnOff: string;
+    bodyCondition: string;
+    screenCondition: string;
+    repairVisits: string;
+    biometricFunction: string;
+  };
+}
+
 // Function to fetch recently uploaded products from the backend
 const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
   try {
-    const response = await api.get<ApiResponse<ProductApiData[]>>(
+    const response = await api.get<ProductApiData[]>(
       "/products/top?limit=6",
       token
     );
@@ -161,6 +181,7 @@ const MobilePhonesPage: React.FC = () => {
     formData.storage,
     formData.ram,
     formData.phoneAge,
+    hasCalculated,
   ]);
 
   const calculateValue = async () => {
@@ -181,7 +202,7 @@ const MobilePhonesPage: React.FC = () => {
     setIsCalculating(true);
 
     try {
-      const payload = {
+      const payload: CalculatorPayload = {
         deviceType: "mobile",
         deviceDetails: {
           brand: formData.brand,
@@ -206,15 +227,23 @@ const MobilePhonesPage: React.FC = () => {
       // }
 
       const response = await api.post<
-        ApiResponse<{ estimatedValue: number; breakdown: CalculationBreakdown }>
+        ApiResponse<{
+          estimatedValue: number;
+          breakdown: CalculationBreakdown;
+        }>,
+        CalculatorPayload
       >("/bid/calculator", payload, token);
 
       if (response.success) {
         console.log(response);
         const calculatedValue: number =
-          response.data?.estimatedValue ?? response.estimatedValue ?? 0;
+          response.data?.estimatedValue ??
+          (response.estimatedValue as number | undefined) ??
+          0;
         const breakdown =
-          response.data?.breakdown ?? response.breakdown ?? null;
+          response.data?.breakdown ??
+          (response.breakdown as CalculationBreakdown | undefined) ??
+          null;
 
         setEstimatedValue(calculatedValue);
         setCalculationBreakdown(breakdown);
@@ -518,7 +547,7 @@ const MobilePhonesPage: React.FC = () => {
           {/* Right Column: Estimated Value */}
           <div className="w-full md:w-4/12 lg:w-1/4">
             <div className="rounded-lg border border-yellow-600 shadow-md p-4 bg-white">
-              <h4 className="text-xl font-semibold mb-2">
+              <h4 className="text-xl font-semibold mb-2 dark:text-black">
                 Estimated Trade-In Value
               </h4>
               <p className="text-sm text-gray-600 mb-4">
