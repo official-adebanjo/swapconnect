@@ -31,6 +31,7 @@ const DEFAULT_USER_ICON = "/images/user-icon.webp";
 // Stores
 import { useUserStore } from "@/stores/AuthStore";
 import useCartStore from "../stores/CartStore";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 // Zustand store for navbar expanded state
 interface NavbarStoreState {
@@ -290,6 +291,7 @@ const Navbar: React.FC = () => {
                 </span>
               )}
             </Link>
+
             <button className="p-1" aria-label="Notifications">
               <FontAwesomeIcon
                 icon={faBell}
@@ -359,6 +361,7 @@ const Navbar: React.FC = () => {
                   </div>
                 )}
             </div>
+            <ThemeToggle />
 
             {/* User Icon/Dropdown (Desktop) */}
             {isLoggedIn && (

@@ -83,7 +83,7 @@ const FAQ = () => {
         {faqData.map((item, index) => (
           <div
             key={index}
-            className="border border-gray-200 rounded-lg shadow-sm bg-white"
+            className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-white dark:bg-gray-800"
           >
             <button
               className="w-full flex justify-between items-center px-6 py-4 text-left focus:outline-none cursor-pointer"
@@ -92,7 +92,9 @@ const FAQ = () => {
               aria-controls={`faq-body-${index}`}
               type="button"
             >
-              <span className="font-semibold">{item.question}</span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100">
+                {item.question}
+              </span>
               <span className="ml-4 text-[#d7a825] text-xl">
                 {openIndex === index ? "−" : "+"}
               </span>
@@ -100,7 +102,7 @@ const FAQ = () => {
             {openIndex === index && (
               <div
                 id={`faq-body-${index}`}
-                className="px-6 pb-4 text-gray-700 animate-fade-in"
+                className="px-6 pb-4 text-gray-700 dark:text-gray-300 animate-fade-in"
               >
                 {item.answer}
               </div>
