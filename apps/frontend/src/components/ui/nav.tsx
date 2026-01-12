@@ -17,6 +17,7 @@ import { API_URL } from "../../lib/config";
 import { useAuthToken } from "../../hooks/useAuthToken";
 import { useUserStore } from "@/stores/AuthStore";
 import NotificationBell from "@/components/ui/notification-bell";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const menuItems = [
   { label: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -148,6 +149,8 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
         <h2 className="text-[24px] font-bold text-text-primary">{title}</h2>
         <div className="flex items-center gap-[32px]">
           <div className="h-8 w-px bg-border-color" />
+          <ThemeToggle />
+          <div className="h-8 w-px bg-border-color" />
           <div className="flex cursor-pointer" aria-label="Notifications">
             <NotificationBell />
           </div>
@@ -202,6 +205,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
           </span>
         </div>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <div className="flex cursor-pointer" aria-label="Notifications">
             <NotificationBell />
           </div>
