@@ -1,137 +1,109 @@
 "use client";
 
 import type React from "react";
-import type { ComputerFormData } from "@/types/trade-in";
-import { FaChevronRight } from "react-icons/fa";
+import type { BaseTradeInFormData } from "@/types/trade-in";
+import { ChevronDown } from "lucide-react";
 
 interface AdditionalDetailsProps {
-  formData: ComputerFormData;
+  formData: BaseTradeInFormData;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
   formData,
   onChange,
-}) => (
-  <div className="grid grid-cols-1 gap-y-4">
-    {/* Auto On/Off */}
-    <div className="relative mb-3">
-      <label
-        htmlFor="autoOnOff"
-        className="block text-gray-700 text-sm font-medium mb-1"
-      >
-        Does your laptop turn off and on automatically?
-      </label>
-      <select
-        id="autoOnOff"
-        name="autoOnOff"
-        value={formData.autoOnOff}
-        onChange={onChange}
-        className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-      >
-        <option value="">Select Option</option>
-        <option value="yes">Yes</option>
-        <option value="no">No</option>
-      </select>
-      <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-    </div>
+}) => {
+  interface DetailField {
+    id: keyof BaseTradeInFormData;
+    label: string;
+    options: { value: string; label: string }[];
+  }
 
-    {/* Body Condition */}
-    <div className="relative mb-3">
-      <label
-        htmlFor="bodyCondition"
-        className="block text-gray-700 text-sm font-medium mb-1"
-      >
-        What is the condition of your laptop&apos;s body?
-      </label>
-      <select
-        id="bodyCondition"
-        name="bodyCondition"
-        value={formData.bodyCondition}
-        onChange={onChange}
-        className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-      >
-        <option value="">Select Option</option>
-        <option value="perfect">Perfect</option>
-        <option value="good">Good (minor wear)</option>
-        <option value="fair">Fair (visible scratches/dents)</option>
-        <option value="poor">Poor (significant damage)</option>
-      </select>
-      <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-    </div>
+  const detailFields: DetailField[] = [
+    {
+      id: "autoOnOff",
+      label: "Does your device turn off and on automatically?",
+      options: [
+        { value: "yes", label: "Yes" },
+        { value: "no", label: "No" },
+      ],
+    },
+    {
+      id: "bodyCondition",
+      label: "What is the condition of your device's body?",
+      options: [
+        { value: "perfect", label: "Perfect" },
+        { value: "good", label: "Good (minor wear)" },
+        { value: "fair", label: "Fair (visible scratches/dents)" },
+        { value: "poor", label: "Poor (significant damage)" },
+      ],
+    },
+    {
+      id: "screenCondition",
+      label: "What is the condition of your device's screen?",
+      options: [
+        { value: "perfect", label: "Perfect" },
+        { value: "good", label: "Good (minor scratches)" },
+        { value: "fair", label: "Fair (visible scratches)" },
+        { value: "poor", label: "Poor (cracks/dead pixels)" },
+      ],
+    },
+    {
+      id: "repairVisits",
+      label: "How many times have you visited a technician for repair?",
+      options: [
+        { value: "0", label: "0 times" },
+        { value: "1", label: "1 time" },
+        { value: "2-3", label: "2 - 3 times" },
+        { value: "more-than-3-times", label: "More than three times" },
+      ],
+    },
+    {
+      id: "biometricFunction",
+      label: "Does fingerprint or face recognition work normally?",
+      options: [
+        { value: "yes", label: "Yes" },
+        { value: "no", label: "No" },
+        { value: "not_applicable", label: "Not Applicable" },
+      ],
+    },
+  ];
 
-    {/* Screen Condition */}
-    <div className="relative mb-3">
-      <label
-        htmlFor="screenCondition"
-        className="block text-gray-700 text-sm font-medium mb-1"
-      >
-        What is the condition of your laptop&apos;s screen?
-      </label>
-      <select
-        id="screenCondition"
-        name="screenCondition"
-        value={formData.screenCondition}
-        onChange={onChange}
-        className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-      >
-        <option value="">Select Option</option>
-        <option value="perfect">Perfect</option>
-        <option value="good">Good (minor scratches)</option>
-        <option value="fair">Fair (visible scratches)</option>
-        <option value="poor">Poor (cracks/dead pixels)</option>
-      </select>
-      <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+  return (
+    <div className="space-y-6">
+      {detailFields.map((field) => (
+        <div className="flex flex-col gap-2" key={field.id}>
+          <label
+            htmlFor={field.id}
+            className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1"
+          >
+            {field.label}
+          </label>
+          <div className="relative group">
+            <select
+              id={field.id}
+              name={field.id}
+              value={formData[field.id] || ""}
+              onChange={onChange}
+              className="w-full h-12 pl-4 pr-11 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl text-gray-900 dark:text-gray-100 text-sm font-medium appearance-none transition-all duration-300 focus:ring-4 focus:ring-green-500/10 focus:border-green-500 hover:border-gray-300 dark:hover:border-gray-700 cursor-pointer shadow-sm"
+            >
+              <option value="" disabled>
+                Select Option
+              </option>
+              {field.options.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-green-600 transition-colors">
+              <ChevronDown size={18} />
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
-
-    {/* Repair Visits */}
-    <div className="relative mb-3">
-      <label
-        htmlFor="repairVisits"
-        className="block text-gray-700 text-sm font-medium mb-1"
-      >
-        How many times have you visited a technician for repair?
-      </label>
-      <select
-        id="repairVisits"
-        name="repairVisits"
-        value={formData.repairVisits}
-        onChange={onChange}
-        className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-      >
-        <option value="">Select Option</option>
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2-3">2 - 3</option>
-        <option value="more-than-3-times">More than three times</option>
-      </select>
-      <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-    </div>
-
-    {/* Biometric Function */}
-    <div className="relative mb-3">
-      <label
-        htmlFor="biometricFunction"
-        className="block text-gray-700 text-sm font-medium mb-1"
-      >
-        Where applicable, does fingerprint reader or face recognition work
-        normally?
-      </label>
-      <select
-        id="biometricFunction"
-        name="biometricFunction"
-        value={formData.biometricFunction}
-        onChange={onChange}
-        className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-      >
-        <option value="">Select Option</option>
-        <option value="yes">Yes</option>
-        <option value="no">No</option>
-        <option value="not_applicable">Not Applicable</option>
-      </select>
-      <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-    </div>
-  </div>
-);
+  );
+};
 
 export default AdditionalDetails;

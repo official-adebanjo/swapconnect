@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import Link from "next/link";
+// import Link from "next/link";
 
 // You can define metadata for this segment and its children
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default function TradeInCalculatorLayout({
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-10">
+        {/* <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-10">
           Device Trade-In Calculator
         </h1>
         <nav className="flex justify-center space-x-4 mb-8">
@@ -32,7 +32,7 @@ export default function TradeInCalculatorLayout({
           >
             Mobile Phones
           </Link>
-        </nav>
+        </nav> */}
 
         {/* This is where the actual page content (MobilePhones.tsx or Computers.tsx) will be rendered */}
         <main className="bg-white p-8 rounded-lg shadow-xl">{children}</main>

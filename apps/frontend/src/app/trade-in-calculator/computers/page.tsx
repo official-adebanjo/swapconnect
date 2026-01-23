@@ -3,7 +3,6 @@
 import type React from "react";
 import { useState, useEffect } from "react";
 import { useUserStore } from "@/stores/AuthStore";
-// import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import TradeInForm from "@/components/trade-in-calculator/TradeInForm";
 import RecentlyUploadedProducts from "@/components/trade-in-calculator/RecentlyUploaded";
@@ -12,6 +11,9 @@ import AdditionalDetails from "@/components/trade-in-calculator/AdditionalDetail
 import type { ComputerFormData, TradeInField, Product } from "@/types/trade-in";
 import { api } from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { ArrowLeft, CheckCircle2, Laptop, Info } from "lucide-react";
+import Link from "next/link";
 
 interface CalculationBreakdown {
   baseValue?: number;
@@ -38,9 +40,7 @@ const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
       token,
     );
     if (response.success && response.data?.data) {
-      // Check for the nested 'data' property
       return response.data.data.map((product: ProductApiData) => ({
-        // Access the nested 'data' array
         id: product.id,
         name: product.name,
         image: product.imageUrl || "/placeholder.svg?height=200&width=200",
@@ -62,7 +62,6 @@ const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
 const currentYear = new Date().getFullYear();
 const startYear = 2018;
 
-// Fields for computer trade-in form
 const computerFields: TradeInField[] = [
   {
     label: "Brand",
@@ -86,7 +85,7 @@ const computerFields: TradeInField[] = [
     name: "model",
     type: "text",
     required: true,
-    placeholder: "Enter Model (e.g., MacBook Pro 13, ThinkPad X1)",
+    placeholder: "e.g., MacBook Pro 13, ThinkPad X1",
   },
   {
     label: "Processor",
@@ -118,7 +117,7 @@ const computerFields: TradeInField[] = [
     options: [
       { value: "HDD", label: "HDD" },
       { value: "SSD", label: "SSD" },
-      { value: "Hybrid", label: "Hybrid (HDD + SSD)" },
+      { value: "Hybrid", label: "Hybrid" },
       { value: "eMMC", label: "eMMC" },
       { value: "Other", label: "Other" },
     ],
@@ -165,12 +164,11 @@ const computerFields: TradeInField[] = [
       }),
       { value: "Before " + startYear, label: "Before " + startYear },
     ],
-    placeholder: "Select Purchase Year",
+    placeholder: "When did you buy it?",
   },
 ];
 
 const ComputersPage: React.FC = () => {
-  // const router = useRouter();
   const { token } = useUserStore();
 
   const [recentlyUploaded, setRecentlyUploaded] = useState<Product[]>([]);
@@ -197,7 +195,6 @@ const ComputersPage: React.FC = () => {
   });
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
-  // Load recently uploaded products
   useEffect(() => {
     setIsLoadingProducts(true);
     fetchRecentlyUploaded(token)
@@ -205,7 +202,6 @@ const ComputersPage: React.FC = () => {
       .finally(() => setIsLoadingProducts(false));
   }, [token]);
 
-  // Restore saved form data if redirected from login
   useEffect(() => {
     const saved = sessionStorage.getItem("computerTradeInFormData");
     if (saved) {
@@ -218,7 +214,6 @@ const ComputersPage: React.FC = () => {
     }
   }, []);
 
-  // Calculate estimated value when form data changes
   useEffect(() => {
     if (hasCalculated) {
       setHasCalculated(false);
@@ -234,7 +229,6 @@ const ComputersPage: React.FC = () => {
   ]);
 
   const calculateValue = async () => {
-    // Only calculate if we have minimum required fields
     if (
       !formData.brand ||
       !formData.model ||
@@ -243,7 +237,7 @@ const ComputersPage: React.FC = () => {
       !formData.storageType
     ) {
       toast.error(
-        "Please fill in all required fields (Brand, Model, Storage, RAM, Phone Age",
+        "Please fill in all required fields (Brand, Model, Storage, RAM, Purchase Year)",
       );
       return;
     }
@@ -273,65 +267,46 @@ const ComputersPage: React.FC = () => {
         },
       };
 
-      // if (!token) {
-      // return;
-      // }
       const response = await api.post<
         { estimatedValue: number; breakdown: CalculationBreakdown },
         typeof payload
       >("/bid/calculator", payload, token);
 
       if (response.success) {
-        console.log(response);
-        const calculatedValue: number =
-          response.data?.estimatedValue ??
-          (response.estimatedValue as number) ??
-          0;
+        const responseData = response as unknown as {
+          estimatedValue?: number;
+          breakdown?: CalculationBreakdown;
+          data?: { estimatedValue: number; breakdown: CalculationBreakdown };
+        };
+        const calculatedValue =
+          responseData.data?.estimatedValue ?? responseData.estimatedValue ?? 0;
         const breakdown =
-          response.data?.breakdown ?? response.breakdown ?? null;
+          responseData.data?.breakdown ?? responseData.breakdown ?? null;
+
         setEstimatedValue(calculatedValue);
         setCalculationBreakdown(breakdown);
         setHasCalculated(true);
 
         if (calculatedValue > 0) {
-          toast.success(
-            `Your computer is estimated to be worth ${formatPrice(
-              calculatedValue,
-            )}!`,
-            { duration: 5000 },
-          );
+          toast.success(`Estimate generated: ${formatPrice(calculatedValue)}`, {
+            duration: 4000,
+          });
         } else {
-          toast.error(
-            "Unable to calculate value. Please check your device details.",
-          );
+          toast.error("Unable to calculate value.");
         }
       } else {
-        console.error("Calculation failed:", response.error);
-        toast.error("Failed to calculate trade-in value. Please try again.");
+        toast.error("Failed to calculate value. Try again.");
       }
-    } catch (error) {
-      console.error("Error calculating value:", error);
-      toast.error(
-        "An error occurred while calculating the value. Please try again.",
-      );
+    } catch {
+      toast.error("An error occurred. Try again.");
     } finally {
       setIsCalculating(false);
     }
   };
 
-  // Debounce the calculation
-  // const timeoutId = setTimeout(calculateValue, 500);
-  // return () => clearTimeout(timeoutId);
-  // }, [formData, token]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // if (!token) {
-    // toast.error("Please log in to get final estimate.", { duration: 3000,});
-    // return;
-    // }
-    toast.success("estimating value, please wait...", { duration: 2000 });
-    // console.log("Form submitted with data:", formData);
+    toast.success("Calculating estimate...", { duration: 2000 });
     await calculateValue();
   };
 
@@ -346,119 +321,225 @@ const ComputersPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto my-8 px-4">
-      <Toaster />
-      <h2 className="mb-8 p-3 text-center text-2xl font-bold text-white bg-green-700 rounded-md">
-        Computers Trade-In Calculator
-      </h2>
-      <form onSubmit={handleSubmit}>
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Trade-in form */}
-          <div className="w-full md:w-8/12 lg:w-3/4">
-            <TradeInForm
-              fields={computerFields}
-              formData={formData}
-              onChange={handleChange}
-            />
-          </div>
+    <div className="bg-gray-50 dark:bg-black min-h-screen pb-20">
+      <Toaster position="top-right" />
 
-          {/* Sidebar */}
-          <div className="w-full md:w-4/12 lg:w-1/4">
-            <TradeInSidebar
-              deviceType="computer"
-              isCalculating={isCalculating}
-              hasCalculated={hasCalculated}
-              estimatedValue={estimatedValue}
-              calculationBreakdown={calculationBreakdown}
-            />
-          </div>
-        </div>
+      {/* Premium Header */}
+      <div className="bg-linear-to-r from-gray-900 via-gray-800 to-green-900 text-white pt-16 pb-24 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_50%_120%,rgba(0,255,100,0.3),transparent_50%)]" />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-green-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Bottom section */}
-        <div className="mt-12 flex flex-col md:flex-row gap-8">
-          {/* Additional details */}
-          <div className="w-full md:w-6/12 lg:w-1/2">
-            <h3 className="mb-6 text-xl font-bold text-gray-800">
-              Additional Details
-            </h3>
-            <AdditionalDetails formData={formData} onChange={handleChange} />
-
-            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-gray-700">
-                <strong className="font-bold text-yellow-800">
-                  Important Notice:
-                </strong>{" "}
-                This trade-in estimate is preliminary and subject to change
-                after physical evaluation by our technicians. Final value
-                depends on actual device condition, functionality, and market
-                demand. We do not accept stolen or counterfeit devices.
-              </p>
-            </div>
-
-            <div className="space-y-3 mt-6">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="dataWiped"
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="dataWiped"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  I confirm all personal data has been backed up and will be
-                  wiped from the device
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="devicePackaged"
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="devicePackaged"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  Device will be safely packaged to avoid transit damage
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="finalInspection"
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="finalInspection"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  I understand final trade-in value will be determined after
-                  physical inspection
-                </label>
-              </div>
-            </div>
-            <button
-              type="submit"
-              disabled={isCalculating}
-              className="bg-green-600 text-white px-6 py-3 my-3 rounded-md font-semibold hover:bg-green-700 transition duration-200 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <Link
+              href="/trade-in-calculator"
+              className="inline-flex items-center text-green-400 font-bold mb-6 hover:text-green-300 transition-colors uppercase tracking-widest text-xs gap-2"
             >
-              {isCalculating ? "Calculating..." : "Get Final Estimate"}
-            </button>
-          </div>
+              <ArrowLeft size={14} /> Back to Categories
+            </Link>
+          </motion.div>
 
-          {/* Recently uploaded */}
-          <div className="w-full md:w-6/12 lg:w-1/2">
-            <h3 className="mb-6 text-xl font-bold text-gray-800">
-              Recently Listed Computers
-            </h3>
-            <RecentlyUploadedProducts
-              products={recentlyUploaded}
-              isLoading={isLoadingProducts}
-            />
+          <div className="max-w-4xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="flex items-center gap-4 mb-4"
+            >
+              <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl">
+                <Laptop size={32} className="text-green-400" />
+              </div>
+              <h1 className="text-3xl md:text-5xl font-black tracking-tight">
+                Computer <span className="text-green-400">Trade-In</span>
+              </h1>
+            </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-gray-300 text-lg md:text-xl font-medium max-w-2xl leading-relaxed"
+            >
+              Get a professional valuation for your laptop or desktop in
+              minutes. Our AI evaluates the latest market data to give you the
+              best price.
+            </motion.p>
           </div>
         </div>
-      </form>
+      </div>
+
+      <div className="container mx-auto px-4 -mt-12 relative z-20">
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            {/* Left Main Pillar */}
+            <div className="w-full lg:w-3/4 space-y-8">
+              {/* Form Section 1: Specs */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none p-8 border border-gray-100 dark:border-gray-800"
+              >
+                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-50 dark:border-gray-800">
+                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-700 dark:text-green-400 font-bold text-sm">
+                    1
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    Device Specifications
+                  </h3>
+                </div>
+                <TradeInForm
+                  fields={computerFields}
+                  formData={formData}
+                  onChange={handleChange}
+                />
+              </motion.div>
+
+              {/* Form Section 2: Condition */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none p-8 border border-gray-100 dark:border-gray-800"
+              >
+                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-50 dark:border-gray-800">
+                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-700 dark:text-green-400 font-bold text-sm">
+                    2
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    Physical & Functionality Condition
+                  </h3>
+                </div>
+                <AdditionalDetails
+                  formData={formData}
+                  onChange={handleChange}
+                />
+
+                <div className="mt-12 p-6 bg-orange-50 dark:bg-orange-900/10 rounded-3xl border border-orange-100 dark:border-orange-900/20 flex gap-4 items-start">
+                  <div className="p-2 bg-orange-200 dark:bg-orange-900/30 rounded-xl text-orange-700 dark:text-orange-400 mt-1">
+                    <Info size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-orange-900 dark:text-orange-100 mb-1">
+                      Professional Inspection Required
+                    </h4>
+                    <p className="text-sm text-orange-800 dark:text-orange-300/80 leading-relaxed font-medium opacity-80">
+                      This estimate is based on the details you provided. A
+                      final binding offer will be made after our technicians
+                      complete a 50-point physical evaluation of your device.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-8 space-y-4">
+                  {[
+                    "I confirm all personal data has been backed up and will be wiped.",
+                    "Device will be safely packaged to avoid transit damage.",
+                    "I understand final value is determined after physical inspection.",
+                  ].map((text, i) => (
+                    <label
+                      key={i}
+                      className="flex items-start gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer group"
+                    >
+                      <div className="relative flex items-center pt-1">
+                        <input
+                          type="checkbox"
+                          required
+                          className="peer appearance-none w-6 h-6 border-2 border-gray-200 dark:border-gray-700 rounded-lg checked:bg-green-600 checked:border-green-600 transition-all cursor-pointer"
+                        />
+                        <CheckCircle2 className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 text-white w-4 h-4 ml-1 transition-opacity" />
+                      </div>
+                      <span className="text-gray-700 dark:text-gray-300 font-medium text-sm group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                        {text}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                <div className="mt-10 flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={isCalculating}
+                    className="group relative bg-gray-900 dark:bg-green-600 text-white px-10 py-5 rounded-2xl font-bold hover:bg-green-600 dark:hover:bg-green-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-gray-400 dark:shadow-none active:scale-95"
+                  >
+                    {isCalculating ? (
+                      <span className="flex items-center gap-2">
+                        <svg
+                          className="animate-spin h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Evaluating...
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        Get Final Estimate
+                        <CheckCircle2 className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Recently uploaded */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+                    Recently Listed Computers
+                  </h3>
+                  <Link
+                    href="/shop"
+                    className="text-green-600 dark:text-green-400 font-bold text-sm hover:underline"
+                  >
+                    View All Shop
+                  </Link>
+                </div>
+                <RecentlyUploadedProducts
+                  products={recentlyUploaded}
+                  isLoading={isLoadingProducts}
+                />
+              </motion.div>
+            </div>
+
+            {/* Right Sidebar Pillar */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="w-full lg:w-1/4"
+            >
+              <TradeInSidebar
+                deviceType="computer"
+                isCalculating={isCalculating}
+                hasCalculated={hasCalculated}
+                estimatedValue={estimatedValue}
+                calculationBreakdown={calculationBreakdown}
+              />
+            </motion.div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

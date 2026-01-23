@@ -1,18 +1,29 @@
-export interface ComputerFormData {
+export interface BaseTradeInFormData {
   brand: string;
   model: string;
-  processor: string;
   ram: string;
-  storageType: string;
-  storageSize: string;
-  screenSize: string;
-  operatingSystem: string;
-  purchaseYear: string;
   autoOnOff: string;
   bodyCondition: string;
   screenCondition: string;
   repairVisits: string;
   biometricFunction: string;
+}
+
+export interface ComputerFormData extends BaseTradeInFormData {
+  processor: string;
+  storageType: string;
+  storageSize: string;
+  screenSize: string;
+  operatingSystem: string;
+  purchaseYear: string;
+}
+
+export interface MobileFormData extends BaseTradeInFormData {
+  storage: string;
+  batteryCapacity: string;
+  batteryHours: string;
+  phoneAge: string;
+  deviceImage: string | File;
 }
 
 export interface TradeInField {
@@ -36,22 +47,6 @@ export interface Product {
   stock: number;
   isTopSale: boolean;
   tag: string;
-}
-
-export interface MobileFormData {
-  brand: string;
-  model: string;
-  storage: string;
-  ram: string;
-  batteryCapacity: string;
-  batteryHours: string;
-  phoneAge: string;
-  deviceImage: string | File;
-  autoOnOff: string;
-  bodyCondition: string;
-  screenCondition: string;
-  repairVisits: string;
-  biometricFunction: string;
 }
 
 export interface CalculationBreakdown {

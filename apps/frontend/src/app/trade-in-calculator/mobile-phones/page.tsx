@@ -3,15 +3,23 @@
 import type React from "react";
 import { useState, useEffect } from "react";
 import { useUserStore } from "@/stores/AuthStore";
-// import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import { ChevronRight } from "lucide-react";
+import {
+  // ChevronRight,
+  ArrowLeft,
+  Smartphone,
+  CheckCircle2,
+  Info,
+} from "lucide-react";
 import TradeInSidebar from "@/components/trade-in-calculator/Sidebar";
 import RecentlyUploadedProducts from "@/components/trade-in-calculator/RecentlyUploaded";
+import TradeInForm from "@/components/trade-in-calculator/TradeInForm";
+import AdditionalDetails from "@/components/trade-in-calculator/AdditionalDetails";
 import { api } from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
-
-import { Product } from "@/types/trade-in";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Product, TradeInField, MobileFormData } from "@/types/trade-in";
 
 interface CalculationBreakdown {
   baseValue?: number;
@@ -39,43 +47,111 @@ interface ProductApiData {
   };
 }
 
-interface MobileFormData {
-  brand: string;
-  model: string;
-  storage: string;
-  ram: string;
-  batteryCapacity: string;
-  batteryHours: string;
-  phoneAge: string;
-  deviceImage?: File | string;
-  autoOnOff: string;
-  bodyCondition: string;
-  screenCondition: string;
-  repairVisits: string;
-  biometricFunction: string;
-}
+// Mobile fields for TradeInForm
+const mobileFields: TradeInField[] = [
+  {
+    label: "Brand",
+    name: "brand",
+    type: "select",
+    required: true,
+    options: [
+      { value: "iOS", label: "iOS (iPhone)" },
+      { value: "Samsung", label: "Samsung" },
+      { value: "Google", label: "Google (Pixel)" },
+      { value: "OnePlus", label: "OnePlus" },
+      { value: "Xiaomi", label: "Xiaomi" },
+      { value: "Huawei", label: "Huawei" },
+      { value: "Infinix", label: "Infinix" },
+      { value: "Tecno", label: "Tecno" },
+      { value: "Other", label: "Other" },
+    ],
+    placeholder: "Select Brand",
+  },
+  {
+    label: "Model",
+    name: "model",
+    type: "text",
+    required: true,
+    placeholder: "e.g., iPhone 13, Galaxy S21",
+  },
+  {
+    label: "Storage",
+    name: "storage",
+    type: "select",
+    required: true,
+    options: [
+      { value: "32GB", label: "32GB" },
+      { value: "64GB", label: "64GB" },
+      { value: "128GB", label: "128GB" },
+      { value: "256GB", label: "256GB" },
+      { value: "512GB", label: "512GB" },
+      { value: "1TB", label: "1TB" },
+    ],
+    placeholder: "Select Storage",
+  },
+  {
+    label: "RAM Size",
+    name: "ram",
+    type: "select",
+    required: true,
+    options: [
+      { value: "2GB", label: "2GB" },
+      { value: "3GB", label: "3GB" },
+      { value: "4GB", label: "4GB" },
+      { value: "6GB", label: "6GB" },
+      { value: "8GB", label: "8GB" },
+      { value: "12GB", label: "12GB" },
+      { value: "16GB", label: "16GB" },
+    ],
+    placeholder: "Select RAM Size",
+  },
+  {
+    label: "Battery Capacity",
+    name: "batteryCapacity",
+    type: "select",
+    options: [
+      { value: "3000MAH", label: "3000mAh" },
+      { value: "4000MAH", label: "4000mAh" },
+      { value: "5000MAH", label: "5000mAh" },
+      { value: "6000MAH", label: "6000mAh" },
+      { value: "Unknown", label: "Unknown" },
+    ],
+    placeholder: "Select Capacity",
+  },
+  {
+    label: "Battery Life",
+    name: "batteryHours",
+    type: "select",
+    options: [
+      { value: "ABOUT 4 HRS", label: "About 4 hours" },
+      { value: "6-8 HRS", label: "6-8 hours" },
+      { value: "8-12 HRS", label: "8-12 hours" },
+      { value: "more than 12 HRS", label: "More than 12 hours" },
+    ],
+    placeholder: "Battery Performance",
+  },
+  {
+    label: "Phone Age",
+    name: "phoneAge",
+    type: "select",
+    required: true,
+    options: [
+      { value: "6-12 Months", label: "6-12 Months" },
+      { value: "1-2 years", label: "1-2 years" },
+      { value: "2-3 years", label: "2-3 years" },
+      { value: "Above 3 years", label: "Above 3 years" },
+    ],
+    placeholder: "How old is it?",
+  },
+  {
+    label: "Device Image",
+    name: "deviceImage",
+    type: "file",
+    placeholder: "Upload clear photo",
+    helperText: "Supports: JPG, PNG, PDF (Max 5MB)",
+  },
+];
 
-interface CalculatorPayload {
-  deviceType: string;
-  deviceDetails: {
-    brand: string;
-    model: string;
-    storage: string;
-    ram: string;
-    batteryCapacity: string;
-    batteryHours: string;
-    phoneAge: string;
-  };
-  conditionDetails: {
-    autoOnOff: string;
-    bodyCondition: string;
-    screenCondition: string;
-    repairVisits: string;
-    biometricFunction: string;
-  };
-}
-
-// Function to fetch recently uploaded products from the backend
 const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
   try {
     const response = await api.get<ProductApiData[]>(
@@ -103,11 +179,9 @@ const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
 };
 
 const MobilePhonesPage: React.FC = () => {
-  // const router = useRouter();
   const { token } = useUserStore();
 
   const [recentlyUploaded, setRecentlyUploaded] = useState<Product[]>([]);
-  // const [startIndex, setStartIndex] = useState(0);
   const [estimatedValue, setEstimatedValue] = useState<number>(0);
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationBreakdown, setCalculationBreakdown] =
@@ -140,7 +214,6 @@ const MobilePhonesPage: React.FC = () => {
     loadProducts();
   }, [token]);
 
-  // Restore saved form data if redirected from login
   useEffect(() => {
     const saved = sessionStorage.getItem("mobileTradeInFormData");
     if (saved) {
@@ -153,7 +226,6 @@ const MobilePhonesPage: React.FC = () => {
     }
   }, []);
 
-  // Reset calculation when form data changes significantly
   useEffect(() => {
     if (hasCalculated) {
       setHasCalculated(false);
@@ -166,11 +238,9 @@ const MobilePhonesPage: React.FC = () => {
     formData.storage,
     formData.ram,
     formData.phoneAge,
-    hasCalculated,
   ]);
 
   const calculateValue = async () => {
-    // Validate required fields
     if (
       !formData.brand ||
       !formData.model ||
@@ -187,7 +257,7 @@ const MobilePhonesPage: React.FC = () => {
     setIsCalculating(true);
 
     try {
-      const payload: CalculatorPayload = {
+      const payload = {
         deviceType: "mobile",
         deviceDetails: {
           brand: formData.brand,
@@ -207,56 +277,41 @@ const MobilePhonesPage: React.FC = () => {
         },
       };
 
-      // if (!token) {
-      //   return;
-      // }
-
       const response = await api.post<
         ApiResponse<{
           estimatedValue: number;
           breakdown: CalculationBreakdown;
         }>,
-        CalculatorPayload
+        unknown
       >("/bid/calculator", payload, token);
 
       if (response.success) {
-        console.log(response);
-        const calculatedValue: number =
-          response.data?.estimatedValue ??
-          (response.estimatedValue as number | undefined) ??
-          0;
+        const responseData = response as unknown as {
+          estimatedValue?: number;
+          breakdown?: CalculationBreakdown;
+          data?: { estimatedValue: number; breakdown: CalculationBreakdown };
+        };
+        const calculatedValue =
+          responseData.data?.estimatedValue ?? responseData.estimatedValue ?? 0;
         const breakdown =
-          response.data?.breakdown ??
-          (response.breakdown as CalculationBreakdown | undefined) ??
-          null;
+          responseData.data?.breakdown ?? responseData.breakdown ?? null;
 
         setEstimatedValue(calculatedValue);
         setCalculationBreakdown(breakdown);
         setHasCalculated(true);
 
         if (calculatedValue > 0) {
-          toast.success(
-            `Your phone is estimated to be worth ${formatPrice(
-              calculatedValue,
-            )}!`,
-            {
-              duration: 5000,
-            },
-          );
+          toast.success(`Estimate generated: ${formatPrice(calculatedValue)}`, {
+            duration: 4000,
+          });
         } else {
-          toast.error(
-            "Unable to calculate value. Please check your device details.",
-          );
+          toast.error("Unable to calculate value.");
         }
       } else {
-        console.error("Calculation failed:", response.error);
-        toast.error("Failed to calculate trade-in value. Please try again.");
+        toast.error("Failed to calculate. Try again.");
       }
-    } catch (error) {
-      console.error("Error calculating value:", error);
-      toast.error(
-        "An error occurred while calculating the value. Please try again.",
-      );
+    } catch {
+      toast.error("An error occurred. Try again.");
     } finally {
       setIsCalculating(false);
     }
@@ -264,7 +319,7 @@ const MobilePhonesPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("estimating value, please wait...", { duration: 2000 });
+    toast.success("Calculating estimate...", { duration: 2000 });
     await calculateValue();
   };
 
@@ -279,442 +334,224 @@ const MobilePhonesPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto my-8 px-4">
-      <Toaster />
-      <h2 className="mb-8 p-3 text-center text-2xl font-bold text-white bg-green-700 rounded-md">
-        Mobile Phones Trade-In Calculator
-      </h2>
+    <div className="bg-gray-50 dark:bg-black min-h-screen pb-20">
+      <Toaster position="top-right" />
 
-      <form onSubmit={handleSubmit}>
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Left Column: Form */}
-          <div className="w-full md:w-8/12 lg:w-3/4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-              {/* Brand */}
-              <div className="relative  mb-3">
-                <label
-                  htmlFor="brand"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  Brand *
-                </label>
-                <select
-                  id="brand"
-                  name="brand"
-                  value={formData.brand}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                  required
-                >
-                  <option value="">Select Brand</option>
-                  <option value="iOS">iOS (iPhone)</option>
-                  <option value="Samsung">Samsung</option>
-                  <option value="Google">Google (Pixel)</option>
-                  <option value="OnePlus">OnePlus</option>
-                  <option value="Xiaomi">Xiaomi</option>
-                  <option value="Huawei">Huawei</option>
-                  <option value="Infinix">Infinix</option>
-                  <option value="Tecno">Tecno</option>
-                  <option value="Other">Other</option>
-                </select>
-                <ChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
+      {/* Premium Header */}
+      <div className="bg-linear-to-r from-gray-900 via-gray-800 to-green-900 text-white pt-16 pb-24 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_50%_120%,rgba(0,255,100,0.3),transparent_50%)]" />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-green-500/10 rounded-full blur-3xl pointer-events-none" />
 
-              {/* Model */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="model"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  Model *
-                </label>
-                <input
-                  type="text"
-                  id="model"
-                  name="model"
-                  value={formData.model}
-                  onChange={handleChange}
-                  className="form-input block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                  placeholder="e.g., iPhone 13, Galaxy S21, Pixel 6"
-                  required
-                />
-              </div>
-
-              {/* Storage */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="storage"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  Storage *
-                </label>
-                <select
-                  id="storage"
-                  name="storage"
-                  value={formData.storage}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                  required
-                >
-                  <option value="">Select Storage</option>
-                  <option value="32GB">32GB</option>
-                  <option value="64GB">64GB</option>
-                  <option value="128GB">128GB</option>
-                  <option value="256GB">256GB</option>
-                  <option value="512GB">512GB</option>
-                  <option value="1TB">1TB</option>
-                </select>
-                <ChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* RAM Size */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="ram"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  RAM Size *
-                </label>
-                <select
-                  id="ram"
-                  name="ram"
-                  value={formData.ram}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                  required
-                >
-                  <option value="">Select RAM Size</option>
-                  <option value="2GB">2GB</option>
-                  <option value="3GB">3GB</option>
-                  <option value="4GB">4GB</option>
-                  <option value="6GB">6GB</option>
-                  <option value="8GB">8GB</option>
-                  <option value="12GB">12GB</option>
-                  <option value="16GB">16GB</option>
-                </select>
-                <ChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Battery Capacity */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="batteryCapacity"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  Battery Capacity
-                </label>
-                <select
-                  id="batteryCapacity"
-                  name="batteryCapacity"
-                  value={formData.batteryCapacity}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                >
-                  <option value="">Select Battery Capacity</option>
-                  <option value="3000MAH">3000mAh</option>
-                  <option value="4000MAH">4000mAh</option>
-                  <option value="5000MAH">5000mAh</option>
-                  <option value="6000MAH">6000mAh</option>
-                  <option value="Unknown">Unknown</option>
-                </select>
-                <ChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Battery Lasting Hours */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="batteryHours"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  Battery Life
-                </label>
-                <select
-                  id="batteryHours"
-                  name="batteryHours"
-                  value={formData.batteryHours}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                >
-                  <option value="">Select Battery Life</option>
-                  <option value="ABOUT 4 HRS">About 4 hours</option>
-                  <option value="6-8 HRS">6-8 hours</option>
-                  <option value="8-12 HRS">8-12 hours</option>
-                  <option value="more than 12 HRS">More than 12 hours</option>
-                </select>
-                <ChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Phone Age */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="phoneAge"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  Phone Age *
-                </label>
-                <select
-                  id="phoneAge"
-                  name="phoneAge"
-                  value={formData.phoneAge}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                  required
-                >
-                  <option value="">Select Phone Age</option>
-                  <option value="6-12 Months">6-12 Months</option>
-                  <option value="1-2 years">1-2 years</option>
-                  <option value="2-3 years">2-3 years</option>
-                  <option value="Above 3 years">Above 3 years</option>
-                </select>
-                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Upload Device Image */}
-              <div className="mb-3">
-                <label
-                  htmlFor="deviceImage"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  Upload Device Image
-                </label>
-                <input
-                  type="file"
-                  id="deviceImage"
-                  name="deviceImage"
-                  onChange={handleChange}
-                  accept=".jpg,.jpeg,.png,.pdf"
-                  className="block w-full text-sm text-gray-500
-                  file:mr-4 file:py-2 file:px-4
-                  file:rounded-md file:border-0
-                  file:text-sm file:font-semibold
-                  file:bg-green-50 file:text-green-700
-                  hover:file:bg-green-100"
-                />
-                <p className="mt-1 text-sm text-gray-500">
-                  Supports: JPG, PNG, PDF (Max 5MB)
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: Estimated Value */}
-          <div className="w-full md:w-4/12 lg:w-1/4">
-            <TradeInSidebar
-              deviceType="mobile"
-              isCalculating={isCalculating}
-              hasCalculated={hasCalculated}
-              estimatedValue={estimatedValue}
-              calculationBreakdown={calculationBreakdown}
-            />
-          </div>
-        </div>
-
-        {/* Second section */}
-        <div className="mt-12 flex flex-col md:flex-row gap-8">
-          {/* Left Column: Additional details */}
-          <div className="w-full md:w-6/12 lg:w-1/2">
-            <h3 className="mb-6 text-xl font-bold text-gray-800">
-              Additional Details
-            </h3>
-            <div className="grid grid-cols-1 gap-y-4">
-              {/* Product turns off and on automatically? */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="autoOnOff"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  Does your phone turn off and on automatically?
-                </label>
-                <select
-                  id="autoOnOff"
-                  name="autoOnOff"
-                  value={formData.autoOnOff}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                >
-                  <option value="">Select Option</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Condition of product's body */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="bodyCondition"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  What is the condition of your phone&apos;s body?
-                </label>
-                <select
-                  id="bodyCondition"
-                  name="bodyCondition"
-                  value={formData.bodyCondition}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                >
-                  <option value="">Select Option</option>
-                  <option value="perfect">Perfect</option>
-                  <option value="minor_scratches">Minor Scratches</option>
-                  <option value="dents">Dents</option>
-                  <option value="cracked">Cracked</option>
-                </select>
-                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Condition of product's screen */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="screenCondition"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  What is the condition of your phone&apos;s screen?
-                </label>
-                <select
-                  id="screenCondition"
-                  name="screenCondition"
-                  value={formData.screenCondition}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                >
-                  <option value="">Select Option</option>
-                  <option value="perfect">Perfect</option>
-                  <option value="minor_scratches">Minor Scratches</option>
-                  <option value="cracked">Cracked</option>
-                  <option value="shattered">Shattered</option>
-                </select>
-                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Times visited technician for repair */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="repairVisits"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  How many times have you visited a technician for repair?
-                </label>
-                <select
-                  id="repairVisits"
-                  name="repairVisits"
-                  value={formData.repairVisits}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                >
-                  <option value="">Select Option</option>
-                  <option value="0">0</option>
-                  <option value="1">1</option>
-                  <option value="2-3">2 - 3</option>
-                  <option value="more-than-3-times">
-                    More than three times
-                  </option>
-                </select>
-                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Touch ID / Face ID function normally? */}
-              <div className="relative mb-3">
-                <label
-                  htmlFor="biometricFunction"
-                  className="block text-gray-700 text-sm font-medium mb-1"
-                >
-                  Where applicable, does Touch ID or Face ID function normally?
-                </label>
-                <select
-                  id="biometricFunction"
-                  name="biometricFunction"
-                  value={formData.biometricFunction}
-                  onChange={handleChange}
-                  className="form-select block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm appearance-none pr-10"
-                >
-                  <option value="">Select Option</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                  <option value="not_applicable">Not Applicable</option>
-                </select>
-                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
-              </div>
-            </div>
-
-            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-gray-700">
-                <strong className="font-bold text-yellow-800">
-                  Important Notice:
-                </strong>{" "}
-                This trade-in estimate is preliminary and subject to change
-                after physical evaluation by our technicians. Final value
-                depends on actual device condition, functionality, and market
-                demand. We do not accept stolen or counterfeit devices.
-              </p>
-            </div>
-
-            <div className="space-y-3 mt-6">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="findMyPhone"
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="findMyPhone"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  Has your &ldquo;find my phone&rdquo; been disabled and you
-                  have signed out of iCloud/Gmail?
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="dataRemoved"
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="dataRemoved"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  Has all your data been backed up and will be wiped from the
-                  device?
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="finalInspection"
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="finalInspection"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  I understand final trade-in value will be determined after
-                  physical inspection
-                </label>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isCalculating}
-              className="bg-green-600 text-white px-6 py-3 my-3 rounded-md font-semibold hover:bg-green-700 transition duration-200 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <Link
+              href="/trade-in-calculator"
+              className="inline-flex items-center text-green-400 font-bold mb-6 hover:text-green-300 transition-colors uppercase tracking-widest text-xs gap-2"
             >
-              {isCalculating ? "Calculating..." : "Get Final Estimate"}
-            </button>
-          </div>
+              <ArrowLeft size={14} /> Back to Categories
+            </Link>
+          </motion.div>
 
-          {/* Right Column: Recently uploaded products */}
-          <div className="w-full md:w-6/12 lg:w-1/2">
-            <h3 className="mb-6 text-xl font-bold text-gray-800">
-              Recently Listed Mobile Phones
-            </h3>
-            <RecentlyUploadedProducts
-              products={recentlyUploaded}
-              isLoading={isLoadingProducts}
-            />
+          <div className="max-w-4xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="flex items-center gap-4 mb-4"
+            >
+              <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl">
+                <Smartphone size={32} className="text-green-400" />
+              </div>
+              <h1 className="text-3xl md:text-5xl font-black tracking-tight">
+                Mobile <span className="text-green-400">Trade-In</span>
+              </h1>
+            </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-gray-300 text-lg md:text-xl font-medium max-w-2xl leading-relaxed"
+            >
+              Turn your old device into cash or credit. Quick evaluation powered
+              by real-time market insights.
+            </motion.p>
           </div>
         </div>
-      </form>
+      </div>
+
+      <div className="container mx-auto px-4 -mt-12 relative z-20">
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            {/* Left Column */}
+            <div className="w-full lg:w-3/4 space-y-8">
+              {/* Specs Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none p-8 border border-gray-100 dark:border-gray-800"
+              >
+                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-50 dark:border-gray-800">
+                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-700 dark:text-green-400 font-bold text-sm">
+                    1
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    Device Specifications
+                  </h3>
+                </div>
+                <TradeInForm
+                  fields={mobileFields}
+                  formData={formData}
+                  onChange={handleChange}
+                />
+              </motion.div>
+
+              {/* Condition Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none p-8 border border-gray-100 dark:border-gray-800"
+              >
+                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-50 dark:border-gray-800">
+                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-700 dark:text-green-400 font-bold text-sm">
+                    2
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    Physical & Functionality Condition
+                  </h3>
+                </div>
+                <AdditionalDetails
+                  formData={formData}
+                  onChange={handleChange}
+                />
+
+                <div className="mt-12 p-6 bg-blue-50 dark:bg-blue-900/10 rounded-3xl border border-blue-100 dark:border-blue-900/20 flex gap-4 items-start">
+                  <div className="p-2 bg-blue-200 dark:bg-blue-900/30 rounded-xl text-blue-700 dark:text-blue-400 mt-1">
+                    <Info size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-blue-900 dark:text-blue-100 mb-1">
+                      Pre-Inspection Terms
+                    </h4>
+                    <p className="text-sm text-blue-800 dark:text-blue-300/80 leading-relaxed font-medium opacity-80">
+                      Your estimate is based on the condition described. Ensure
+                      Find My Phone is disabled and you are signed out of
+                      iCloud/Gmail before physical inspection.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-8 space-y-4">
+                  {[
+                    "Find My Phone has been disabled and I've signed out of accounts.",
+                    "All data has been backed up and will be wiped from the device.",
+                    "I understand final value is determined after physical inspection.",
+                  ].map((text, i) => (
+                    <label
+                      key={i}
+                      className="flex items-start gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer group"
+                    >
+                      <div className="relative flex items-center pt-1">
+                        <input
+                          type="checkbox"
+                          required
+                          className="peer appearance-none w-6 h-6 border-2 border-gray-200 dark:border-gray-700 rounded-lg checked:bg-green-600 checked:border-green-600 transition-all cursor-pointer"
+                        />
+                        <CheckCircle2 className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 text-white w-4 h-4 ml-1 transition-opacity" />
+                      </div>
+                      <span className="text-gray-700 dark:text-gray-300 font-medium text-sm group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                        {text}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                <div className="mt-10 flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={isCalculating}
+                    className="group relative bg-gray-900 dark:bg-green-600 text-white px-10 py-5 rounded-2xl font-bold hover:bg-green-600 dark:hover:bg-green-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-gray-400 dark:shadow-none active:scale-95"
+                  >
+                    {isCalculating ? (
+                      <span className="flex items-center gap-2">
+                        <svg
+                          className="animate-spin h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Evaluating...
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        Get Final Estimate
+                        <CheckCircle2 className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Recently uploaded */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+                    Recently Listed Mobiles
+                  </h3>
+                  <Link
+                    href="/shop"
+                    className="text-green-600 dark:text-green-400 font-bold text-sm hover:underline"
+                  >
+                    View All Shop
+                  </Link>
+                </div>
+                <RecentlyUploadedProducts
+                  products={recentlyUploaded}
+                  isLoading={isLoadingProducts}
+                />
+              </motion.div>
+            </div>
+
+            {/* Right Sidebar */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="w-full lg:w-1/4"
+            >
+              <TradeInSidebar
+                deviceType="mobile"
+                isCalculating={isCalculating}
+                hasCalculated={hasCalculated}
+                estimatedValue={estimatedValue}
+                calculationBreakdown={calculationBreakdown}
+              />
+            </motion.div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
