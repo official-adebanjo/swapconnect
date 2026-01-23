@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import { SOCIAL_LINKS, QUICK_LINKS, CATEGORIES, ASSETS } from "@/lib/constants";
 import { FaWhatsapp, FaFacebookF, FaInstagram } from "react-icons/fa";
 import { Mail } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const iconMap: Record<string, React.ElementType> = {
   whatsapp: FaWhatsapp,
@@ -32,7 +33,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-gray- mt-8 pt-8 shrink-0">
+    <footer className={cn("bg-card mt-8 pt-8 shrink-0 border-t border-border")}>
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex flex-col md:flex-row md:justify-between gap-8">
           {/* First Column */}
@@ -59,7 +60,7 @@ const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={item.label}
-                  className="text-xl text-foreground hover:text-green-700 transition-colors"
+                  className="text-xl text-foreground hover:text-brand-primary transition-colors"
                 >
                   {(() => {
                     const Icon = iconMap[item.id];
@@ -83,7 +84,7 @@ const Footer: React.FC = () => {
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="text-foreground hover:text-yellow-600 transition-colors text-base"
+                        className="text-foreground hover:text-brand-primary transition-colors text-base"
                       >
                         {link.label}
                       </Link>
@@ -101,7 +102,7 @@ const Footer: React.FC = () => {
                     <li key={cat.href}>
                       <Link
                         href={cat.href}
-                        className="text-foreground hover:text-green-700 transition-colors text-base"
+                        className="text-foreground hover:text-brand-primary transition-colors text-base"
                       >
                         {cat.label}
                       </Link>
@@ -134,14 +135,14 @@ const Footer: React.FC = () => {
                 <input
                   type="email"
                   placeholder="Enter email"
-                  className="bg-gray-300 text-foreground placeholder:text-text-muted rounded-l-full px-4 py-2 flex-1 outline-none border-none"
+                  className="bg-muted text-foreground placeholder:text-text-muted rounded-l-full px-4 py-2 flex-1 outline-none border-none"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <button
                   type="submit"
-                  className="bg-green-700 text-white px-4 py-2 rounded-r-full font-semibold hover:bg-green-800 transition-colors"
+                  className="bg-brand-primary text-white px-4 py-2 rounded-r-full font-semibold hover:bg-brand-primary-hover transition-colors"
                 >
                   Subscribe
                 </button>
@@ -151,7 +152,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
       {/* Copyright section */}
-      <div className="bg-green-900 text-white mt-8">
+      <div className="bg-brand-primary text-white mt-8">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center py-3 text-sm">
             &copy; {getCurrentYear()} All Rights Reserved.

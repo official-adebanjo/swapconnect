@@ -8,7 +8,7 @@ const cardData = [
     category: "Apple",
     imageUrl:
       "https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573351/SwapConnect/home/categories/apple_t6b7my.png",
-    backgroundColor: "red",
+    backgroundColor: "#F43F5E", // Rose 500
     link: "/category/apple",
   },
   {
@@ -16,7 +16,7 @@ const cardData = [
     category: "Speakers",
     imageUrl:
       "https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573351/SwapConnect/home/categories/speakers_rfiz7v.png",
-    backgroundColor: "#FBC52D",
+    backgroundColor: "#FACC15", // Yellow 400
     link: "/category/speakers",
   },
   {
@@ -24,7 +24,7 @@ const cardData = [
     category: "Handband",
     imageUrl:
       "https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573351/SwapConnect/home/categories/handband_crl0o1.png",
-    backgroundColor: "black",
+    backgroundColor: "#1F2937", // Gray 800
     link: "/category/handband",
   },
   {
@@ -32,7 +32,7 @@ const cardData = [
     category: "Mouse",
     imageUrl:
       "https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573351/SwapConnect/home/categories/mouse_cm3v2k.png",
-    backgroundColor: "blue",
+    backgroundColor: "#3B82F6", // Blue 500
     link: "/category/mouse",
   },
   {
@@ -40,7 +40,7 @@ const cardData = [
     category: "Mobile",
     imageUrl:
       "https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573351/SwapConnect/home/categories/mobile_cy7ugt.png",
-    backgroundColor: "green",
+    backgroundColor: "#10B981", // Emerald 500
     link: "/category/mobile",
   },
   {
@@ -48,7 +48,7 @@ const cardData = [
     category: "MacBook",
     imageUrl:
       "https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573351/SwapConnect/home/categories/macbook_hdscrm.png",
-    backgroundColor: "skyblue",
+    backgroundColor: "#0EA5E9", // Sky 500
     link: "/category/macbook",
   },
 ];

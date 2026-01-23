@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { create } from "zustand";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export interface IconTextItem {
   icon: string;
@@ -16,36 +17,36 @@ interface IconTextSectionProps {
   subtitle: string;
 }
 
-// Zustand store for mobile detection (window width)
-interface IconTextSectionStore {
-  isMobile: boolean;
-  setIsMobile: (isMobile: boolean) => void;
-}
-
-const useIconTextSectionStore = create<IconTextSectionStore>((set) => ({
-  isMobile: false,
-  setIsMobile: (isMobile) => set({ isMobile }),
-}));
-
 const IconTextSection: React.FC<IconTextSectionProps> = ({
   icon,
   title,
   subtitle,
 }) => (
-  <div className="flex items-center justify-center">
-    <Image
-      src={icon}
-      alt={title}
-      width={50}
-      height={50}
-      className="mr-3"
-      unoptimized
-    />
-    <div>
-      <h6 className="uppercase mb-0 font-bold text-[#037F44]">{title}</h6>
-      <p className="mb-0">{subtitle}</p>
+  <motion.div
+    whileHover={{ y: -5 }}
+    className={cn(
+      "flex items-center p-4 rounded-2xl bg-white border border-border/50 shadow-sm hover:shadow-md transition-all duration-300",
+    )}
+  >
+    <div className="bg-brand-primary/10 p-3 rounded-xl mr-4 shrink-0">
+      <Image
+        src={icon}
+        alt={title}
+        width={32}
+        height={32}
+        className="w-8 h-8 object-contain"
+        unoptimized
+      />
     </div>
-  </div>
+    <div className="overflow-hidden">
+      <h6 className="uppercase text-[10px] font-black tracking-widest text-brand-primary mb-1 truncate">
+        {title}
+      </h6>
+      <p className="text-sm font-semibold text-text-secondary truncate">
+        {subtitle}
+      </p>
+    </div>
+  </motion.div>
 );
 
 interface IconTextCarouselProps {
@@ -55,38 +56,55 @@ interface IconTextCarouselProps {
 const IconTextCarousel: React.FC<IconTextCarouselProps> = ({
   iconTextData,
 }) => {
-  const { isMobile, setIsMobile } = useIconTextSectionStore();
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Use effect to update isMobile in Zustand store
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [setIsMobile]);
+  }, []);
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0 },
+  };
 
   if (isMobile) {
-    // Show a simple horizontal scroll for mobile
     return (
-      <div className="flex overflow-x-auto gap-4 py-4">
+      <div className="flex overflow-x-auto gap-4 py-4 no-scrollbar">
         {iconTextData.map((item, idx) => (
           <div
             key={idx}
-            className="flex flex-col items-center min-w-[140px] flex-shrink-0"
+            className="flex flex-col items-center min-w-[160px] shrink-0 p-4 bg-white rounded-2xl border border-border/50 shadow-sm"
           >
-            <Image
-              src={item.icon}
-              alt={item.title}
-              width={50}
-              height={50}
-              className="mb-2"
-              unoptimized
-            />
+            <div className="bg-brand-primary/10 p-4 rounded-2xl mb-3">
+              <Image
+                src={item.icon}
+                alt={item.title}
+                width={40}
+                height={40}
+                className="w-10 h-10 object-contain"
+                unoptimized
+              />
+            </div>
             <div className="text-center">
-              <h6 className="uppercase mb-0 font-bold text-[#037F44]">
+              <h6 className="uppercase text-[10px] font-black tracking-widest text-brand-primary mb-1">
                 {item.title}
               </h6>
-              <p className="mb-0">{item.subtitle}</p>
+              <p className="text-xs font-semibold text-text-secondary">
+                {item.subtitle}
+              </p>
             </div>
           </div>
         ))}
@@ -94,19 +112,24 @@ const IconTextCarousel: React.FC<IconTextCarouselProps> = ({
     );
   }
 
-  // Desktop: grid layout
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-      {iconTextData.map((item, idx) => (
-        <div key={idx} className="flex items-center">
+    <motion.div
+      variants={container}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true }}
+      className="grid grid-cols-1 md:grid-cols-4 gap-6"
+    >
+      {iconTextData.map((itemValue, idx) => (
+        <motion.div key={idx} variants={item}>
           <IconTextSection
-            icon={item.icon}
-            title={item.title}
-            subtitle={item.subtitle}
+            icon={itemValue.icon}
+            title={itemValue.title}
+            subtitle={itemValue.subtitle}
           />
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 };
 

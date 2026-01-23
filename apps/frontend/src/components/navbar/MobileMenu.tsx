@@ -3,16 +3,18 @@
 import React from "react";
 import Link from "next/link";
 import { LogOut, LayoutDashboard } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import NavLink from "./NavLink";
 import SearchOverlay from "./SearchOverlay";
 import { NAV_LINKS } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
 interface MobileMenuProps {
   isOpen: boolean;
   isLoggedIn: boolean;
   onClose: () => void;
   onLogout: () => void;
-  searchProps: any; // Simplified for now
+  searchProps: unknown;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({
@@ -22,57 +24,93 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   onLogout,
   searchProps,
 }) => {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-95 z-40 flex flex-col pt-16 px-6 lg:hidden">
-      <ul className="flex flex-col space-y-4 mb-6">
-        {NAV_LINKS.map((link) => (
-          <li key={link.href}>
-            <NavLink
-              href={link.href}
-              label={link.label}
-              onClick={onClose}
-              className="nav-link text-lg font-medium block py-2 text-foreground"
-            />
-          </li>
-        ))}
-        {!isLoggedIn && (
-          <li>
-            <NavLink
-              href="/login"
-              label="Login"
-              onClick={onClose}
-              className="nav-link text-lg font-medium block py-2 text-foreground"
-            />
-          </li>
-        )}
-        {isLoggedIn && (
-          <li>
-            <Link
-              href="/dashboard"
-              className="nav-link text-lg font-medium py-2 text-foreground flex items-center"
-              onClick={onClose}
-            >
-              <LayoutDashboard size={20} className="mr-2" />
-              Dashboard
-            </Link>
-          </li>
-        )}
-        {isLoggedIn && (
-          <li>
-            <button
-              onClick={onLogout}
-              className="w-full text-left nav-link text-lg font-medium py-2 text-red-600 flex items-center"
-            >
-              <LogOut size={20} className="mr-2" /> Logout
-            </button>
-          </li>
-        )}
-      </ul>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className={cn(
+            "fixed inset-0 w-full h-full bg-background/98 backdrop-blur-md z-40 flex flex-col pt-20 px-6 lg:hidden",
+          )}
+        >
+          <ul className="flex flex-col space-y-2 mb-8">
+            {NAV_LINKS.map((link, index) => (
+              <motion.li
+                key={link.href}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <NavLink
+                  href={link.href}
+                  label={link.label}
+                  onClick={onClose}
+                  className="nav-link text-xl font-semibold block py-3 text-foreground hover:text-brand-primary transition-colors border-b border-border/50"
+                />
+              </motion.li>
+            ))}
+            {!isLoggedIn && (
+              <motion.li
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: NAV_LINKS.length * 0.05 }}
+              >
+                <NavLink
+                  href="/login"
+                  label="Login"
+                  onClick={onClose}
+                  className="nav-link text-xl font-semibold block py-3 text-foreground hover:text-brand-primary transition-colors border-b border-border/50"
+                />
+              </motion.li>
+            )}
+            {isLoggedIn && (
+              <motion.li
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: NAV_LINKS.length * 0.05 }}
+              >
+                <Link
+                  href="/dashboard"
+                  className="nav-link text-xl font-semibold py-4 text-foreground flex items-center hover:text-brand-primary transition-colors border-b border-border/50"
+                  onClick={onClose}
+                >
+                  <LayoutDashboard
+                    size={24}
+                    className="mr-3 text-brand-primary"
+                  />
+                  Dashboard
+                </Link>
+              </motion.li>
+            )}
+            {isLoggedIn && (
+              <motion.li
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: (NAV_LINKS.length + 1) * 0.05 }}
+              >
+                <button
+                  onClick={onLogout}
+                  className="w-full text-left nav-link text-xl font-semibold py-4 text-text-error flex items-center hover:bg-error-bg/50 px-2 rounded-lg transition-colors mt-2"
+                >
+                  <LogOut size={24} className="mr-3" /> Logout
+                </button>
+              </motion.li>
+            )}
+          </ul>
 
-      <SearchOverlay {...searchProps} isMobile={true} />
-    </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <SearchOverlay {...searchProps} isMobile={true} />
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

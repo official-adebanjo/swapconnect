@@ -17,6 +17,11 @@ import type { AuthUser } from "@/stores/AuthStore";
 import { ASSETS } from "@/lib/constants";
 
 // OTP Components
+import {
+  renderResendTimer,
+  renderResendButton,
+} from "@/components/auth/OtpRenderers";
+
 const OTPInput = dynamic(
   () => import("otp-input-react").then((mod) => mod.OTPInput),
   { ssr: false },
@@ -346,34 +351,6 @@ const Signup: React.FC = () => {
 
   const inputClass =
     "w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none disabled:bg-gray-200";
-
-  const renderResendTimer = (props?: { remainingTime?: number }) => {
-    const remaining = props?.remainingTime ?? 0;
-
-    return (
-      <span className="text-sm text-gray-500">
-        {remaining > 0 ? `Resend OTP in ${remaining}s` : "Didn't receive code?"}
-      </span>
-    );
-  };
-
-  const renderResendButton = (props?: {
-    onClick?: () => void;
-    disabled?: boolean;
-  }) => {
-    const onClick = props?.onClick ?? (() => {});
-    const disabled = props?.disabled ?? false;
-
-    return (
-      <button
-        onClick={onClick}
-        disabled={disabled}
-        className="text-blue-600 hover:underline text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Resend
-      </button>
-    );
-  };
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-100 p-4 overflow-hidden">

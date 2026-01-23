@@ -1,8 +1,8 @@
-// src/components/LayoutWrapper.tsx
 "use client";
 
 import { usePathname } from "next/navigation";
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -32,7 +32,18 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
   return (
     <>
       {shouldShowNavAndFooter ? <Navbar /> : null}
-      <main>{children}</main>
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={pathname}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="flex-grow"
+        >
+          {children}
+        </motion.main>
+      </AnimatePresence>
       {shouldShowNavAndFooter ? <Footer /> : null}
     </>
   );

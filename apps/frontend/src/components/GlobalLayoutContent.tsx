@@ -5,6 +5,8 @@ import LayoutWrapper from "@/components/LayoutWrapper";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import React from "react";
 
+import { QueryProvider } from "@/components/QueryProvider";
+
 interface GlobalLayoutContentProps {
   children: React.ReactNode;
 }
@@ -18,11 +20,13 @@ export default function GlobalLayoutContent({
   // Only wrap with LayoutWrapper (navbar/footer) if not a dashboard route
   return (
     <ThemeProvider>
-      {isDashboard ? (
-        <>{children}</>
-      ) : (
-        <LayoutWrapper>{children}</LayoutWrapper>
-      )}
+      <QueryProvider>
+        {isDashboard ? (
+          <>{children}</>
+        ) : (
+          <LayoutWrapper>{children}</LayoutWrapper>
+        )}
+      </QueryProvider>
     </ThemeProvider>
   );
 }

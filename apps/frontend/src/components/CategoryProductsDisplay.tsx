@@ -1,11 +1,22 @@
-"use client";
-
-import type React from "react";
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthToken } from "@/hooks/useAuthToken";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
+import {
+  Search,
+  Filter,
+  RefreshCw,
+  AlertCircle,
+  ShoppingBag,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 interface Product {
   id: number;
@@ -35,17 +46,27 @@ interface CategoryProductsDisplayProps {
   categoryName: string;
 }
 
+const ProductSkeleton = () => (
+  <div className="bg-card rounded-2xl border border-border overflow-hidden p-4 space-y-4">
+    <Skeleton className="h-48 w-full rounded-xl" />
+    <div className="space-y-3">
+      <Skeleton className="h-4 w-1/3" />
+      <Skeleton className="h-6 w-full" />
+      <Skeleton className="h-5 w-1/2" />
+      <div className="pt-4 border-t border-border flex justify-between items-center">
+        <Skeleton className="h-4 w-1/4" />
+        <Skeleton className="h-4 w-10" />
+      </div>
+    </div>
+  </div>
+);
+
 export default function CategoryProductsDisplay({
   categoryName,
 }: CategoryProductsDisplayProps) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalProducts, setTotalProducts] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
+  const [appliedSearchTerm, setAppliedSearchTerm] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -53,19 +74,23 @@ export default function CategoryProductsDisplay({
   const token = useAuthToken();
   const limit = 12;
 
-  useEffect(() => {
-    fetchProducts();
-  }, [categoryName, currentPage, searchTerm, sortBy, minPrice, maxPrice]);
-
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
+  const { data, isLoading, error, isRefetching, refetch } = useQuery<{
+    products: Product[];
+    pagination: { total: number; pages: number; page: number };
+  }>({
+    queryKey: [
+      "category-products",
+      categoryName,
+      currentPage,
+      appliedSearchTerm,
+      minPrice,
+      maxPrice,
+    ],
+    queryFn: async () => {
       const queryParams = new URLSearchParams({
         page: currentPage.toString(),
         limit: limit.toString(),
-        ...(searchTerm && { search: searchTerm }),
+        ...(appliedSearchTerm && { search: appliedSearchTerm }),
         ...(minPrice && { minPrice }),
         ...(maxPrice && { maxPrice }),
       });
@@ -79,21 +104,24 @@ export default function CategoryProductsDisplay({
         };
       }>(`/products/category/${categoryName}?${queryParams}`, token);
 
-      if (response.success && response.data) {
-        setProducts(response.data || []);
-        setTotalPages(response.pagination?.pages || 1);
-        setTotalProducts(response.pagination?.total || 0);
-      } else {
+      if (!response.success || !response.data) {
         throw new Error(response.error || "Failed to fetch products");
       }
-    } catch (err) {
-      console.error("Error fetching products:", err);
-      setError(err instanceof Error ? err.message : "Failed to load products");
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+      return {
+        products: response.data.data || [],
+        pagination: response.data.pagination || {
+          total: 0,
+          pages: 1,
+          page: 1,
+        },
+      };
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const products = data?.products || [];
+  const pagination = data?.pagination || { total: 0, pages: 1, page: 1 };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-NG", {
@@ -105,108 +133,97 @@ export default function CategoryProductsDisplay({
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setAppliedSearchTerm(searchTerm);
     setCurrentPage(1);
-    fetchProducts();
   };
 
   const handleFilterReset = () => {
     setSearchTerm("");
+    setAppliedSearchTerm("");
     setMinPrice("");
     setMaxPrice("");
-    setSortBy("newest");
     setCurrentPage(1);
   };
 
-  if (loading && products.length === 0) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-green-700"></div>
-        <span className="ml-3 text-lg text-gray-600">Loading products...</span>
-      </div>
-    );
-  }
-
-  if (error && products.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative inline-block mb-4">
-          <strong className="font-bold">Error!</strong>
-          <span className="block sm:inline ml-2">{error}</span>
-        </div>
-        <button
-          onClick={fetchProducts}
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <form onSubmit={handleSearch} className="space-y-4">
+      <div className="bg-card rounded-3xl border border-border shadow-sm p-6 md:p-8">
+        <form onSubmit={handleSearch} className="space-y-6">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted h-5 w-5" />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Search premium products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full pl-12 pr-4 py-4 bg-page-bg border-none rounded-2xl focus:ring-2 focus:ring-brand-primary placeholder:text-text-muted text-foreground transition-all"
               />
             </div>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Search
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowFilters(!showFilters)}
-              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Filters
-            </button>
+            <div className="flex gap-3">
+              <Button
+                type="submit"
+                className="px-8 rounded-2xl bg-brand-primary hover:bg-brand-primary/90 text-white font-bold h-14"
+              >
+                Search
+              </Button>
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={() => setShowFilters(!showFilters)}
+                className={cn(
+                  "px-6 rounded-2xl border-border h-14 font-semibold group",
+                  showFilters &&
+                    "bg-brand-primary/5 border-brand-primary text-brand-primary",
+                )}
+              >
+                <Filter
+                  className={cn(
+                    "mr-2 h-5 w-5 transition-transform",
+                    showFilters && "rotate-180",
+                  )}
+                />
+                Filters
+              </Button>
+            </div>
           </div>
 
           {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Min Price
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-border/50 animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-text-secondary">
+                  Min Price (₦)
                 </label>
                 <input
                   type="number"
                   placeholder="0"
                   value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-page-bg border-none rounded-xl focus:ring-2 focus:ring-brand-primary text-foreground"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Max Price
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-text-secondary">
+                  Max Price (₦)
                 </label>
                 <input
                   type="number"
-                  placeholder="1000000"
+                  placeholder="No Limit"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-page-bg border-none rounded-xl focus:ring-2 focus:ring-brand-primary text-foreground"
                 />
               </div>
               <div className="flex items-end">
-                <button
+                <Button
                   type="button"
+                  variant="primary"
                   onClick={handleFilterReset}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="w-full h-12 text-text-muted hover:text-destructive hover:bg-destructive/5 rounded-xl transition-colors"
                 >
-                  Reset Filters
-                </button>
+                  <RefreshCw className="mr-2 h-4 w-4" /> Reset Filters
+                </Button>
               </div>
             </div>
           )}
@@ -214,198 +231,229 @@ export default function CategoryProductsDisplay({
       </div>
 
       {/* Results Summary */}
-      <div className="flex justify-between items-center">
-        <p className="text-gray-600">
-          Showing {products.length} of {totalProducts} products
-        </p>
-        {loading && (
-          <div className="flex items-center">
-            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-green-600"></div>
-            <span className="ml-2 text-sm text-gray-600">Loading...</span>
+      <div className="flex justify-between items-center px-2">
+        <div>
+          <h2 className="text-2xl font-black text-foreground capitalize">
+            {categoryName}
+          </h2>
+          <p className="text-text-secondary text-sm font-medium mt-1">
+            Found {pagination.total} premium products
+          </p>
+        </div>
+        {(isRefetching || isLoading) && (
+          <div className="flex items-center gap-3 bg-brand-primary/10 text-brand-primary px-4 py-2 rounded-full border border-brand-primary/20">
+            <RefreshCw className="h-4 w-4 animate-spin" />
+            <span className="text-xs font-bold uppercase tracking-wider">
+              Syncing...
+            </span>
           </div>
         )}
       </div>
 
       {/* Products Grid */}
-      {products.length > 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {[...Array(limit)].map((_, i) => (
+            <ProductSkeleton key={i} />
+          ))}
+        </div>
+      ) : error ? (
+        <div className="text-center py-20 bg-destructive/5 rounded-3xl border border-dashed border-destructive/20">
+          <div className="bg-destructive/10 text-destructive p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="h-8 w-8" />
+          </div>
+          <h3 className="text-xl font-bold text-foreground mb-2">
+            Failed to load products
+          </h3>
+          <p className="text-text-secondary mb-8 max-w-sm mx-auto">
+            {(error as Error).message}
+          </p>
+          <Button
+            onClick={() => refetch()}
+            className="rounded-full px-10 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold"
+          >
+            Try Again
+          </Button>
+        </div>
+      ) : products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product) => (
             <Link
               key={product.id}
               href={`/product/${product.id}`}
-              className="group"
+              className="group h-full"
             >
-              <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+              <div className="bg-card rounded-2xl border border-border shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full relative">
                 {/* Product Image */}
-                <div className="relative w-full h-48 bg-gray-100">
+                <div className="relative w-full h-52 bg-white flex items-center justify-center p-4 overflow-hidden">
                   <Image
-                    src={
-                      product.imageUrl ||
-                      "/placeholder.svg?height=192&width=256&query=product"
-                    }
+                    src={product.imageUrl || "/placeholder.svg"}
                     alt={product.name}
                     fill
                     style={{ objectFit: "contain" }}
-                    className="p-4 group-hover:scale-105 transition-transform duration-200"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = "/placeholder.svg?height=192&width=256";
-                    }}
+                    className="p-6 group-hover:scale-105 transition-transform duration-500"
                   />
 
                   {/* Badges */}
-                  <div className="absolute top-2 left-2 flex flex-col gap-1">
+                  <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5 pointer-events-none">
                     {product.swappable && (
-                      <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                      <Badge
+                        variant="success"
+                        className="bg-brand-primary/90 backdrop-blur-sm text-[10px] px-2 py-0"
+                      >
                         Swappable
-                      </span>
+                      </Badge>
                     )}
                     {product.installmentAvailable && (
-                      <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">
+                      <Badge
+                        variant="secondary"
+                        className="bg-secondary/90 backdrop-blur-sm text-[10px] px-2 py-0"
+                      >
                         Installment
-                      </span>
+                      </Badge>
                     )}
                   </div>
 
                   {/* Stock Status */}
                   {product.stock === 0 && (
-                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                      <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px] flex items-center justify-center">
+                      <Badge
+                        variant="destructive"
+                        className="px-4 py-1 text-sm font-bold"
+                      >
                         Out of Stock
-                      </span>
+                      </Badge>
                     </div>
                   )}
                 </div>
 
                 {/* Product Info */}
-                <div className="p-4">
-                  {/* Category */}
-                  {product.Category && (
-                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                      {product.Category.name}
-                    </p>
-                  )}
+                <div className="p-5 flex flex-col flex-1 gap-2">
+                  <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-widest text-text-muted">
+                    <span>{product.Category?.name || categoryName}</span>
+                    <span>{product.brand}</span>
+                  </div>
 
-                  {/* Product Name */}
-                  <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 group-hover:text-green-600 transition-colors">
+                  <h3 className="font-bold text-foreground text-sm line-clamp-2 leading-snug group-hover:text-brand-primary transition-colors">
                     {product.name}
                   </h3>
 
-                  {/* Brand */}
-                  {product.brand && (
-                    <p className="text-sm text-gray-600 mb-2">
-                      {product.brand}
+                  <div className="mt-auto pt-3">
+                    <p className="text-xl font-black text-brand-primary">
+                      {formatPrice(product.price)}
                     </p>
-                  )}
 
-                  {/* Price */}
-                  <p className="text-lg font-bold text-green-600 mb-2">
-                    {formatPrice(product.price)}
-                  </p>
-
-                  {/* Seller Info */}
-                  {product.Account && (
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <span>
-                        {product.Account.firstName} {product.Account.lastName}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        {product.Account.verified && (
-                          <span
-                            className="text-blue-500"
-                            title="Verified Seller"
-                          >
-                            ✓
+                    {product.Account && (
+                      <div className="mt-3 flex items-center justify-between border-t border-border/50 pt-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-text-secondary truncate max-w-[100px]">
+                            {product.Account.firstName}
                           </span>
-                        )}
-                        {product.Account.badge && (
-                          <span className="bg-yellow-100 text-yellow-800 text-xs px-1 rounded">
-                            {product.Account.badge}
-                          </span>
-                        )}
+                          {product.Account.verified && (
+                            <div
+                              className="bg-blue-500/10 text-blue-500 rounded-full p-0.5"
+                              title="Verified Seller"
+                            >
+                              <svg
+                                className="w-2.5 h-2.5"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs text-text-muted font-medium">
+                          <RefreshCw className="h-3 w-3" />
+                          {product.views}
+                        </div>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Views */}
-                  <p className="text-xs text-gray-400 mt-1">
-                    {product.views} views
-                  </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <div className="text-gray-400 mb-4">
-            <svg
-              className="mx-auto h-12 w-12"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-4m-12 0H4m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2"
-              />
-            </svg>
+        <div className="text-center py-32 bg-card rounded-3xl border border-dashed border-border">
+          <div className="p-6 bg-muted w-20 h-20 rounded-3xl mx-auto mb-6 flex items-center justify-center">
+            <ShoppingBag className="text-text-muted h-10 w-10" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-2xl font-black text-foreground mb-2">
             No products found
           </h3>
-          <p className="text-gray-500 mb-4">
-            Try adjusting your search criteria or filters.
+          <p className="text-text-secondary max-w-xs mx-auto mb-8">
+            We couldn't find any products matching your current filters. Try
+            broadening your search!
           </p>
-          <button
+          <Button
             onClick={handleFilterReset}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            variant="outline-secondary"
+            className="rounded-full px-8 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
           >
-            Clear Filters
-          </button>
+            Clear All Filters
+          </Button>
         </div>
       )}
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center space-x-2 mt-8">
-          <button
+      {pagination.pages > 1 && (
+        <div className="flex justify-center items-center gap-3 mt-12 pb-8">
+          <Button
+            variant="primary"
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+            className="rounded-xl h-12 w-12 p-0 border border-border bg-card shadow-sm hover:bg-page-bg disabled:opacity-30"
           >
-            Previous
-          </button>
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
 
-          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-            const pageNum =
-              Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
-            return (
-              <button
-                key={pageNum}
-                onClick={() => setCurrentPage(pageNum)}
-                className={`px-3 py-2 border rounded-lg transition-colors ${
-                  currentPage === pageNum
-                    ? "bg-green-600 text-white border-green-600"
-                    : "border-gray-300 hover:bg-gray-50"
-                }`}
-              >
-                {pageNum}
-              </button>
-            );
-          })}
+          <div className="flex gap-2">
+            {Array.from({ length: pagination.pages }, (_, i) => i + 1)
+              .filter(
+                (pageNum) =>
+                  pageNum === 1 ||
+                  pageNum === pagination.pages ||
+                  (pageNum >= currentPage - 1 && pageNum <= currentPage + 1),
+              )
+              .map((pageNum, idx, array) => (
+                <React.Fragment key={pageNum}>
+                  {idx > 0 && array[idx - 1] !== pageNum - 1 && (
+                    <span className="flex items-center text-text-muted px-2">
+                      ...
+                    </span>
+                  )}
+                  <Button
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={cn(
+                      "rounded-xl h-12 w-12 p-0 font-bold transition-all",
+                      currentPage === pageNum
+                        ? "bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-110"
+                        : "bg-card text-foreground border border-border hover:bg-page-bg",
+                    )}
+                  >
+                    {pageNum}
+                  </Button>
+                </React.Fragment>
+              ))}
+          </div>
 
-          <button
+          <Button
+            variant="primary"
             onClick={() =>
-              setCurrentPage(Math.min(totalPages, currentPage + 1))
+              setCurrentPage(Math.min(pagination.pages, currentPage + 1))
             }
-            disabled={currentPage === totalPages}
-            className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+            disabled={currentPage === pagination.pages}
+            className="rounded-xl h-12 w-12 p-0 border border-border bg-card shadow-sm hover:bg-page-bg disabled:opacity-30"
           >
-            Next
-          </button>
+            <ChevronRight className="h-6 w-6" />
+          </Button>
         </div>
       )}
     </div>

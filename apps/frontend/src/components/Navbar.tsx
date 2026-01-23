@@ -16,6 +16,7 @@ import { useUserStore } from "@/stores/AuthStore";
 import useCartStore from "@/stores/CartStore";
 import useNavbarStore from "@/stores/NavbarStore";
 import { getValidAvatarUrl } from "@/utils/user";
+import { cn } from "@/lib/utils";
 
 // Sub-components
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -38,6 +39,7 @@ const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState(MOCK_SEARCH_ITEMS);
   const [showSearchPopup, setShowSearchPopup] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const searchPopupRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -63,13 +65,22 @@ const Navbar: React.FC = () => {
       setShowSearchPopup(false);
       return;
     }
-    const filteredResults = MOCK_SEARCH_ITEMS.filter(
-      (item) =>
-        item.title.toLowerCase().includes(query.toLowerCase()) ||
-        item.category.toLowerCase().includes(query.toLowerCase()),
-    );
-    setSearchResults(filteredResults);
+
     setShowSearchPopup(true);
+    setIsSearching(true);
+
+    // Simulate network delay for premium feel and to show skeleton
+    const timer = setTimeout(() => {
+      const filteredResults = MOCK_SEARCH_ITEMS.filter(
+        (item) =>
+          item.title.toLowerCase().includes(query.toLowerCase()) ||
+          item.category.toLowerCase().includes(query.toLowerCase()),
+      );
+      setSearchResults(filteredResults);
+      setIsSearching(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleSearchResultClick = useCallback(
@@ -117,6 +128,7 @@ const Navbar: React.FC = () => {
     setSearchQuery,
     searchResults,
     showSearchPopup,
+    isLoading: isSearching,
     onSearch: performSearch,
     onResultClick: handleSearchResultClick,
     closePopup: closeSearchPopup,
@@ -126,7 +138,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full bg-white shadow-sm z-50">
+      <nav className="fixed top-0 left-0 w-full bg-background border-b border-border shadow-sm z-50">
         <div className="container max-w-6xl mx-auto flex items-center justify-between py-2 px-4 h-[60px]">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
@@ -165,16 +177,19 @@ const Navbar: React.FC = () => {
           {/* Desktop Right Icons */}
           <div className="hidden lg:flex items-center space-x-4 flex-shrink-0">
             <Link href="/cart" className="relative p-1">
-              <ShoppingCart className="text-green-700 w-5 h-5" />
+              <ShoppingCart className="text-brand-primary w-5 h-5" />
               {carts?.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-1.5 py-0.5">
+                <span className="absolute -top-2 -right-2 bg-text-error text-white text-xs rounded-full px-1.5 py-0.5">
                   {carts.length}
                 </span>
               )}
             </Link>
 
-            <button className="p-1" aria-label="Notifications">
-              <Bell className="text-green-700 w-5 h-5" />
+            <button
+              className="p-1"
+              aria-label="Notifications text-brand-primary"
+            >
+              <Bell className="text-brand-primary w-5 h-5" />
             </button>
 
             <SearchOverlay {...searchProps} />
@@ -194,9 +209,9 @@ const Navbar: React.FC = () => {
           {/* Mobile Cart & Toggle */}
           <div className="flex items-center lg:hidden">
             <Link href="/cart" className="relative mr-2 p-1">
-              <ShoppingCart className="text-green-700 w-5 h-5" />
+              <ShoppingCart className="text-brand-primary w-5 h-5" />
               {carts?.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-1.5 py-0.5">
+                <span className="absolute -top-2 -right-2 bg-text-error text-white text-xs rounded-full px-1.5 py-0.5">
                   {carts.length}
                 </span>
               )}
@@ -207,14 +222,14 @@ const Navbar: React.FC = () => {
               className="p-1 mr-2"
               aria-label="Toggle search"
             >
-              <Search className="text-green-700 w-5 h-5" />
+              <Search className="text-brand-primary w-5 h-5" />
             </button>
 
             {isLoggedIn && (
               <Link
                 href="/dashboard"
                 onClick={handleSelect}
-                className="rounded-full overflow-hidden w-8 h-8 flex items-center justify-center border-2 border-transparent hover:border-green-700 transition-all duration-200 mr-2"
+                className="rounded-full overflow-hidden w-8 h-8 flex items-center justify-center border-2 border-transparent hover:border-brand-primary transition-all duration-200 mr-2"
               >
                 <Image
                   src={userImageSrc}
@@ -244,12 +259,15 @@ const Navbar: React.FC = () => {
 
       {/* Spacer */}
       <div
-        className={`h-[60px] ${!expanded && isMobileSearchOpen ? "h-[110px]" : ""} lg:h-[60px] transition-all`}
+        className={cn(
+          "h-[60px] lg:h-[60px] transition-all",
+          !expanded && isMobileSearchOpen ? "h-[110px]" : "",
+        )}
       ></div>
 
       {/* Mobile Search Bar (when menu is closed but search is open) */}
       {!expanded && isMobileSearchOpen && (
-        <div className="lg:hidden fixed top-[60px] left-0 w-full bg-white shadow-sm z-40 px-4 py-2">
+        <div className="lg:hidden fixed top-[60px] left-0 w-full bg-background border-b border-border shadow-sm z-40 px-4 py-2">
           <SearchOverlay {...searchProps} isMobile={true} />
         </div>
       )}
