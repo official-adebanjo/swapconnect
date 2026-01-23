@@ -3,9 +3,21 @@
 import { useEffect, useMemo, type ChangeEvent } from "react";
 import ProductCard from "./ProductCard";
 import { create } from "zustand";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import useProductStore from "@/stores/useProductStoreNew";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  SlidersHorizontal,
+  LayoutGrid,
+  ArrowUpDown,
+  SearchX,
+} from "lucide-react";
 import useCartStore from "@/stores/CartStore";
+import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { ProductSkeleton } from "./ProductCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Use the Product type from the product store to ensure compatibility
 import type { Product } from "@/stores/useProductStoreNew";
@@ -27,7 +39,7 @@ const useProductsDisplayUIStore = create<ProductsDisplayUIState>((set) => ({
   currentPage: 1,
   selectedSort: "Default Sorting",
   minPrice: 0,
-  maxPrice: 100000000000000,
+  maxPrice: 1000000,
   showSortDropdown: false,
   setCurrentPage: (page) => set({ currentPage: page }),
   setSelectedSort: (sort) => set({ selectedSort: sort }),
@@ -44,7 +56,6 @@ const sortOptions = [
 ];
 
 const ProductsDisplay = () => {
-  const { loading, error, products, fetchProducts } = useProductStore();
   const { addToCart, carts } = useCartStore();
 
   const {
@@ -60,16 +71,26 @@ const ProductsDisplay = () => {
     setShowSortDropdown,
   } = useProductsDisplayUIStore();
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+  const {
+    data: apiResponse,
+    isLoading,
+    error: queryError,
+    refetch,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: () => api.get<Product[]>("/products"),
+  });
 
-  // Reset to page 1 on sort/filter change
+  const products = useMemo(() => apiResponse?.data || [], [apiResponse]);
+  const error =
+    queryError instanceof Error
+      ? queryError.message
+      : apiResponse?.error || null;
+
   useEffect(() => {
     setCurrentPage(1);
   }, [minPrice, maxPrice, selectedSort, setCurrentPage]);
 
-  // Filtered and sorted products
   const processedProducts = useMemo(() => {
     const filtered = products.filter((product: Product) => {
       const numericPrice = Number(String(product.price).replace(/[^\d.]/g, ""));
@@ -98,7 +119,7 @@ const ProductsDisplay = () => {
 
   const displayedProducts = processedProducts.slice(
     (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
+    currentPage * productsPerPage,
   );
 
   const handleSortSelect = (option: string) => {
@@ -108,7 +129,7 @@ const ProductsDisplay = () => {
 
   const handlePriceChange = (
     e: ChangeEvent<HTMLInputElement>,
-    type: "min" | "max"
+    type: "min" | "max",
   ) => {
     const value = Number(e.target.value);
     if (type === "min") setMinPrice(value);
@@ -117,95 +138,205 @@ const ProductsDisplay = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 300, behavior: "smooth" });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-green-700"></div>
-        <span className="ml-3 text-lg text-gray-600">Loading products...</span>
+      <div className="flex flex-col gap-10">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-12 w-12 rounded-2xl" />
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-32" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+          </div>
+          <Skeleton className="h-14 w-[200px] rounded-2xl" />
+        </div>
+        <div className="flex flex-col lg:flex-row gap-10">
+          <div className="w-full lg:w-80 hidden lg:block">
+            <Skeleton className="h-[400px] w-full rounded-[3rem]" />
+          </div>
+          <div className="flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <ProductSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative inline-block">
-          <strong className="font-bold">Error!</strong>
-          <span className="block sm:inline ml-2">{error}</span>
+      <div className="text-center py-20 bg-white dark:bg-gray-900 rounded-[3rem] shadow-xl border border-gray-100 dark:border-gray-800">
+        <div className="inline-flex p-6 bg-red-50 dark:bg-red-900/10 rounded-full text-red-600 mb-6 font-bold uppercase tracking-widest text-xs gap-2 items-center">
+          <SearchX size={20} />
+          Error Loading Products
         </div>
+        <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto font-medium">
+          {error}
+        </p>
         <button
-          onClick={fetchProducts}
-          className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+          onClick={() => refetch()}
+          className="px-10 py-4 bg-gray-900 dark:bg-green-600 text-white rounded-2xl font-bold hover:bg-green-600 transition-all shadow-xl active:scale-95"
         >
-          Try Again
+          Try Refreshing
         </button>
       </div>
     );
   }
 
-  if (products.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative inline-block">
-          <strong className="font-bold">No Products Found</strong>
-          <span className="block sm:inline ml-2">
-            No products available at the moment
-          </span>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">
-          Products ({totalFilteredProducts})
-        </h2>
-        <div className="relative">
-          <button
-            onClick={() => setShowSortDropdown(!showSortDropdown)}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-          >
-            {selectedSort}
-            <span
-              className={`transition-transform ${
-                showSortDropdown ? "rotate-180" : ""
-              }`}
+    <div className="flex flex-col gap-10">
+      {/* Search Header Info */}
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 text-green-600">
+            <LayoutGrid size={24} />
+          </div>
+          <div>
+            <h2 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+              Devices
+            </h2>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
+              {totalFilteredProducts} models available
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <button
+              onClick={() => setShowSortDropdown(!showSortDropdown)}
+              className="flex items-center gap-3 px-6 py-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-lg text-sm font-bold text-gray-700 dark:text-gray-200 hover:border-green-500 transition-all min-w-[200px] justify-between"
             >
-              ▼
-            </span>
-          </button>
-          {showSortDropdown && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
-              {sortOptions.map((option) => (
-                <button
-                  key={option}
-                  onClick={() => handleSortSelect(option)}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                    option === selectedSort ? "bg-green-50 text-green-700" : ""
-                  }`}
+              <div className="flex items-center gap-2">
+                <ArrowUpDown size={16} className="text-green-600" />
+                {selectedSort}
+              </div>
+              <ChevronLeft
+                className={`transition-transform duration-300 -rotate-90 ${showSortDropdown ? "rotate-90" : ""}`}
+                size={16}
+              />
+            </button>
+            <AnimatePresence>
+              {showSortDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 mt-3 w-64 bg-white dark:bg-gray-900 rounded-[2rem] shadow-2xl z-50 border border-gray-100 dark:border-gray-800 py-3 overflow-hidden shadow-green-900/10"
                 >
-                  {option}
-                </button>
-              ))}
-            </div>
-          )}
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option}
+                      onClick={() => handleSortSelect(option)}
+                      className={`block w-full text-left px-6 py-3 text-sm font-bold transition-colors ${
+                        option === selectedSort
+                          ? "text-green-600 bg-green-50 dark:bg-green-900/10"
+                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
-      {/* Main content: Product grid and price filter side by side */}
-      <div className="flex flex-col md:flex-row gap-6">
+
+      <div className="flex flex-col lg:flex-row gap-10">
+        {/* Sidebar: Filters */}
+        <div className="w-full lg:w-80 space-y-8">
+          <div className="bg-white dark:bg-gray-900 rounded-[3rem] shadow-xl shadow-gray-200/50 dark:shadow-none p-8 border border-gray-100 dark:border-gray-800 sticky top-24">
+            <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-50 dark:border-gray-800">
+              <SlidersHorizontal size={20} className="text-green-600" />
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                Refine View
+              </h3>
+            </div>
+
+            <div className="space-y-10">
+              {/* Price Range */}
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <label className="text-sm font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                    Price Limit
+                  </label>
+                  <span className="text-xs font-black text-green-600 dark:text-green-500 bg-green-50 dark:bg-green-900/20 px-3 py-1 rounded-full border border-green-100 dark:border-green-900/30">
+                    ₦{maxPrice.toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="px-1">
+                  <input
+                    type="range"
+                    min={0}
+                    max={1000000}
+                    step={10000}
+                    value={maxPrice}
+                    onChange={(e) => handlePriceChange(e, "max")}
+                    className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full appearance-none cursor-pointer accent-green-600"
+                  />
+                  <div className="flex justify-between mt-3 text-[10px] font-black text-gray-300 dark:text-gray-700 uppercase tracking-widest">
+                    <span>₦0</span>
+                    <span>₦1M+</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tips Section */}
+              <div className="p-6 bg-green-50 dark:bg-green-900/10 rounded-3xl border border-green-100 dark:border-green-900/20">
+                <div className="flex items-center gap-2 mb-2 text-green-700 dark:text-green-400">
+                  <Filter size={14} strokeWidth={3} />
+                  <span className="text-xs font-black uppercase tracking-widest">
+                    Shopping Tip
+                  </span>
+                </div>
+                <p className="text-[11px] text-green-800 dark:text-green-300/80 leading-relaxed font-bold italic opacity-80">
+                  Use &quot;Newest Arrivals&quot; to see fresh listings from
+                  verified sellers first.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Product Grid */}
         <div className="flex-1">
           {totalFilteredProducts === 0 ? (
-            <div className="bg-blue-100 text-blue-700 p-4 rounded mb-4">
-              No products match your filter criteria.
-            </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-white dark:bg-gray-900 p-20 rounded-[3rem] text-center border border-gray-100 dark:border-gray-800 shadow-xl"
+            >
+              <div className="inline-flex p-6 bg-gray-50 dark:bg-gray-800 rounded-full text-gray-400 mb-6">
+                <SearchX size={48} />
+              </div>
+              <h4 className="text-2xl font-black text-gray-900 dark:text-white transition-colors uppercase tracking-tight italic mb-2">
+                No matches found
+              </h4>
+              <p className="text-gray-500 font-medium mb-8">
+                Try adjusting your price filters or search terms.
+              </p>
+              <button
+                onClick={() => {
+                  setMinPrice(0);
+                  setMaxPrice(1000000);
+                }}
+                className="text-green-600 font-black uppercase tracking-widest text-xs hover:underline decoration-2 underline-offset-8"
+              >
+                Reset all filters
+              </button>
+            </motion.div>
           ) : (
-            <div className="grid grid-cols-1 mx-10 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
               {displayedProducts.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -222,97 +353,55 @@ const ProductsDisplay = () => {
 
           {/* Pagination */}
           {totalFilteredPages > 1 && (
-            <div className="flex justify-center items-center space-x-2 mt-8">
+            <div className="flex justify-center items-center gap-4 mt-20">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-                aria-label="Previous page"
+                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-lg text-gray-600 dark:text-gray-400 hover:text-green-600 disabled:opacity-30 transition-all active:scale-90"
               >
-                <FaAngleLeft />
+                <ChevronLeft size={20} />
               </button>
 
-              {/* Page numbers */}
-              <div className="flex space-x-1">
-                {Array.from(
-                  { length: Math.min(5, totalFilteredPages) },
-                  (_, index) => {
-                    let pageNumber;
-                    if (totalFilteredPages <= 5) {
-                      pageNumber = index + 1;
-                    } else if (currentPage <= 3) {
-                      pageNumber = index + 1;
-                    } else if (currentPage >= totalFilteredPages - 2) {
-                      pageNumber = totalFilteredPages - 4 + index;
-                    } else {
-                      pageNumber = currentPage - 2 + index;
-                    }
-
+              <div className="flex gap-2">
+                {Array.from({ length: totalFilteredPages }, (_, i) => i + 1)
+                  .filter((page) => {
+                    if (totalFilteredPages <= 7) return true;
                     return (
+                      page === 1 ||
+                      page === totalFilteredPages ||
+                      Math.abs(page - currentPage) <= 1
+                    );
+                  })
+                  .map((page, index, array) => (
+                    <div key={page} className="flex gap-2">
+                      {index > 0 && page - array[index - 1] > 1 && (
+                        <span className="flex items-center text-gray-300">
+                          ...
+                        </span>
+                      )}
                       <button
-                        key={pageNumber}
-                        onClick={() => handlePageChange(pageNumber)}
-                        className={`px-3 py-2 rounded-md border border-gray-300 ${
-                          pageNumber === currentPage
-                            ? "bg-green-600 text-white hover:bg-green-700"
-                            : "bg-white text-gray-700 hover:bg-gray-100"
+                        onClick={() => handlePageChange(page)}
+                        className={`w-12 h-12 rounded-2xl font-black transition-all active:scale-95 shadow-lg ${
+                          page === currentPage
+                            ? "bg-gray-900 dark:bg-green-600 text-white shadow-green-900/20"
+                            : "bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:border-green-500"
                         }`}
                       >
-                        {pageNumber}
+                        {page}
                       </button>
-                    );
-                  }
-                )}
+                    </div>
+                  ))}
               </div>
 
               <button
-                className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalFilteredPages}
-                aria-label="Next page"
+                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-lg text-gray-600 dark:text-gray-400 hover:text-green-600 disabled:opacity-30 transition-all active:scale-90"
               >
-                <FaAngleRight />
+                <ChevronRight size={20} />
               </button>
             </div>
           )}
-        </div>
-        {/* Price Filter - now beside the grid */}
-        <div className="w-full md:w-[260px] bg-white rounded-lg shadow-md p-4 h-fit self-start">
-          <h5 className="font-semibold mb-4">Filter By Price</h5>
-          <div className="mb-4">
-            <label
-              htmlFor="minPrice"
-              className="block text-sm text-gray-700 mb-1"
-            >
-              Min Price: ₦{minPrice}
-            </label>
-            <input
-              id="minPrice"
-              type="range"
-              min={0}
-              max={100000000000000}
-              value={minPrice}
-              onChange={(e) => handlePriceChange(e, "min")}
-              className="w-full accent-green-600"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="maxPrice"
-              className="block text-sm text-gray-700 mb-1"
-            >
-              Max Price: ₦{maxPrice}
-            </label>
-            <input
-              id="maxPrice"
-              type="range"
-              min={0}
-              max={1000}
-              value={maxPrice}
-              onChange={(e) => handlePriceChange(e, "max")}
-              className="w-full accent-green-600"
-            />
-          </div>
         </div>
       </div>
     </div>
