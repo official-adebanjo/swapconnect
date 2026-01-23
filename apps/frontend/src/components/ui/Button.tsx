@@ -4,6 +4,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?:
     | "primary"
     | "success"
+    | "destructive"
     | "outline-secondary"
     | "outline-success"
     | "link";
@@ -28,6 +29,10 @@ const Button: React.FC<ButtonProps> = ({
     case "success":
       variantClasses =
         "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500";
+      break;
+    case "destructive":
+      variantClasses =
+        "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500";
       break;
     case "outline-secondary":
       variantClasses =

@@ -13,7 +13,7 @@ interface SearchItem {
   url: string;
 }
 
-interface SearchOverlayProps {
+export interface SearchOverlayProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   searchResults: SearchItem[];

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { LogOut, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import NavLink from "./NavLink";
-import SearchOverlay from "./SearchOverlay";
+import SearchOverlay, { type SearchOverlayProps } from "./SearchOverlay";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,7 @@ interface MobileMenuProps {
   isLoggedIn: boolean;
   onClose: () => void;
   onLogout: () => void;
-  searchProps: unknown;
+  searchProps: Omit<SearchOverlayProps, "isMobile">;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({
