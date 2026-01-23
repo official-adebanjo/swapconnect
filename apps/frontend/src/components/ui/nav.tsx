@@ -18,6 +18,7 @@ import { useAuthToken } from "../../hooks/useAuthToken";
 import { useUserStore } from "@/stores/AuthStore";
 import NotificationBell from "@/components/ui/notification-bell";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { getValidAvatarUrl, DEFAULT_USER_ICON } from "@/utils/user";
 
 const menuItems = [
   { label: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -32,30 +33,6 @@ const menuItems = [
 interface NavProps {
   title: string;
 }
-
-const DEFAULT_USER_ICON = "/images/user-icon.webp";
-
-const getValidAvatarUrl = (avatarUrl: string | null | undefined): string => {
-  // Return default if no avatar or invalid avatar
-  if (!avatarUrl || typeof avatarUrl !== "string" || avatarUrl.trim() === "") {
-    return DEFAULT_USER_ICON;
-  }
-
-  // Check if it's a problematic external URL (vectorstock, etc.)
-  if (
-    avatarUrl.includes("vectorstock.com") ||
-    avatarUrl.includes("placeholder")
-  ) {
-    return DEFAULT_USER_ICON;
-  }
-
-  // If it's a relative path, ensure it starts with /
-  if (!avatarUrl.startsWith("http") && !avatarUrl.startsWith("/")) {
-    return `/${avatarUrl}`;
-  }
-
-  return avatarUrl;
-};
 
 const Navbar: React.FC<NavProps> = ({ title }) => {
   const [menuOpen, setMenuOpen] = useState(false);

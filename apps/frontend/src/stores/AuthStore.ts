@@ -102,7 +102,7 @@ export const useUserStore = create<UserStore>()(
         } catch (error) {
           console.error(
             "AuthStore: Failed to check auth state with backend:",
-            error
+            error,
           );
           localStorage.removeItem("authToken");
           set({
@@ -122,6 +122,16 @@ export const useUserStore = create<UserStore>()(
         token: state.token,
         isAuthenticated: state.isAuthenticated,
       }),
-    }
-  )
+      onRehydrateStorage: (state) => {
+        return (hydratedState, error) => {
+          if (error) {
+            console.error("AuthStore: Error during hydration:", error);
+          } else if (hydratedState) {
+            hydratedState.isHydrated = true;
+            hydratedState.checkAuth();
+          }
+        };
+      },
+    },
+  ),
 );

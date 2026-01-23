@@ -11,10 +11,10 @@ export const useAuthToken = () => {
     const tokenFromParams = params.get("token");
 
     if (tokenFromParams) {
-      localStorage.setItem("token", tokenFromParams);
+      localStorage.setItem("authToken", tokenFromParams);
       setToken(tokenFromParams);
     } else {
-      const tokenFromStorage = localStorage.getItem("token");
+      const tokenFromStorage = localStorage.getItem("authToken");
       setToken(tokenFromStorage);
     }
   }, []);

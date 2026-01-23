@@ -8,6 +8,7 @@ import Bugsnag from "@bugsnag/js";
 import BugsnagPerformance from "@bugsnag/browser-performance";
 
 import { Inter } from "next/font/google";
+import { ASSETS } from "@/lib/constants";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,10 +16,10 @@ const inter = Inter({
 });
 
 // Bugsnag initialization remains here as it's typically client-side setup
-if (typeof window !== "undefined") {
+if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_BUGSNAG_API_KEY) {
   // Ensure Bugsnag runs only in the browser environment
-  Bugsnag.start({ apiKey: "452f2c7e4be3e335498c8ce760a969dd" });
-  BugsnagPerformance.start({ apiKey: "452f2c7e4be3e335498c8ce760a969dd" });
+  Bugsnag.start({ apiKey: process.env.NEXT_PUBLIC_BUGSNAG_API_KEY });
+  BugsnagPerformance.start({ apiKey: process.env.NEXT_PUBLIC_BUGSNAG_API_KEY });
 }
 
 export const metadata: Metadata = {
@@ -35,15 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link
-          rel="icon"
-          href="https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573356/SwapConnect/favicon-logo_bci2ur.png"
-          type="image/png"
-        />
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-        />
+        <link rel="icon" href={ASSETS.FAVICON} type="image/png" />
       </head>
       <body className={`${inter.variable} antialiased`}>
         {/* Render the Client Component here */}

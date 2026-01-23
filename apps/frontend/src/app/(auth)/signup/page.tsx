@@ -14,6 +14,8 @@ import { api } from "@/lib/api";
 import { useUserStore } from "@/stores/AuthStore";
 import type { AuthUser } from "@/stores/AuthStore";
 
+import { ASSETS } from "@/lib/constants";
+
 // OTP Components
 const OTPInput = dynamic(
   () => import("otp-input-react").then((mod) => mod.OTPInput),
@@ -376,9 +378,9 @@ const Signup: React.FC = () => {
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-100 p-4 overflow-hidden">
       <CenterCard
-        leftImageSrc="https://res.cloudinary.com/ds83mhjcm/image/upload/v1720707824/SwapConnect/auth/signup_img_bty689.png"
+        leftImageSrc={ASSETS.SIGNUP_IMG}
         leftImageAlt="Signup Illustration"
-        leftLogoSrc="https://res.cloudinary.com/ds83mhjcm/image/upload/v1720710233/SwapConnect/swapconnect-full-logo-trans_lodvax.png"
+        leftLogoSrc={ASSETS.FULL_LOGO_TRANS}
       >
         <h4 className="text-2xl font-bold text-gray-800 mb-2">
           Create Account
@@ -532,7 +534,7 @@ const Signup: React.FC = () => {
             disabled={isProcessing || !isTermsAccepted}
           >
             <Image
-              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              src={ASSETS.GOOGLE_ICON}
               alt="Google logo"
               width={20}
               height={20}

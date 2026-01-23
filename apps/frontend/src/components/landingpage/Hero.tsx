@@ -6,21 +6,23 @@ import Link from "next/link";
 import CustomNavbar from "./CustomNavbar";
 import { useEffect } from "react";
 
+import { ASSETS } from "@/lib/constants";
+
 const slides = [
   {
     title: "Upgrade, Exchange, Elevate",
     desc: "Unlock the power of tech swapping solutions.",
-    img: "https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573352/SwapConnect/home/hero_carousel/gamepad_hero_esmyyq.png",
+    img: ASSETS.HERO.GAMEPAD,
   },
   {
     title: "Swap Smarter, Live Better.",
     desc: "Unlock the power of tech swapping.",
-    img: "https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573353/SwapConnect/home/hero_carousel/landing_phone_bg_ugdnrm.png",
+    img: ASSETS.HERO.PHONE,
   },
   {
     title: "The Future of Device Evolution",
     desc: "Connecting tech enthusiasts, One solution at a time.",
-    img: "https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573353/SwapConnect/home/hero_carousel/Android_phone_hero_tsjtwy.png",
+    img: ASSETS.HERO.ANDROID,
   },
 ];
 

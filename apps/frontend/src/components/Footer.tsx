@@ -5,46 +5,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { SOCIAL_LINKS, QUICK_LINKS, CATEGORIES, ASSETS } from "@/lib/constants";
+import { FaWhatsapp, FaFacebookF, FaInstagram } from "react-icons/fa";
+import { Mail } from "lucide-react";
 
-const socialLinks = [
-  {
-    icon: "fab fa-whatsapp",
-    href: "https://wa.me/2348101641196",
-    label: "WhatsApp",
-  },
-  {
-    icon: "fab fa-facebook-f",
-    href: "https://www.facebook.com/SwapConnect",
-    label: "Facebook",
-  },
-  {
-    icon: "fab fa-instagram",
-    href: "https://www.instagram.com/swap_connect",
-    label: "Instagram",
-  },
-  {
-    icon: "fas fa-envelope",
-    href: "mailto:swapconnecttech@gmail.com",
-    label: "Email",
-  },
-];
-
-const quickLinks = [
-  { href: "/", label: "Home" },
-  { href: "/swap", label: "Swap" },
-  { href: "/about", label: "About Us" },
-  { href: "/shop", label: "Shop" },
-  { href: "/blog", label: "Blog" },
-];
-
-const categories = [
-  { href: "/category/ios", label: "iOS" },
-  { href: "/category/bluetooth", label: "Bluetooths" },
-  { href: "/category/watches", label: "Watches" },
-  { href: "/category/accessories", label: "Accessories" },
-  { href: "/category/androids", label: "Androids" },
-  { href: "/category/laptops", label: "Laptops" },
-];
+const iconMap: Record<string, React.ElementType> = {
+  whatsapp: FaWhatsapp,
+  facebook: FaFacebookF,
+  instagram: FaInstagram,
+  email: Mail,
+};
 
 const Footer: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -62,17 +32,17 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-gray- mt-8 pt-8 flex-shrink-0">
+    <footer className="bg-gray- mt-8 pt-8 shrink-0">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex flex-col md:flex-row md:justify-between gap-8">
           {/* First Column */}
           <div className="mb-6 md:mb-0 md:w-1/4">
             <Image
-              src="https://res.cloudinary.com/ds83mhjcm/image/upload/v1719573357/SwapConnect/logo-full_dhcmrc.png"
+              src={ASSETS.LOGO}
               alt="Logo"
               width={150}
               height={40}
-              className="mb-4"
+              className="mb-4 cursor-pointer"
               onClick={handleClick}
             />
             <p className="text-text-secondary text-sm mb-4">
@@ -82,16 +52,19 @@ const Footer: React.FC = () => {
               place.
             </p>
             <div className="flex gap-3 mt-2">
-              {socialLinks.map((item) => (
+              {SOCIAL_LINKS.map((item) => (
                 <a
-                  key={item.icon}
+                  key={item.id}
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={item.label}
+                  className="text-xl text-foreground hover:text-green-700 transition-colors"
                 >
-                  <i
-                    className={`${item.icon} text-xl text-foreground hover:text-green-700 transition-colors`}
-                  />
+                  {(() => {
+                    const Icon = iconMap[item.id];
+                    return Icon ? <Icon size={24} /> : null;
+                  })()}
                 </a>
               ))}
             </div>
@@ -106,7 +79,7 @@ const Footer: React.FC = () => {
                   Quick links
                 </h5>
                 <ul className="space-y-2">
-                  {quickLinks.map((link) => (
+                  {QUICK_LINKS.map((link) => (
                     <li key={link.href}>
                       <Link
                         href={link.href}
@@ -124,7 +97,7 @@ const Footer: React.FC = () => {
                   Categories
                 </h5>
                 <ul className="space-y-2">
-                  {categories.map((cat) => (
+                  {CATEGORIES.map((cat) => (
                     <li key={cat.href}>
                       <Link
                         href={cat.href}

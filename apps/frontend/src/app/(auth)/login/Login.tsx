@@ -14,6 +14,7 @@ import Image from "next/image";
 import { useUserStore } from "@/stores/AuthStore";
 import CenterCard from "../CenterCard";
 import { api } from "@/lib/api";
+import { ASSETS } from "@/lib/constants";
 
 // OTP Components
 const OTPInput = dynamic(
@@ -415,9 +416,9 @@ const Login: React.FC = () => {
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-100 p-4 overflow-hidden">
       <CenterCard
-        leftLogoSrc="/logo-white.webp"
+        leftLogoSrc={ASSETS.LOGO_WHITE}
         leftImageAlt="Login Illustration"
-        leftImageSrc="/login-img.webp"
+        leftImageSrc={ASSETS.LOGIN_IMG}
       >
         <h4 className="text-2xl font-bold text-gray-800 mb-2">Welcome back!</h4>
 
@@ -482,7 +483,7 @@ const Login: React.FC = () => {
             disabled={isProcessing}
           >
             <Image
-              src="/google-icon.svg"
+              src={ASSETS.GOOGLE_ICON}
               alt="Google"
               width={18}
               height={18}
