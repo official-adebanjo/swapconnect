@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 // import Link from "next/link";
-import { FaAngleUp, FaAngleDown } from "react-icons/fa";
+import { ChevronUp, ChevronDown } from "lucide-react";
 import useSimilarProductsStore from "../stores/useSimilarProductStore";
 import Spinner from "./ui/Spinner";
 
@@ -26,7 +26,7 @@ const SimilarProducts: React.FC = () => {
 
   const visibleProducts = products.slice(
     startIndex,
-    startIndex + productsPerPage
+    startIndex + productsPerPage,
   );
 
   if (loading) {
@@ -47,7 +47,7 @@ const SimilarProducts: React.FC = () => {
           disabled={!showPrev}
           aria-label="Scroll up"
         >
-          <FaAngleUp size={24} />
+          <ChevronUp size={24} />
         </button>
         <div className="flex flex-col gap-4 ">
           {visibleProducts.map((product) => (
@@ -75,7 +75,7 @@ const SimilarProducts: React.FC = () => {
           disabled={!showNext}
           aria-label="Scroll down"
         >
-          <FaAngleDown size={24} />
+          <ChevronDown size={24} />
         </button>
       </div>
     </div>

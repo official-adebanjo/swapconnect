@@ -1,4 +1,4 @@
-import { FaAngleRight } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -36,9 +36,9 @@ const HeroSectionComponent = () => {
           <Link href="/trade-in-calculator" className="w-fit">
             <span className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded transition-colors duration-200">
               Proceed
-              <FaAngleRight className="ml-2" />
-              <FaAngleRight className="ml-1" />
-              <FaAngleRight className="ml-1" />
+              <ChevronRight size={18} className="ml-2" />
+              <ChevronRight size={18} className="-ml-2 opacity-70" />
+              <ChevronRight size={18} className="-ml-2 opacity-40" />
             </span>
           </Link>
         </div>

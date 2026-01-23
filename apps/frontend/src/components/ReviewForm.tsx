@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FaAngleLeft, FaAngleRight, FaStar } from "react-icons/fa";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import useReviewStore from "../stores/useReviewStore";
 
 interface ReviewFormProps {
@@ -16,7 +16,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   const rating = useReviewStore((state) => state.rating);
   const hover = useReviewStore((state) => state.hover);
   const currentReviewIndex = useReviewStore(
-    (state) => state.currentReviewIndex
+    (state) => state.currentReviewIndex,
   );
 
   const setProductTitle = useReviewStore((state) => state.setProductTitle);
@@ -79,7 +79,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
                   {currentReview && (
                     <div className="review-carousel flex items-center mb-6 p-4 border rounded-lg shadow-sm">
                       {reviews.length > 1 && (
-                        <FaAngleLeft
+                        <ChevronLeft
                           size={28}
                           className="cursor-pointer text-gray-600 hover:text-gray-800 mr-2"
                           onClick={prevReview}
@@ -91,12 +91,12 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
                         </div>
                         <div className="flex items-center mb-1">
                           {[1, 2, 3, 4, 5].map((star) => (
-                            <FaStar
+                            <Star
                               key={star}
                               size={18}
                               className={`mr-1 ${
                                 currentReview.rating >= star
-                                  ? "text-yellow-500"
+                                  ? "text-yellow-500 fill-yellow-500"
                                   : "text-gray-300"
                               }`}
                             />
@@ -110,7 +110,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
                         </div>
                       </div>
                       {reviews.length > 1 && (
-                        <FaAngleRight
+                        <ChevronRight
                           size={28}
                           className="cursor-pointer text-gray-600 hover:text-gray-800 ml-2"
                           onClick={nextReview}
@@ -176,12 +176,12 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
                   </label>
                   <div className="flex items-center mt-1">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <FaStar
+                      <Star
                         key={star}
                         size={24}
                         className={`cursor-pointer mr-1 ${
                           (hover !== null && hover >= star) || rating >= star
-                            ? "text-yellow-500"
+                            ? "text-yellow-500 fill-yellow-500"
                             : "text-gray-300"
                         }`}
                         onClick={() => setRating(star)}

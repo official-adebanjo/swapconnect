@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { FaShoppingCart, FaHeart } from "react-icons/fa"; // Assuming you have react-icons installed
+import { ShoppingCart, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import useOtherProductsStore from "../stores/useOtherProductsStore"; // Corrected import path
@@ -102,7 +102,7 @@ const OtherProducts = () => {
       <div className="flex gap-4 overflow-hidden min-h-[320px] justify-center">
         {productsToShow.map(
           (
-            product // Removed `index` from key, use `product.id`
+            product, // Removed `index` from key, use `product.id`
           ) => (
             <div
               key={product.id} // Use product.id for unique key
@@ -124,7 +124,7 @@ const OtherProducts = () => {
                 className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition"
                 aria-label="Add to favorites"
               >
-                <FaHeart />
+                <Heart size={18} />
               </button>
               <div className="flex justify-center items-center h-28 mt-6">
                 <Image
@@ -147,7 +147,7 @@ const OtherProducts = () => {
                 </div>
                 <div
                   className={`mb-1 text-xs ${getStockColor(
-                    product.availability
+                    product.availability,
                   )}`}
                 >
                   {product.availability}
@@ -181,12 +181,12 @@ const OtherProducts = () => {
                     }
                     aria-label="Add to cart"
                   >
-                    <FaShoppingCart />
+                    <ShoppingCart size={18} />
                   </button>
                 </div>
               </div>
             </div>
-          )
+          ),
         )}
       </div>
     </div>

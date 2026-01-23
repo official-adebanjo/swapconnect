@@ -3,13 +3,12 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaChevronRight } from "react-icons/fa";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faShoppingCart,
-  faArrowRight,
-  faArrowLeft,
-} from "@fortawesome/free-solid-svg-icons";
+  ChevronRight,
+  ShoppingCart,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 
 // Updated Product interface to match the JSON structure,
 // particularly 'price' as a number and including 'id'.
@@ -62,7 +61,10 @@ const TradeInCalculator: React.FC = () => {
 
   const handleNext = () => {
     setStartIndex((prevIndex) =>
-      Math.min(prevIndex + itemsPerPage, recentlyUploaded.length - itemsPerPage)
+      Math.min(
+        prevIndex + itemsPerPage,
+        recentlyUploaded.length - itemsPerPage,
+      ),
     );
   };
 
@@ -99,7 +101,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="iOS">iOS</option>
                 <option value="Androids">Androids</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Model */}
@@ -127,7 +129,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="Samsung">Samsung</option>
                 <option value="Infinix">Infinix</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Storage */}
@@ -151,7 +153,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="64GB">64GB</option>
                 <option value="128GB">128GB</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* RAM Size */}
@@ -176,7 +178,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="16GB">16GB</option>
                 <option value="64GB">64GB</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Battery Capacity */}
@@ -201,7 +203,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="6000MAH">6000MAH</option>
                 <option value="8000MAH">8000MAH</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Battery Lasting Hours */}
@@ -225,7 +227,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="8 HRS">8 HRS</option>
                 <option value="more than 8 HRS">more than 8 HRS</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Phone Age */}
@@ -250,7 +252,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="2-3 years">2-3 years</option>
                 <option value="Above 3 years">Above 3 years</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Upload Device Image */}
@@ -307,9 +309,9 @@ const TradeInCalculator: React.FC = () => {
               passHref
               className="flex items-center text-yellow-600 hover:text-yellow-700 mt-4 text-sm font-medium"
             >
-              see full details <FaChevronRight className="ml-1 text-xs" />
-              <FaChevronRight className="text-xs" />
-              <FaChevronRight className="text-xs" />
+              see full details <ChevronRight className="ml-1 text-xs" />
+              <ChevronRight className="text-xs" />
+              <ChevronRight className="text-xs" />
             </Link>
           </div>
         </div>
@@ -342,7 +344,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Condition of product's body */}
@@ -366,7 +368,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="dents">Dents</option>
                 <option value="cracked">Cracked</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Condition of product's screen */}
@@ -390,7 +392,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="cracked">Cracked</option>
                 <option value="shattered">Shattered</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Times visited technician for repair */}
@@ -414,7 +416,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="2-3">2 - 3</option>
                 <option value="more-than-3-times">More than three times</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Touch ID / Face ID function normally? */}
@@ -436,7 +438,7 @@ const TradeInCalculator: React.FC = () => {
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
               </select>
-              <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+              <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
             </div>
           </div>
 
@@ -517,7 +519,7 @@ const TradeInCalculator: React.FC = () => {
                 }`}
               aria-label="Previous products"
             >
-              <FontAwesomeIcon icon={faArrowLeft} />
+              <ArrowLeft />
             </button>
             <button
               onClick={handleNext}
@@ -530,7 +532,7 @@ const TradeInCalculator: React.FC = () => {
                 }`}
               aria-label="Next products"
             >
-              <FontAwesomeIcon icon={faArrowRight} />
+              <ArrowRight />
             </button>
           </div>
 
@@ -583,15 +585,9 @@ const TradeInCalculator: React.FC = () => {
                       View More
                     </button>
                     {product.availability === "out of stock" ? (
-                      <FontAwesomeIcon
-                        icon={faShoppingCart}
-                        className="text-gray-400 opacity-50 text-base"
-                      />
+                      <ShoppingCart className="text-gray-400 opacity-50 text-base" />
                     ) : (
-                      <FontAwesomeIcon
-                        icon={faShoppingCart}
-                        className="text-green-600 border border-green-600 p-1 rounded-md text-base hover:text-green-700 hover:border-green-700 transition duration-200"
-                      />
+                      <ShoppingCart className="text-green-600 border border-green-600 p-1 rounded-md text-base hover:text-green-700 hover:border-green-700 transition duration-200" />
                     )}
                   </div>
                 </div>

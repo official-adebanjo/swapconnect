@@ -1,4 +1,4 @@
-import { FaExchangeAlt, FaDollarSign, FaMobileAlt } from "react-icons/fa";
+import { Repeat, DollarSign, Smartphone } from "lucide-react";
 
 const CardsSectionComponent = () => {
   return (
@@ -12,7 +12,7 @@ const CardsSectionComponent = () => {
       <div className="flex flex-col md:flex-row gap-8 max-w-5xl mx-auto">
         {/* Card 1 */}
         <div className="flex-1 bg-gray-300 dark:bg-gray-700 rounded-lg shadow-md p-6 flex flex-col items-center text-center">
-          <FaExchangeAlt size={40} className="mb-3 text-[#037f44]" />
+          <Repeat size={40} className="mb-3 text-[#037f44]" />
           <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
             Upgrade Hassle-Free
           </h3>
@@ -23,7 +23,7 @@ const CardsSectionComponent = () => {
         </div>
         {/* Card 2 */}
         <div className="flex-1 bg-gray-300 dark:bg-gray-700 rounded-lg shadow-md p-6 flex flex-col items-center text-center">
-          <FaDollarSign size={40} className="mb-3 text-[#037f44]" />
+          <DollarSign size={40} className="mb-3 text-[#037f44]" />
           <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
             Maximize Value
           </h3>
@@ -34,7 +34,7 @@ const CardsSectionComponent = () => {
         </div>
         {/* Card 3 */}
         <div className="flex-1 bg-gray-300 dark:bg-gray-700 rounded-lg shadow-md p-6 flex flex-col items-center text-center">
-          <FaMobileAlt size={40} className="mb-3 text-[#037f44]" />
+          <Smartphone size={40} className="mb-3 text-[#037f44]" />
           <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
             Wide Selection
           </h3>
