@@ -9,15 +9,17 @@ import * as yup from "yup";
 import OtpInputs from "@/components/OtpInputs"; // Adjust this path if OtpInputs is elsewhere
 
 // 2. Define Validation Schema for OTP Form
-const otpSchema = yup.object().shape({
+interface OtpFormInputs {
+  otp: string;
+}
+
+const otpSchema: yup.ObjectSchema<OtpFormInputs> = yup.object().shape({
   otp: yup
     .string()
     .required("OTP is required")
     .min(6, "OTP must be 6 digits")
     .max(6, "OTP must be 6 digits"),
 });
-
-type OtpFormInputs = yup.InferType<typeof otpSchema>;
 
 interface OtpVerificationModalProps {
   onVerify: (otp: string) => Promise<void>;
@@ -111,7 +113,7 @@ const OtpVerificationModal: React.FC<OtpVerificationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-[9999]">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-9999">
       <div className="bg-white rounded-xl shadow-lg p-6 relative w-11/12 max-w-sm animate-fadeInScale">
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl"
@@ -183,7 +185,7 @@ const OtpVerificationModal: React.FC<OtpVerificationModalProps> = ({
           <div className="flex gap-2">
             <button
               type="submit"
-              className="flex-grow bg-green-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-green-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="grow bg-green-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-green-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               disabled={isVerifying}
             >
               {isVerifying ? (

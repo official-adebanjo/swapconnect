@@ -1,26 +1,42 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { CheckCircle, MapPin, XCircle } from 'lucide-react';
-import Image from 'next/image';
-import { API_URL } from '@/lib/config';
-import { useAuthToken } from '@/hooks/useAuthToken';
+"use client";
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { CheckCircle, MapPin, XCircle } from "lucide-react";
+import Image from "next/image";
+import { API_URL } from "@/lib/config";
+import { useAuthToken } from "@/hooks/useAuthToken";
+
+interface OrderProduct {
+  imageUrl?: string;
+  brand?: string;
+  model?: string;
+  condition?: string;
+  batteryHealth?: string;
+  ram?: string;
+  color?: string;
+  storage?: string;
+  price?: number | string;
+  name?: string;
+}
+
+interface Account {
+  location?: string;
+}
 
 interface Order {
-  image: string;
-  brand: string;
-  model: string;
-  condition: string;
-  batteryHealth: string;
-  ram: string;
-  color: string;
-  storage: string;
-  verified: boolean;
-  currentBid: string;
-  location: string;
-  swapOffer: string;
-  listedItem: string;
+  id: string;
+  userId: string;
+  totalAmount: number;
   status: string;
+  address: string;
+  shippingCost: number;
+  paymentMethod: string;
+  paymentMode: string;
+  createdAt: string;
+  updatedAt: string;
+  OrderProducts?: OrderProduct[];
+  Account?: Account;
+  verified?: boolean; // Keep if it's used elsewhere or for compatibility
 }
 
 export default function OrderDetailsPage() {
@@ -38,15 +54,15 @@ export default function OrderDetailsPage() {
       setError(null);
       try {
         const response = await fetch(`${API_URL}/orders/${orderId}`, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
-        if (!response.ok) throw new Error('Failed to fetch order details');
+        if (!response.ok) throw new Error("Failed to fetch order details");
         const data = await response.json();
-        console.log('API Response:', data); // For debugging
+        console.log("API Response:", data); // For debugging
 
         // Fixed: Access data.order instead of data.data
         setOrder(data.order);
@@ -59,22 +75,19 @@ export default function OrderDetailsPage() {
     fetchOrder();
   }, [token, orderId]);
 
-  const handleAction = async (action: 'accept' | 'decline') => {
+  const handleAction = async (action: "accept" | "decline") => {
     if (!token || !orderId) return;
     try {
-      const response = await fetch(
-        `${API_URL}/orders/${orderId}/${action}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/orders/${orderId}/${action}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!response.ok) throw new Error(`Failed to ${action} order`);
       alert(`Order ${action}ed successfully!`);
-      router.push('/dashboard/orders');
+      router.push("/dashboard/orders");
     } catch (err) {
       alert((err as Error).message);
     }
@@ -89,20 +102,20 @@ export default function OrderDetailsPage() {
   const transformedOrder = {
     ...order,
     // Extract image from the first product if available
-    image: order.OrderProducts?.[0]?.imageUrl || '/default-image.jpg',
+    image: order.OrderProducts?.[0]?.imageUrl || "/default-image.jpg",
     // Extract other properties as needed
-    brand: order.OrderProducts?.[0]?.brand || 'Unknown',
-    model: order.OrderProducts?.[0]?.model || 'Unknown',
-    condition: order.OrderProducts?.[0]?.condition || 'Unknown',
-    batteryHealth: order.OrderProducts?.[0]?.batteryHealth || 'Unknown',
-    ram: order.OrderProducts?.[0]?.ram || 'Unknown',
-    color: order.OrderProducts?.[0]?.color || 'Unknown',
-    storage: order.OrderProducts?.[0]?.storage || 'Unknown',
-    price: order.OrderProducts?.[0]?.price || '0',
-    currentBid: `$${order.totalAmount || '0'}`,
-    location: order.Account?.location || 'Unknown location',
-    swapOffer: order.OrderProducts?.[0]?.name || 'Unknown item',
-    listedItem: order.OrderProducts?.[0]?.name || 'Unknown item',
+    brand: order.OrderProducts?.[0]?.brand || "Unknown",
+    model: order.OrderProducts?.[0]?.model || "Unknown",
+    condition: order.OrderProducts?.[0]?.condition || "Unknown",
+    batteryHealth: order.OrderProducts?.[0]?.batteryHealth || "Unknown",
+    ram: order.OrderProducts?.[0]?.ram || "Unknown",
+    color: order.OrderProducts?.[0]?.color || "Unknown",
+    storage: order.OrderProducts?.[0]?.storage || "Unknown",
+    price: order.OrderProducts?.[0]?.price || "0",
+    currentBid: `$${order.totalAmount || "0"}`,
+    location: order.Account?.location || "Unknown location",
+    swapOffer: order.OrderProducts?.[0]?.name || "Unknown item",
+    listedItem: order.OrderProducts?.[0]?.name || "Unknown item",
   };
 
   return (
@@ -116,7 +129,7 @@ export default function OrderDetailsPage() {
               alt={
                 transformedOrder.brand ||
                 transformedOrder.model ||
-                'Order Image'
+                "Order Image"
               }
               className="w-40 h-40 object-cover rounded-xl border"
               width={160}
@@ -157,7 +170,7 @@ export default function OrderDetailsPage() {
             </div>
             <div>
               <span className="font-medium text-[#848484]">
-                Battery Health:{' '}
+                Battery Health:{" "}
               </span>
               <span className="text-[#353535]">
                 {transformedOrder.batteryHealth}
@@ -183,7 +196,10 @@ export default function OrderDetailsPage() {
             <div>
               <span className="font-medium text-[#848484]">Price: </span>
               <span className="text-[#037F44] font-bold">
-                {transformedOrder.price.toLocaleString('en', {style: 'currency', currency: 'NGN'})}
+                {transformedOrder.price.toLocaleString("en", {
+                  style: "currency",
+                  currency: "NGN",
+                })}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -209,15 +225,15 @@ export default function OrderDetailsPage() {
           <div className="flex flex-col gap-4 mt-6 md:mt-0">
             <button
               className="bg-[#037F44] hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold transition"
-              onClick={() => handleAction('accept')}
-              disabled={order.status === 'accepted'}
+              onClick={() => handleAction("accept")}
+              disabled={order.status === "accepted"}
             >
               Accept
             </button>
             <button
               className="bg-[#F87171] hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold transition"
-              onClick={() => handleAction('decline')}
-              disabled={order.status === 'declined'}
+              onClick={() => handleAction("decline")}
+              disabled={order.status === "declined"}
             >
               Decline
             </button>

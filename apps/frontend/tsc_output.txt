@@ -1,0 +1,30 @@
+src/app/(auth)/login/OtpVerificationModal.tsx(44,5): error TS2322: Type 'Resolver<{ otp: string; }, any, { otp?: string; }>' is not assignable to type 'Resolver<{ otp?: string; }, any, { otp?: string; }>'.
+  Types of parameters 'options' and 'options' are incompatible.
+    Type 'ResolverOptions<{ otp?: string; }>' is not assignable to type 'ResolverOptions<{ otp: string; }>'.
+      Type '{ otp?: string; }' is not assignable to type '{ otp: string; }'.
+        Property 'otp' is optional in type '{ otp?: string; }' but required in type '{ otp: string; }'.
+src/app/checkout/page.tsx(195,31): error TS2339: Property 'image' does not exist on type 'CartItem'.
+src/app/dashboard/orders/[orderId]/page.tsx(92,18): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(94,18): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(95,18): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(96,22): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(97,26): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(98,16): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(99,18): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(100,20): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(101,18): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(102,27): error TS2339: Property 'totalAmount' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(103,21): error TS2339: Property 'Account' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(104,22): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/app/dashboard/orders/[orderId]/page.tsx(105,23): error TS2339: Property 'OrderProducts' does not exist on type 'Order'.
+src/components/PersonalInfo.tsx(49,38): error TS2339: Property 'firstName' does not exist on type 'unknown'.
+src/components/PersonalInfo.tsx(50,37): error TS2339: Property 'lastName' does not exist on type 'unknown'.
+src/components/PersonalInfo.tsx(51,34): error TS2339: Property 'email' does not exist on type 'unknown'.
+src/components/PersonalInfo.tsx(52,34): error TS2339: Property 'phone' does not exist on type 'unknown'.
+src/components/PersonalInfo.tsx(53,36): error TS2339: Property 'address' does not exist on type 'unknown'.
+src/components/PersonalInfo.tsx(54,33): error TS2339: Property 'city' does not exist on type 'unknown'.
+src/components/PersonalInfo.tsx(55,34): error TS2339: Property 'state' does not exist on type 'unknown'.
+src/components/PersonalInfo.tsx(56,36): error TS2339: Property 'country' does not exist on type 'unknown'.
+src/components/walletComponent.tsx(206,48): error TS2339: Property 'replace' does not exist on type 'never'.
+src/components/walletComponent.tsx(365,27): error TS2339: Property 'name' does not exist on type 'Transaction'.
+src/components/walletComponent.tsx(409,27): error TS2339: Property 'name' does not exist on type 'Transaction'.

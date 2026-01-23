@@ -7,6 +7,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   orderId?: string;
+  image?: string;
   // Add other product fields as needed
 }
 
@@ -25,7 +26,7 @@ const useCartStore = create<CartStore>()(
       addToCart: (product) =>
         set((state) => {
           const existingProduct = state.carts.find(
-            (item) => item.id === product.id
+            (item) => item.id === product.id,
           );
 
           if (existingProduct) {
@@ -33,7 +34,7 @@ const useCartStore = create<CartStore>()(
               carts: state.carts.map((item) =>
                 item.id === product.id
                   ? { ...item, quantity: item.quantity + 1 }
-                  : item
+                  : item,
               ),
             };
           }
@@ -56,7 +57,7 @@ const useCartStore = create<CartStore>()(
       updateQuantity: (productId, quantity) =>
         set((state) => ({
           carts: state.carts.map((item) =>
-            item.id === productId ? { ...item, quantity: quantity } : item
+            item.id === productId ? { ...item, quantity: quantity } : item,
           ),
         })),
     }),
@@ -74,8 +75,8 @@ const useCartStore = create<CartStore>()(
           localStorage.removeItem(name);
         },
       },
-    }
-  )
+    },
+  ),
 );
 
 export default useCartStore;

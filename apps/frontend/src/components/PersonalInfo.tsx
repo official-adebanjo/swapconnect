@@ -38,7 +38,7 @@ export default function PersonalInfo({ userId }: { userId: string }) {
 
     const fetchUserData = async () => {
       try {
-        const response = await api.get("/users", token);
+        const response = await api.get<UserData>("/users", token);
 
         if (!response.success) {
           throw new Error(response.error || "Failed to fetch user data");

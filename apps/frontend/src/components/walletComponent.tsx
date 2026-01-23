@@ -1,11 +1,11 @@
-'use client';
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { Plus, Filter } from 'lucide-react';
-import { Input } from './ui/input';
-import { useAuthToken } from '@/hooks/useAuthToken';
-import { API_URL } from '@/lib/config';
-import { useRouter } from 'next/navigation';
+"use client";
+import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
+import { Plus, Filter } from "lucide-react";
+import { Input } from "./ui/input";
+import { useAuthToken } from "@/hooks/useAuthToken";
+import { API_URL } from "@/lib/config";
+import { useRouter } from "next/navigation";
 
 interface WalletData {
   balance: number;
@@ -22,12 +22,13 @@ interface Stat {
 interface Transaction {
   id: string;
   reference: string;
-  amount: number;
+  amount: number | string;
   type: string;
   method: string;
   purpose: string;
   status: string;
   description: string;
+  name?: string;
   createdAt: string;
   sender?: {
     id: string;
@@ -44,10 +45,10 @@ interface Transaction {
 }
 
 const statDisplayMap = {
-  totalEarnings: { label: 'Total Earnings', color: '#353535' },
-  totalSpent: { label: 'Total Spent', color: '#353535' },
-  pendingEarnings: { label: 'Pending Earnings', color: '#353535' },
-  totalSold: { label: 'Total Sold', color: '#353535' },
+  totalEarnings: { label: "Total Earnings", color: "#353535" },
+  totalSpent: { label: "Total Spent", color: "#353535" },
+  pendingEarnings: { label: "Pending Earnings", color: "#353535" },
+  totalSold: { label: "Total Sold", color: "#353535" },
 };
 
 export default function Wallet() {
@@ -60,7 +61,7 @@ export default function Wallet() {
   const token = useAuthToken();
   const router = useRouter();
 
-  const fetchWalletData = async () => {
+  const fetchWalletData = useCallback(async () => {
     if (!token) {
       setLoading(false);
       return;
@@ -72,12 +73,12 @@ export default function Wallet() {
       const response = await fetch(
         `${API_URL}/wallet/transactions?_t=${Date.now()}`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -85,46 +86,56 @@ export default function Wallet() {
       }
 
       const data = await response.json();
-      console.log('[v0] Wallet API Response:', data); // Debug log
+      console.log("[v0] Wallet API Response:", data); // Debug log
 
       if (data?.data) {
         setBalance(data.data.wallet);
         setStats(data.data.stats);
         if (Array.isArray(data.data.transactions?.items)) {
           const mappedTransactions = data.data.transactions.items.map(
-            (tx: any) => ({
+            (tx: {
+              id?: string;
+              reference: string;
+              sender?: { firstName: string; lastName: string };
+              description?: string;
+              purpose?: string;
+              amount: number | string;
+              createdAt: string;
+              status: string;
+              type: string;
+            }) => ({
               id: tx.id || tx.reference,
               name: tx.sender
                 ? `${tx.sender.firstName} ${tx.sender.lastName}`
-                : 'System',
-              description: tx.description || tx.purpose || 'Transaction',
+                : "System",
+              description: tx.description || tx.purpose || "Transaction",
               amount: tx.amount.toString(),
               date: tx.createdAt,
               status: tx.status,
               type: tx.type,
               reference: tx.reference,
-            })
+            }),
           );
           setTransactions(mappedTransactions);
         } else {
           console.warn(
-            'API did not return transactions.items as an array:',
-            data.data.transactions
+            "API did not return transactions.items as an array:",
+            data.data.transactions,
           );
           setTransactions([]);
         }
       } else {
-        console.error('Unexpected API response format:', data);
-        setError('Failed to load data: Unexpected API response format.');
+        console.error("Unexpected API response format:", data);
+        setError("Failed to load data: Unexpected API response format.");
       }
     } catch (err) {
-      console.error('Error fetching wallet data:', err);
+      console.error("Error fetching wallet data:", err);
       if (err instanceof Error) {
         setError(`Error fetching data: ${err.message}`);
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         setError(`Error fetching data: ${err}`);
       } else {
-        setError('Error fetching data: An unknown error occurred.');
+        setError("Error fetching data: An unknown error occurred.");
       }
       setBalance(null);
       setStats(null);
@@ -132,36 +143,36 @@ export default function Wallet() {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchWalletData();
   }, [token]);
 
   useEffect(() => {
+    fetchWalletData();
+  }, [fetchWalletData]);
+
+  useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'wallet_updated') {
-        console.log('[v0] Wallet update detected, refreshing data'); // Debug log
+      if (e.key === "wallet_updated") {
+        console.log("[v0] Wallet update detected, refreshing data"); // Debug log
         fetchWalletData();
-        localStorage.removeItem('wallet_updated');
+        localStorage.removeItem("wallet_updated");
       }
     };
 
     const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get('status');
-    const reference = urlParams.get('reference');
+    const status = urlParams.get("status");
+    const reference = urlParams.get("reference");
 
     if (status && reference) {
-      console.log('[v0] Payment completion detected:', { status, reference }); // Debug log
+      console.log("[v0] Payment completion detected:", { status, reference }); // Debug log
       // Clear URL parameters
       window.history.replaceState({}, document.title, window.location.pathname);
       // Refresh wallet data
       setTimeout(() => fetchWalletData(), 1000); // Small delay to ensure backend processing is complete
     }
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, [token]);
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [fetchWalletData]);
 
   if (loading) {
     return (
@@ -183,27 +194,27 @@ export default function Wallet() {
   }
 
   const getTransactionColor = (transaction: Transaction) => {
-    if (transaction.type === 'credit') {
-      return 'text-[#037F44]'; // Green for credits
-    } else if (transaction.type === 'debit') {
-      return 'text-[#DC2626]'; // Red for debits
+    if (transaction.type === "credit") {
+      return "text-[#037F44]"; // Green for credits
+    } else if (transaction.type === "debit") {
+      return "text-[#DC2626]"; // Red for debits
     }
-    return 'text-[#6B7280]'; // Gray for neutral
+    return "text-[#6B7280]"; // Gray for neutral
   };
 
   const getTransactionSign = (transaction: Transaction) => {
-    if (transaction.type === 'credit') {
-      return '+';
-    } else if (transaction.type === 'debit') {
-      return '-';
+    if (transaction.type === "credit") {
+      return "+";
+    } else if (transaction.type === "debit") {
+      return "-";
     }
-    return '';
+    return "";
   };
 
   const formatTransactionAmount = (transaction: Transaction) => {
     const amount =
-      typeof transaction.amount === 'string'
-        ? Number.parseFloat(transaction.amount.replace(/[^0-9.]+/g, ''))
+      typeof transaction.amount === "string"
+        ? Number.parseFloat(transaction.amount.replace(/[^0-9.]+/g, ""))
         : Number.parseFloat(transaction.amount.toString());
 
     const cleanAmount = Math.abs(amount);
@@ -213,16 +224,16 @@ export default function Wallet() {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'completed':
-      case 'success':
-        return 'bg-[#DCFCE7] text-[#037F44]';
-      case 'pending':
-        return 'bg-[#FEF3C7] text-[#D97706]';
-      case 'failed':
-      case 'error':
-        return 'bg-[#FEE2E2] text-[#DC2626]';
+      case "completed":
+      case "success":
+        return "bg-[#DCFCE7] text-[#037F44]";
+      case "pending":
+        return "bg-[#FEF3C7] text-[#D97706]";
+      case "failed":
+      case "error":
+        return "bg-[#FEE2E2] text-[#DC2626]";
       default:
-        return 'bg-[#F3F4F6] text-[#6B7280]';
+        return "bg-[#F3F4F6] text-[#6B7280]";
     }
   };
 
@@ -236,7 +247,7 @@ export default function Wallet() {
                 Wallet Balance
               </div>
               <div className="md:text-[32px] font-bold text-[#037F44] mb-6">
-                ₦{balance?.balance?.toLocaleString() || '0.00'}
+                ₦{balance?.balance?.toLocaleString() || "0.00"}
               </div>
             </div>
 
@@ -251,18 +262,15 @@ export default function Wallet() {
           <div className="flex md:flex-col justify-between">
             <button
               className="border bg-[#037F44] w-[137px] md:h-[48px] h-[40px] rounded-md text-white text-[16px]"
-              onClick={() => router.push('/dashboard/wallet/withdraw')}
+              onClick={() => router.push("/dashboard/wallet/withdraw")}
             >
               Withdraw
             </button>
             <button
               className="flex items-center justify-center gap-2 border bg-white border-[#037F44] text-[#037F44] w-[174px] md:h-[48px] h-[40px] rounded-md text-[16px]"
-              onClick={() => router.push('/dashboard/wallet/fund')}
+              onClick={() => router.push("/dashboard/wallet/fund")}
             >
-              <Plus
-                width={16}
-                height={16}
-              />
+              <Plus width={16} height={16} />
               Fund Wallet
             </button>
           </div>
@@ -276,7 +284,7 @@ export default function Wallet() {
               if (!displayInfo) return null;
 
               const formattedValue =
-                key === 'totalSold'
+                key === "totalSold"
                   ? value
                   : `₦${Number.parseFloat(value as string).toLocaleString()}`;
 
@@ -345,19 +353,13 @@ export default function Wallet() {
             <tbody>
               {transactions.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="text-center py-4 text-[#848484]"
-                  >
+                  <td colSpan={6} className="text-center py-4 text-[#848484]">
                     No transactions found for this user.
                   </td>
                 </tr>
               ) : (
                 transactions.map((tx) => (
-                  <tr
-                    key={tx.id}
-                    className="border-b border-white"
-                  >
+                  <tr key={tx.id} className="border-b border-white">
                     <td className="px-4 py-3 text-[#434343] text-[14px]">
                       {tx.id}
                     </td>
@@ -369,7 +371,7 @@ export default function Wallet() {
                     </td>
                     <td
                       className={`px-4 py-3 text-[14px] font-semibold ${getTransactionColor(
-                        tx
+                        tx,
                       )}`}
                     >
                       {formatTransactionAmount(tx)}
@@ -380,7 +382,7 @@ export default function Wallet() {
                     <td className="px-4 py-3 text-[#434343] text-[14px]">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                          tx.status
+                          tx.status,
                         )}`}
                       >
                         {tx.status}
@@ -415,14 +417,14 @@ export default function Wallet() {
                   <div className="flex flex-col items-end">
                     <div
                       className={`font-semibold text-[15px] ${getTransactionColor(
-                        tx
+                        tx,
                       )}`}
                     >
                       {formatTransactionAmount(tx)}
                     </div>
                     <div
                       className={`mt-1 text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(
-                        tx.status
+                        tx.status,
                       )}`}
                     >
                       {tx.status}
