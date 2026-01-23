@@ -47,7 +47,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
   };
 
   const containerClass = cn(
-    "relative flex items-center border border-border rounded px-2 py-1 bg-white",
+    "relative flex items-center border border-border rounded px-2 py-1 bg-background",
     isMobile ? "mb-4" : "",
   );
 

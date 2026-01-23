@@ -120,7 +120,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
   const displayAvatarUrl = getValidAvatarUrl(user?.avatar || user?.photoURL);
 
   return (
-    <nav className="fixed top-0 right-0 left-0 h-[85px] bg-card-bg border-b border-border-color flex items-center justify-between md:left-[220px] px-4 md:px-8 z-101">
+    <nav className="fixed top-0 right-0 left-0 h-[85px] bg-card border-b border-border flex items-center justify-between md:left-[220px] px-4 md:px-8 z-101">
       <div className="hidden md:flex items-center justify-between w-full">
         <h2 className="text-[24px] font-bold text-text-primary">{title}</h2>
         <div className="flex items-center gap-[32px]">
@@ -144,7 +144,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
               alt="Profile"
               width={40}
               height={40}
-              className="w-[40px] h-[40px] rounded-full object-cover border-2 border-[#eee]"
+              className="w-[40px] h-[40px] rounded-full object-cover border-2 border-border"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 if (target.src !== DEFAULT_USER_ICON) {
@@ -164,7 +164,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
             alt="Profile"
             width={36}
             height={36}
-            className="w-9 h-9 rounded-full object-cover border-2 border-[#eee]"
+            className="w-9 h-9 rounded-full object-cover border-2 border-border"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               if (target.src !== DEFAULT_USER_ICON) {
@@ -198,7 +198,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
       {/* Mobile Menu Overlay */}
       {menuOpen && (
         <div className="fixed inset-0 bg-black/40 z-50 flex md:hidden">
-          <div className="bg-white w-64 h-full shadow-lg p-6 flex flex-col justify-between">
+          <div className="bg-background w-64 h-full shadow-lg p-6 flex flex-col justify-between">
             <div>
               <button
                 className="mb-4 text-[#037F44] font-bold"

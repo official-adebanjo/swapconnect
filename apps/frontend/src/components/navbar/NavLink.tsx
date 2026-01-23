@@ -14,7 +14,7 @@ const NavLink: React.FC<NavLinkProps> = ({
   href,
   label,
   onClick,
-  className = "nav-link text-black font-medium transition-colors duration-300 hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 py-1",
+  className = "nav-link text-foreground font-medium transition-colors duration-300 hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 py-1",
   activeClassName = "text-yellow-600 border-b-2 border-yellow-600",
   isActive,
 }) => {

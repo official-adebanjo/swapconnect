@@ -9,6 +9,7 @@ import { SOCIAL_LINKS, QUICK_LINKS, CATEGORIES, ASSETS } from "@/lib/constants";
 import { Whatsapp, Facebook, Instagram } from "@/components/ui/BrandIcons";
 import { Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/ThemeProvider";
 
 const iconMap: Record<string, React.ElementType> = {
   whatsapp: Whatsapp,
@@ -21,6 +22,7 @@ const Footer: React.FC = () => {
   const [email, setEmail] = useState("");
   const getCurrentYear = () => new Date().getFullYear();
 
+  const { resolvedTheme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -39,7 +41,11 @@ const Footer: React.FC = () => {
           {/* First Column */}
           <div className="mb-6 md:mb-0 md:w-1/4">
             <Image
-              src={ASSETS.LOGO}
+              src={
+                resolvedTheme === "dark"
+                  ? ASSETS.LOGO_WHITE || ASSETS.LOGO
+                  : ASSETS.LOGO
+              }
               alt="Logo"
               width={150}
               height={40}

@@ -46,22 +46,22 @@ const dropdowns = [
 
 const CustomNavbar: React.FC = () => {
   return (
-    <nav className="hidden lg:block bg-white rounded-full px-6 py-2 shadow-lg mx-auto max-w-fit z-10">
+    <nav className="hidden lg:block bg-card rounded-full px-6 py-2 shadow-lg mx-auto max-w-fit z-10 border border-border">
       <ul className="flex items-center gap-8">
         {dropdowns.map((dropdown) => (
           <li key={dropdown.title} className="relative group">
             <button
-              className="font-semibold text-gray-700 hover:text-green-700 focus:outline-none"
+              className="font-semibold text-foreground hover:text-brand-primary focus:outline-none"
               tabIndex={0}
             >
               {dropdown.title}
             </button>
-            <ul className="absolute left-0 mt-2 bg-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto min-w-[180px]">
+            <ul className="absolute left-0 mt-2 bg-card border border-border rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto min-w-[180px]">
               {dropdown.items.map((item) => (
                 <li key={item.label}>
                   <Link
                     href={item.href}
-                    className="block px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-700 transition rounded"
+                    className="block px-4 py-2 text-foreground hover:bg-brand-primary/10 hover:text-brand-primary transition rounded"
                   >
                     {item.label}
                   </Link>

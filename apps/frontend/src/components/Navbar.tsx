@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 
 // Sub-components
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { useTheme } from "@/components/ThemeProvider";
 import NavLink from "./navbar/NavLink";
 import UserDropdown from "./navbar/UserDropdown";
 import SearchOverlay from "./navbar/SearchOverlay";
@@ -27,6 +28,7 @@ import MobileMenu from "./navbar/MobileMenu";
 
 const Navbar: React.FC = () => {
   const { user, logoutUser } = useUserStore();
+  const { resolvedTheme } = useTheme();
   const router = useRouter();
   const isLoggedIn = !!user;
   const { carts } = useCartStore();
@@ -141,10 +143,14 @@ const Navbar: React.FC = () => {
       <nav className="fixed top-0 left-0 w-full bg-background border-b border-border shadow-sm z-50">
         <div className="container max-w-6xl mx-auto flex items-center justify-between py-2 px-4 h-[60px]">
           {/* Logo */}
-          <div className="flex items-center flex-shrink-0">
+          <div className="flex items-center shrink-0">
             <Link href="/" onClick={handleSelect} className="flex items-center">
               <Image
-                src={ASSETS.LOGO}
+                src={
+                  resolvedTheme === "dark"
+                    ? ASSETS.LOGO_WHITE || ASSETS.LOGO
+                    : ASSETS.LOGO
+                }
                 alt="Logo"
                 className="object-contain"
                 width={100}
@@ -175,7 +181,7 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Desktop Right Icons */}
-          <div className="hidden lg:flex items-center space-x-4 flex-shrink-0">
+          <div className="hidden lg:flex items-center space-x-4 shrink-0">
             <Link href="/cart" className="relative p-1">
               <ShoppingCart className="text-brand-primary w-5 h-5" />
               {carts?.length > 0 && (
@@ -248,6 +254,7 @@ const Navbar: React.FC = () => {
                 alt="Toggle Menu"
                 width={24}
                 height={24}
+                className="dark:invert"
               />
             </button>
           </div>
