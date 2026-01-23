@@ -45,7 +45,7 @@ const SummerSaleBanner: React.FC = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Button className="bg-white text-brand-primary hover:bg-white/90 font-bold py-7 px-10 rounded-full shadow-2xl transition-all transform hover:scale-105">
+            <Button className="bg-white text-brand-primary hover:bg-white/90 font-bold py-4 cursor-pointer px-10 rounded-full shadow-2xl transition-all transform hover:scale-105">
               Shop the Collection
             </Button>
           </motion.div>

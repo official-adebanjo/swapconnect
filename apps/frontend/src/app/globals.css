@@ -20,6 +20,7 @@
 
   /* Brand colors (consistent across themes) */
   --brand-primary: #037f44;
+  --brand-secondary: #d7a825;
   --brand-primary-hover: #026835;
   --brand-light: #ccdcd4;
   --brand-lighter: #e6f9f0;
@@ -154,6 +155,7 @@ body {
 
   /* Brand and Semantic Colors */
   --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
   --color-brand-primary-hover: var(--brand-primary-hover);
   --color-brand-light: var(--brand-light);
   --color-brand-lighter: var(--brand-lighter);

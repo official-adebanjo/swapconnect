@@ -7,13 +7,12 @@ import { useUserStore } from "@/stores/AuthStore";
 import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
 import Image from "next/image";
-import { FaChevronRight } from "react-icons/fa";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faShoppingCart,
-  faArrowRight,
-  faArrowLeft,
-} from "@fortawesome/free-solid-svg-icons";
+  ChevronRight,
+  ArrowLeft,
+  ArrowRight,
+  ShoppingCart,
+} from "lucide-react";
 import { api } from "@/lib/api";
 
 interface Product {
@@ -95,7 +94,7 @@ const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
   try {
     const response = await api.get<ProductApiData[]>(
       "/products/top?limit=6",
-      token
+      token,
     );
     if (response.success && response.data) {
       return response.data.map((product: ProductApiData) => ({
@@ -194,7 +193,7 @@ const MobilePhonesPage: React.FC = () => {
       !formData.phoneAge
     ) {
       toast.error(
-        "Please fill in all required fields (Brand, Model, Storage, RAM, Phone Age)"
+        "Please fill in all required fields (Brand, Model, Storage, RAM, Phone Age)",
       );
       return;
     }
@@ -252,15 +251,15 @@ const MobilePhonesPage: React.FC = () => {
         if (calculatedValue > 0) {
           toast.success(
             `Your phone is estimated to be worth ${formatPrice(
-              calculatedValue
+              calculatedValue,
             )}!`,
             {
               duration: 5000,
-            }
+            },
           );
         } else {
           toast.error(
-            "Unable to calculate value. Please check your device details."
+            "Unable to calculate value. Please check your device details.",
           );
         }
       } else {
@@ -270,7 +269,7 @@ const MobilePhonesPage: React.FC = () => {
     } catch (error) {
       console.error("Error calculating value:", error);
       toast.error(
-        "An error occurred while calculating the value. Please try again."
+        "An error occurred while calculating the value. Please try again.",
       );
     } finally {
       setIsCalculating(false);
@@ -284,7 +283,7 @@ const MobilePhonesPage: React.FC = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type, files } = e.target as HTMLInputElement;
     setFormData((prev) => ({
@@ -311,7 +310,10 @@ const MobilePhonesPage: React.FC = () => {
 
   const handleNext = () => {
     setStartIndex((prevIndex) =>
-      Math.min(prevIndex + itemsPerPage, recentlyUploaded.length - itemsPerPage)
+      Math.min(
+        prevIndex + itemsPerPage,
+        recentlyUploaded.length - itemsPerPage,
+      ),
     );
   };
 
@@ -364,7 +366,7 @@ const MobilePhonesPage: React.FC = () => {
                   <option value="Tecno">Tecno</option>
                   <option value="Other">Other</option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Model */}
@@ -411,7 +413,7 @@ const MobilePhonesPage: React.FC = () => {
                   <option value="512GB">512GB</option>
                   <option value="1TB">1TB</option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
 
               {/* RAM Size */}
@@ -439,7 +441,7 @@ const MobilePhonesPage: React.FC = () => {
                   <option value="12GB">12GB</option>
                   <option value="16GB">16GB</option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Battery Capacity */}
@@ -464,7 +466,7 @@ const MobilePhonesPage: React.FC = () => {
                   <option value="6000MAH">6000mAh</option>
                   <option value="Unknown">Unknown</option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Battery Lasting Hours */}
@@ -488,7 +490,7 @@ const MobilePhonesPage: React.FC = () => {
                   <option value="8-12 HRS">8-12 hours</option>
                   <option value="more than 12 HRS">More than 12 hours</option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-2/3 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Phone Age */}
@@ -513,7 +515,7 @@ const MobilePhonesPage: React.FC = () => {
                   <option value="2-3 years">2-3 years</option>
                   <option value="Above 3 years">Above 3 years</option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Upload Device Image */}
@@ -607,7 +609,7 @@ const MobilePhonesPage: React.FC = () => {
                     <div className="font-semibold border-t pt-1">
                       Final Value:{" "}
                       {formatPrice(
-                        calculationBreakdown.finalValue || estimatedValue
+                        calculationBreakdown.finalValue || estimatedValue,
                       )}
                     </div>
                   </div>
@@ -618,9 +620,9 @@ const MobilePhonesPage: React.FC = () => {
                 href="/trade-in-calculator"
                 className="flex items-center text-yellow-600 hover:text-yellow-700 mt-4 text-sm font-medium"
               >
-                see other categories <FaChevronRight className="ml-1 text-xs" />
-                <FaChevronRight className="text-xs" />
-                <FaChevronRight className="text-xs" />
+                see other categories <ChevronRight className="ml-1 text-xs" />
+                <ChevronRight className="text-xs" />
+                <ChevronRight className="text-xs" />
               </Link>
             </div>
           </div>
@@ -653,7 +655,7 @@ const MobilePhonesPage: React.FC = () => {
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Condition of product's body */}
@@ -677,7 +679,7 @@ const MobilePhonesPage: React.FC = () => {
                   <option value="dents">Dents</option>
                   <option value="cracked">Cracked</option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Condition of product's screen */}
@@ -701,7 +703,7 @@ const MobilePhonesPage: React.FC = () => {
                   <option value="cracked">Cracked</option>
                   <option value="shattered">Shattered</option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Times visited technician for repair */}
@@ -727,7 +729,7 @@ const MobilePhonesPage: React.FC = () => {
                     More than three times
                   </option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Touch ID / Face ID function normally? */}
@@ -750,7 +752,7 @@ const MobilePhonesPage: React.FC = () => {
                   <option value="no">No</option>
                   <option value="not_applicable">Not Applicable</option>
                 </select>
-                <FaChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
+                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" />
               </div>
             </div>
 
@@ -837,7 +839,7 @@ const MobilePhonesPage: React.FC = () => {
                 }`}
                 aria-label="Previous products"
               >
-                <FontAwesomeIcon icon={faArrowLeft} />
+                <ArrowLeft className="h-5 w-5" />
               </button>
               <span className="text-sm text-gray-600">
                 {Math.floor(startIndex / itemsPerPage) + 1} of{" "}
@@ -854,7 +856,7 @@ const MobilePhonesPage: React.FC = () => {
                 }`}
                 aria-label="Next products"
               >
-                <FontAwesomeIcon icon={faArrowRight} />
+                <ArrowRight className="h-5 w-5" />
               </button>
             </div>
 
@@ -903,13 +905,10 @@ const MobilePhonesPage: React.FC = () => {
                         View More
                       </Link>
                       {product.availability === "out of stock" ? (
-                        <FontAwesomeIcon
-                          icon={faShoppingCart}
-                          className="text-gray-400 opacity-50 text-base"
-                        />
+                        <ShoppingCart className="text-gray-400 opacity-50 h-4 w-4" />
                       ) : (
                         <button className="text-green-600 border border-green-600 p-1 rounded-md text-base hover:text-green-700 hover:border-green-700 transition duration-200">
-                          <FontAwesomeIcon icon={faShoppingCart} />
+                          <ShoppingCart className="h-4 w-4" />
                         </button>
                       )}
                     </div>

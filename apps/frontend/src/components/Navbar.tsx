@@ -185,10 +185,7 @@ const Navbar: React.FC = () => {
               )}
             </Link>
 
-            <button
-              className="p-1"
-              aria-label="Notifications text-brand-primary"
-            >
+            <button className="p-1" aria-label="Notifications">
               <Bell className="text-brand-primary w-5 h-5" />
             </button>
 

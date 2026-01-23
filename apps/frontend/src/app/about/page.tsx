@@ -1,4 +1,15 @@
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description: "Learn more about SwapConnect, our mission, and our values.",
+  openGraph: {
+    title: "About Us | SwapConnect",
+    description: "Learn more about SwapConnect, our mission, and our values.",
+    type: "website",
+  },
+};
 
 const About = () => {
   return (
@@ -7,23 +18,23 @@ const About = () => {
       <section className="flex justify-center mb-8">
         <Image
           src="https://res.cloudinary.com/ds83mhjcm/image/upload/v1720109248/SwapConnect/about/TeamIMG_dgavsi.png"
-          alt="Team"
+          alt="SwapConnect Team"
           width={900}
           height={300}
           className="rounded-lg object-cover w-full max-w-4xl h-auto"
+          priority
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 900px, 900px"
         />
       </section>
 
       {/* About Us Section */}
       <section className="max-w-4xl mx-auto mt-10">
-        <h2 className="text-3xl font-bold mb-4" style={{ color: "#037f44" }}>
-          About Us
-        </h2>
-        <p className="mb-8">
+        <h1 className="text-3xl font-bold mb-4 text-brand-primary">About Us</h1>
+        <p className="mb-8 text-foreground/80 leading-relaxed">
           Welcome to{" "}
           <strong>
-            <span style={{ color: "#d7a825" }}>Swap</span>
-            <span style={{ color: "#037f44" }}>Connect</span>,
+            <span className="text-brand-secondary">Swap</span>
+            <span className="text-brand-primary">Connect</span>,
           </strong>{" "}
           where innovation meets sustainability in the world of tech. We&apos;re
           more than just a Device Swap/Upgrade Website; we&apos;re a
@@ -34,14 +45,14 @@ const About = () => {
 
       {/* Our Mission Section */}
       <section className="max-w-4xl mx-auto mt-10">
-        <h2 className="text-3xl font-bold mb-4" style={{ color: "#037f44" }}>
+        <h2 className="text-3xl font-bold mb-4 text-brand-primary">
           Our Mission
         </h2>
-        <p className="mb-8">
+        <p className="mb-8 text-foreground/80 leading-relaxed">
           At{" "}
           <strong>
-            <span style={{ color: "#d7a825" }}>Swap</span>
-            <span style={{ color: "#037f44" }}>Connect</span>
+            <span className="text-brand-secondary">Swap</span>
+            <span className="text-brand-primary">Connect</span>
           </strong>
           , our mission is to empower individuals to upgrade their devices
           affordably, sustainably, and with confidence. We believe in creating a
@@ -53,10 +64,10 @@ const About = () => {
 
       {/* Why Choose SwapConnect Section */}
       <section className="max-w-4xl mx-auto mt-10">
-        <h2 className="text-3xl font-bold mb-4" style={{ color: "#037f44" }}>
+        <h2 className="text-3xl font-bold mb-4 text-brand-primary">
           Why Choose SwapConnect
         </h2>
-        <ul className="list-disc pl-6 space-y-4 mb-8">
+        <ul className="list-disc pl-6 space-y-4 mb-8 text-foreground/80 leading-relaxed">
           <li>
             <strong>Sustainability at Heart:</strong> We&apos;re committed to
             reducing e-waste and minimizing the environmental impact of
@@ -88,18 +99,18 @@ const About = () => {
 
       {/* Join the Movement Section */}
       <section className="max-w-4xl mx-auto mt-10">
-        <p className="mb-4">
+        <p className="mb-4 text-foreground/80 leading-relaxed">
           Join the SwapConnect Movement: Whether you&apos;re upgrading to the
           latest smartphone, selling your old laptop, or simply looking to be
           part of a tech-savvy community, SwapConnect is your destination. Join
           us in revolutionizing the way we think about technology – making it
           accessible, sustainable, and community-driven.
         </p>
-        <p className="mb-8">
+        <p className="mb-8 text-foreground/80 leading-relaxed">
           Thank you for being part of our journey at{" "}
           <strong>
-            <span style={{ color: "#d7a825" }}>Swap</span>
-            <span style={{ color: "#037f44" }}>Connect</span>
+            <span className="text-brand-secondary">Swap</span>
+            <span className="text-brand-primary">Connect</span>
           </strong>
           . Together, let&apos;s redefine the tech landscape.
         </p>
@@ -109,12 +120,15 @@ const About = () => {
       <section className="max-w-4xl mx-auto mt-10 text-center">
         <a
           href="https://shorturl.at/ysvrI"
-          className="uppercase font-bold mb-2"
+          className="uppercase font-bold mb-2 inline-block hover:opacity-80 transition-opacity"
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          join <span style={{ color: "#d7a825" }}>Swap</span>
-          <span style={{ color: "#037f44" }}>Connect</span> and spread the word!
+          join <span className="text-brand-secondary">Swap</span>
+          <span className="text-brand-primary">Connect</span> and spread the
+          word!
         </a>
-        <p className="italic mb-4">coming soon...</p>
+        <p className="italic mb-4 text-text-muted">coming soon...</p>
         <div className="flex justify-center gap-4">
           <Image
             src="https://res.cloudinary.com/ds83mhjcm/image/upload/v1720113877/SwapConnect/about/app-store-download_zi5x2u.svg"
@@ -125,7 +139,7 @@ const About = () => {
           />
           <Image
             src="https://res.cloudinary.com/ds83mhjcm/image/upload/v1720113877/SwapConnect/about/app-store-download_zi5x2u.svg"
-            alt="Download on Play Store"
+            alt="Download on App Store"
             width={180}
             height={90}
             className="store-icon"

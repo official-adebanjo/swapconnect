@@ -6,14 +6,14 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { SOCIAL_LINKS, QUICK_LINKS, CATEGORIES, ASSETS } from "@/lib/constants";
-import { FaWhatsapp, FaFacebookF, FaInstagram } from "react-icons/fa";
+import { Whatsapp, Facebook, Instagram } from "@/components/ui/BrandIcons";
 import { Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const iconMap: Record<string, React.ElementType> = {
-  whatsapp: FaWhatsapp,
-  facebook: FaFacebookF,
-  instagram: FaInstagram,
+  whatsapp: Whatsapp,
+  facebook: Facebook,
+  instagram: Instagram,
   email: Mail,
 };
 

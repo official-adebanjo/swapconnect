@@ -1,12 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { api } from "@/lib/api";
 import { useAuthToken } from "@/hooks/useAuthToken";
 import useCartStore from "@/stores/CartStore";
-import SwapOfferDialog from "@/components/SwapOfferDialog";
+import dynamic from "next/dynamic";
+
+const SwapOfferDialog = dynamic(() => import("@/components/SwapOfferDialog"), {
+  loading: () => (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-green-700"></div>
+    </div>
+  ),
+  ssr: false,
+});
 
 interface Product {
   id: number;
@@ -58,13 +67,7 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [showSwapDialog, setShowSwapDialog] = useState(false);
 
-  useEffect(() => {
-    if (productId) {
-      fetchProduct();
-    }
-  }, [productId, token]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -86,7 +89,13 @@ export default function ProductDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId, token]);
+
+  useEffect(() => {
+    if (productId) {
+      fetchProduct();
+    }
+  }, [productId, fetchProduct]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-NG", {
@@ -127,7 +136,7 @@ export default function ProductDetailPage() {
   }
 
   const allImages = [product.imageUrl, ...(product.otherImages || [])].filter(
-    Boolean
+    Boolean,
   );
 
   const handleAddToCart = () => {
@@ -181,7 +190,7 @@ export default function ProductDetailPage() {
                     <button
                       key={index}
                       onClick={() => setSelectedImage(image)}
-                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
+                      className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
                         selectedImage === image
                           ? "border-green-500"
                           : "border-gray-200"
@@ -274,7 +283,7 @@ export default function ProductDetailPage() {
                           <p className="text-sm text-gray-600">
                             {plan.numberOfPayments} payments of{" "}
                             {formatPrice(
-                              plan.totalAmount / plan.numberOfPayments
+                              plan.totalAmount / plan.numberOfPayments,
                             )}
                             {" every "}
                             {plan.intervalCount} {plan.paymentInterval}(s)
@@ -339,8 +348,8 @@ export default function ProductDetailPage() {
                   {product.stock === 0
                     ? "Out of Stock"
                     : isInCart
-                    ? "Added to Cart ✓"
-                    : "Add to Cart"}
+                      ? "Added to Cart ✓"
+                      : "Add to Cart"}
                 </button>
 
                 {product.swappable && (

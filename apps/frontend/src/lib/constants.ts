@@ -8,13 +8,13 @@ export const CLOUDINARY_BASE_URL =
   "https://res.cloudinary.com/ds83mhjcm/image/upload";
 
 export const ASSETS = {
-  LOGO: `${CLOUDINARY_BASE_URL}/v1719573357/SwapConnect/logo-full_dhcmrc.png`,
+  LOGO: `${CLOUDINARY_BASE_URL}/v1769164250/SwapConnect/logo_b4jtho.webp`,
   FAVICON: `${CLOUDINARY_BASE_URL}/v1719573356/SwapConnect/favicon-logo_bci2ur.png`,
   MENU_ICON: `${CLOUDINARY_BASE_URL}/v1747647290/SwapConnect/menu-icon_hh6lo7.svg`,
   CANCEL_ICON: `${CLOUDINARY_BASE_URL}/v1747647290/SwapConnect/menu-cancel-icon_mzesfv.svg`,
   SIGNUP_IMG: `${CLOUDINARY_BASE_URL}/v1720707824/SwapConnect/auth/signup_img_bty689.png`,
-  LOGIN_IMG: `${CLOUDINARY_BASE_URL}/v1720707824/SwapConnect/auth/login_img_mvkf9a.png`,
-  LOGO_WHITE: `${CLOUDINARY_BASE_URL}/v1720709493/SwapConnect/logo-white_q3w0xv.webp`,
+  LOGIN_IMG: `${CLOUDINARY_BASE_URL}/v1720707824/SwapConnect/auth/login-img_brscfh.png`,
+  LOGO_WHITE: `${CLOUDINARY_BASE_URL}/v1720710233/SwapConnect/swapconnect-full-logo-trans_lodvax.png`,
   FULL_LOGO_TRANS: `${CLOUDINARY_BASE_URL}/v1720710233/SwapConnect/swapconnect-full-logo-trans_lodvax.png`,
   GOOGLE_ICON:
     "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg",
