@@ -16,7 +16,7 @@ interface UserData {
   country?: string;
 }
 
-export default function PersonalInfo({ userId }: { userId: string }) {
+export default function PersonalInfo() {
   const [userData, setUserData] = useState<UserData>({
     firstName: "",
     lastName: "",

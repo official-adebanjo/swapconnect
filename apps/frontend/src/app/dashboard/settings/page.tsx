@@ -59,7 +59,7 @@ function Page() {
       </div>
 
       {activeTab === "personal" ? (
-        <PersonalInfo userId={userId} />
+        <PersonalInfo />
       ) : activeTab === "notifications" ? (
         <NotificationSettings />
       ) : (

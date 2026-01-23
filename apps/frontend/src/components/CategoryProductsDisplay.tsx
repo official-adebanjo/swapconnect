@@ -389,8 +389,8 @@ export default function CategoryProductsDisplay({
             No products found
           </h3>
           <p className="text-text-secondary max-w-xs mx-auto mb-8">
-            We couldn't find any products matching your current filters. Try
-            broadening your search!
+            We couldn&apos;t find any products matching your current filters.
+            Try broadening your search!
           </p>
           <Button
             onClick={handleFilterReset}

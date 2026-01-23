@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useNotifications } from '@/hooks/useNotifications';
-import { Bell, Mail, Smartphone, Save, Loader2 } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useNotifications } from "@/hooks/useNotifications";
+import { Bell, Mail, Smartphone, Save, Loader2 } from "lucide-react";
 
 export default function NotificationSettings() {
   const { preferences, updatePreferences, loading, error } = useNotifications();
@@ -46,7 +46,7 @@ export default function NotificationSettings() {
         setTimeout(() => setSaved(false), 2000);
       }
     } catch (error) {
-      console.error('Error saving preferences:', error);
+      console.error("Error saving preferences:", error);
     } finally {
       setSaving(false);
     }
@@ -63,10 +63,7 @@ export default function NotificationSettings() {
     return (
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-center py-8">
-          <Loader2
-            className="animate-spin text-[#037F44]"
-            size={24}
-          />
+          <Loader2 className="animate-spin text-[#037F44]" size={24} />
           <span className="ml-2 text-gray-600">
             Loading notification settings...
           </span>
@@ -88,10 +85,7 @@ export default function NotificationSettings() {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center gap-3 mb-6">
-        <Bell
-          className="text-[#037F44]"
-          size={24}
-        />
+        <Bell className="text-[#037F44]" size={24} />
         <h2 className="text-xl font-semibold text-gray-800">
           Notification Settings
         </h2>
@@ -101,10 +95,7 @@ export default function NotificationSettings() {
         {/* Email Notifications */}
         <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
           <div className="flex items-center gap-3">
-            <Mail
-              className="text-gray-600"
-              size={20}
-            />
+            <Mail className="text-gray-600" size={20} />
             <div>
               <h3 className="font-medium text-gray-800">Email Notifications</h3>
               <p className="text-sm text-gray-600">
@@ -117,7 +108,7 @@ export default function NotificationSettings() {
               type="checkbox"
               className="sr-only peer"
               checked={localPreferences.emailNotifications}
-              onChange={() => handleToggle('emailNotifications')}
+              onChange={() => handleToggle("emailNotifications")}
             />
             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#037F44]"></div>
           </label>
@@ -126,10 +117,7 @@ export default function NotificationSettings() {
         {/* Push Notifications */}
         <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
           <div className="flex items-center gap-3">
-            <Smartphone
-              className="text-gray-600"
-              size={20}
-            />
+            <Smartphone className="text-gray-600" size={20} />
             <div>
               <h3 className="font-medium text-gray-800">Push Notifications</h3>
               <p className="text-sm text-gray-600">
@@ -142,7 +130,7 @@ export default function NotificationSettings() {
               type="checkbox"
               className="sr-only peer"
               checked={localPreferences.pushNotifications}
-              onChange={() => handleToggle('pushNotifications')}
+              onChange={() => handleToggle("pushNotifications")}
             />
             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#037F44]"></div>
           </label>
@@ -151,7 +139,7 @@ export default function NotificationSettings() {
         {/* Notification Types */}
         <div className="border border-gray-200 rounded-lg p-4">
           <h3 className="font-medium text-gray-800 mb-3">
-            You'll receive notifications for:
+            You&apos;ll receive notifications for:
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
             <div className="flex items-center gap-2">
@@ -174,26 +162,26 @@ export default function NotificationSettings() {
         </div>
 
         {/* Save Button */}
-        {(
-        <div className="flex justify-end">
-          <button
-            onClick={handleSave}
-            disabled={saving || !hasChanges}
-            className="flex items-center gap-2 bg-[#037F44] text-white px-6 py-2 rounded-md hover:bg-[#025c32] transition disabled:opacity-50"
-          >
-            {saving ? (
-              <Loader2 className="animate-spin" size={16} />
-            ) : saved ? (
-              <span className="text-green-200">✓ Saved</span>
-            ) : (
-              <>
-                <Save size={16} />
-                Save Changes
-              </>
-            )}
-          </button>
-        </div>
-      )}
+        {
+          <div className="flex justify-end">
+            <button
+              onClick={handleSave}
+              disabled={saving || !hasChanges}
+              className="flex items-center gap-2 bg-[#037F44] text-white px-6 py-2 rounded-md hover:bg-[#025c32] transition disabled:opacity-50"
+            >
+              {saving ? (
+                <Loader2 className="animate-spin" size={16} />
+              ) : saved ? (
+                <span className="text-green-200">✓ Saved</span>
+              ) : (
+                <>
+                  <Save size={16} />
+                  Save Changes
+                </>
+              )}
+            </button>
+          </div>
+        }
       </div>
     </div>
   );

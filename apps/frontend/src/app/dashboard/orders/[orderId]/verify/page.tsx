@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type React from 'react';
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import type React from "react";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
@@ -15,10 +15,10 @@ interface VerifyOrderPageProps {
 const VerifyOrderPage: React.FC<VerifyOrderPageProps> = ({ params }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
-    'loading'
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading",
   );
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [resolvedParams, setResolvedParams] = useState<{
     orderId: string;
   } | null>(null);
@@ -38,43 +38,43 @@ const VerifyOrderPage: React.FC<VerifyOrderPageProps> = ({ params }) => {
 
     const verifyPayment = async () => {
       try {
-        const reference = searchParams.get('reference');
+        const reference = searchParams.get("reference");
 
         if (!reference) {
-          setStatus('error');
-          setMessage('Payment reference not found');
+          setStatus("error");
+          setMessage("Payment reference not found");
           return;
         }
 
         const response = await fetch(
           `${backendUrl}/api/orders/verify/${resolvedParams.orderId}?reference=${reference}`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
 
         const result = await response.json();
 
         if (response.ok) {
-          setStatus('success');
+          setStatus("success");
           setMessage(
-            'Payment verified successfully! Your order has been confirmed.'
+            "Payment verified successfully! Your order has been confirmed.",
           );
 
           // Redirect to orders page after 3 seconds
           setTimeout(() => {
-            router.push('/dashboard/orders');
+            router.push("/dashboard/orders");
           }, 3000);
         } else {
-          setStatus('error');
-          setMessage(result.error || 'Payment verification failed');
+          setStatus("error");
+          setMessage(result.error || "Payment verification failed");
         }
-      } catch (error) {
-        setStatus('error');
-        setMessage('An error occurred while verifying payment');
+      } catch {
+        setStatus("error");
+        setMessage("An error occurred while verifying payment");
       }
     };
 
@@ -92,7 +92,7 @@ const VerifyOrderPage: React.FC<VerifyOrderPageProps> = ({ params }) => {
 
   return (
     <div className="max-w-2xl mx-auto py-20 px-4 text-center">
-      {status === 'loading' && (
+      {status === "loading" && (
         <div>
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mx-auto mb-4"></div>
           <h2 className="text-2xl font-bold mb-2">Verifying Payment...</h2>
@@ -102,7 +102,7 @@ const VerifyOrderPage: React.FC<VerifyOrderPageProps> = ({ params }) => {
         </div>
       )}
 
-      {status === 'success' && (
+      {status === "success" && (
         <div>
           <div className="text-green-600 text-6xl mb-4">✓</div>
           <h2 className="text-2xl font-bold text-green-600 mb-2">
@@ -113,7 +113,7 @@ const VerifyOrderPage: React.FC<VerifyOrderPageProps> = ({ params }) => {
         </div>
       )}
 
-      {status === 'error' && (
+      {status === "error" && (
         <div>
           <div className="text-red-600 text-6xl mb-4">✗</div>
           <h2 className="text-2xl font-bold text-red-600 mb-2">
@@ -122,13 +122,13 @@ const VerifyOrderPage: React.FC<VerifyOrderPageProps> = ({ params }) => {
           <p className="text-gray-600 mb-6">{message}</p>
           <div className="space-x-4">
             <button
-              onClick={() => router.push('/cart')}
+              onClick={() => router.push("/cart")}
               className="bg-gray-600 text-white px-6 py-3 rounded font-semibold hover:bg-gray-700"
             >
               Back to Cart
             </button>
             <button
-              onClick={() => router.push('/shop')}
+              onClick={() => router.push("/shop")}
               className="bg-green-600 text-white px-6 py-3 rounded font-semibold hover:bg-green-700"
             >
               Continue Shopping

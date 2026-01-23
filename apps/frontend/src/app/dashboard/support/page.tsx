@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import type React from 'react';
-import { useState, useEffect, useRef } from 'react';
-import { useAuthToken } from '@/hooks/useAuthToken';
-import { io, type Socket } from 'socket.io-client';
-import { Send, MessageCircle, User, Clock, CheckCheck } from 'lucide-react';
-import { API_URL } from '@/lib/config';
+import type React from "react";
+import { useState, useEffect, useRef } from "react";
+import { useAuthToken } from "@/hooks/useAuthToken";
+import { io, type Socket } from "socket.io-client";
+import { Send, MessageCircle, User, Clock, CheckCheck } from "lucide-react";
+import { API_URL } from "@/lib/config";
 
 interface Message {
   id: number;
@@ -55,7 +55,7 @@ interface Conversation {
 function SupportPage() {
   const token = useAuthToken();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [socket, setSocket] = useState<Socket | null>(null);
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -67,7 +67,7 @@ function SupportPage() {
   const [hasAttemptedJoin, setHasAttemptedJoin] = useState(false);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -86,7 +86,7 @@ function SupportPage() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         if (response.ok) {
@@ -102,7 +102,7 @@ function SupportPage() {
           }
         }
       } catch (error) {
-        console.error('Error fetching conversation:', error);
+        console.error("Error fetching conversation:", error);
       }
     };
 
@@ -113,8 +113,8 @@ function SupportPage() {
     if (!token) return;
 
     console.log(
-      '[v0] Initializing socket connection with token:',
-      token ? 'present' : 'missing'
+      "[v0] Initializing socket connection with token:",
+      token ? "present" : "missing",
     );
 
     const newSocket = io(API_URL, {
@@ -127,25 +127,25 @@ function SupportPage() {
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
-      transports: ['websocket', 'polling'],
+      transports: ["websocket", "polling"],
     });
 
     setSocket(newSocket);
 
-    newSocket.on('connect', () => {
-      console.log('[v0] Connected to support chat');
+    newSocket.on("connect", () => {
+      console.log("[v0] Connected to support chat");
       setIsConnected(true);
     });
 
-    newSocket.on('disconnect', () => {
-      console.log('[v0] Disconnected from support chat');
+    newSocket.on("disconnect", () => {
+      console.log("[v0] Disconnected from support chat");
       setIsConnected(false);
     });
 
     newSocket.on(
-      'conversationJoined',
+      "conversationJoined",
       (data: { conversation: Conversation; messages: Message[] }) => {
-        console.log('[v0] Conversation joined:', data);
+        console.log("[v0] Conversation joined:", data);
         setConversation(data.conversation);
         // Only set messages if we don't already have them from the API
         if (messages.length === 0) {
@@ -153,26 +153,26 @@ function SupportPage() {
         }
         setCurrentUserId(data.conversation.user);
         setHasAttemptedJoin(true);
-      }
+      },
     );
 
     newSocket.on(
-      'conversationCreated',
+      "conversationCreated",
       (data: { conversation: Conversation; message: Message }) => {
-        console.log('[v0] Conversation created:', data);
+        console.log("[v0] Conversation created:", data);
         setConversation(data.conversation);
         setMessages([data.message]);
         setCurrentUserId(data.conversation.user);
 
         // Join the newly created conversation
-        newSocket.emit('joinConversation', {
+        newSocket.emit("joinConversation", {
           conversationId: data.conversation.id,
         });
-      }
+      },
     );
 
-    newSocket.on('newMessage', (message: Message) => {
-      console.log('[v0] New message:', message);
+    newSocket.on("newMessage", (message: Message) => {
+      console.log("[v0] New message:", message);
       setMessages((prev) => [...prev, message]);
 
       // If this is the first message and we don't have a conversation yet
@@ -181,8 +181,8 @@ function SupportPage() {
         const tempConversation = {
           id: message.conversationId,
           user: message.senderId,
-          subject: 'Support Request',
-          status: 'open',
+          subject: "Support Request",
+          status: "open",
           lastMessageAt: message.createdAt,
           createdAt: message.createdAt,
           updatedAt: message.updatedAt,
@@ -193,14 +193,14 @@ function SupportPage() {
         setCurrentUserId(message.senderId);
 
         // Join the conversation
-        newSocket.emit('joinConversation', {
+        newSocket.emit("joinConversation", {
           conversationId: message.conversationId,
         });
       }
 
       // Mark message as read if it's not from current user
       if (message.senderId !== currentUserId) {
-        newSocket.emit('markAsRead', {
+        newSocket.emit("markAsRead", {
           conversationId: message.conversationId,
           messageIds: [message.id],
         });
@@ -208,23 +208,23 @@ function SupportPage() {
     });
 
     newSocket.on(
-      'newAdminMessage',
+      "newAdminMessage",
       (data: { conversationId: number; message: Message }) => {
-        console.log('[v0] New admin message:', data);
+        console.log("[v0] New admin message:", data);
         setMessages((prev) => [...prev, data.message]);
 
         // Auto-mark admin messages as read
-        newSocket.emit('markAsRead', {
+        newSocket.emit("markAsRead", {
           conversationId: data.conversationId,
           messageIds: [data.message.id],
         });
-      }
+      },
     );
 
     newSocket.on(
-      'userTyping',
+      "userTyping",
       (data: { userId: number; userName: string; isTyping: boolean }) => {
-        console.log('[v0] User typing:', data);
+        console.log("[v0] User typing:", data);
         if (data.userId !== currentUserId) {
           if (data.isTyping) {
             setTypingUser(data.userName);
@@ -232,48 +232,48 @@ function SupportPage() {
             setTypingUser(null);
           }
         }
-      }
+      },
     );
 
     newSocket.on(
-      'messagesMarkedAsRead',
+      "messagesMarkedAsRead",
       (data: {
         conversationId: number;
         readBy: number;
         messageIds?: number[];
       }) => {
-        console.log('[v0] Messages marked as read:', data);
+        console.log("[v0] Messages marked as read:", data);
         setMessages((prev) =>
           prev.map((msg) =>
             msg.conversationId === data.conversationId &&
             (!data.messageIds || data.messageIds.includes(msg.id))
               ? { ...msg, isRead: true }
-              : msg
-          )
+              : msg,
+          ),
         );
-      }
+      },
     );
 
-    newSocket.on('error', (error: string | { message: string }) => {
-      const errorMessage = typeof error === 'string' ? error : error.message;
-      console.error('[v0] Socket error:', errorMessage);
+    newSocket.on("error", (err: string | { message: string }) => {
+      const errorMessage = typeof err === "string" ? err : err.message;
+      console.error("[v0] Socket error:", errorMessage);
     });
 
-    newSocket.on('connect_error', (error) => {
-      console.error('[v0] Connection error:', error);
+    newSocket.on("connect_error", (error) => {
+      console.error("[v0] Connection error:", error);
       setIsConnected(false);
     });
 
     return () => {
       newSocket.disconnect();
     };
-  }, [token, currentUserId, messages.length]);
+  }, [token, currentUserId, messages.length, conversation]);
 
   // Join existing conversation when socket is connected and conversation is available
   useEffect(() => {
     if (socket && isConnected && conversation && !hasAttemptedJoin) {
-      console.log('[v0] Joining existing conversation:', conversation.id);
-      socket.emit('joinConversation', { conversationId: conversation.id });
+      console.log("[v0] Joining existing conversation:", conversation.id);
+      socket.emit("joinConversation", { conversationId: conversation.id });
       setHasAttemptedJoin(true);
     }
   }, [socket, isConnected, conversation, hasAttemptedJoin]);
@@ -281,8 +281,8 @@ function SupportPage() {
   const sendMessage = () => {
     if (!input.trim() || !socket || !isConnected) return;
 
-    console.log('[v0] Sending message:', input.trim());
-    console.log('[v0] Current conversation:', conversation);
+    console.log("[v0] Sending message:", input.trim());
+    console.log("[v0] Current conversation:", conversation);
 
     // For the first message, don't send conversationId at all
     // The server will handle creating the conversation
@@ -290,23 +290,23 @@ function SupportPage() {
       ? {
           conversationId: conversation.id,
           content: input.trim(),
-          messageType: 'text',
+          messageType: "text",
         }
       : {
           content: input.trim(),
-          messageType: 'text',
+          messageType: "text",
         };
 
-    console.log('[v0] Sending message data:', messageData);
-    socket.emit('sendMessage', messageData);
-    setInput('');
+    console.log("[v0] Sending message data:", messageData);
+    socket.emit("sendMessage", messageData);
+    setInput("");
 
     // Stop typing indicator
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
     if (conversation) {
-      socket.emit('typing', {
+      socket.emit("typing", {
         conversationId: conversation.id,
         isTyping: false,
       });
@@ -321,7 +321,7 @@ function SupportPage() {
 
     if (!isTyping) {
       setIsTyping(true);
-      socket.emit('typing', {
+      socket.emit("typing", {
         conversationId: conversation.id,
         isTyping: true,
       });
@@ -335,7 +335,7 @@ function SupportPage() {
     // Set timeout to stop typing indicator
     typingTimeoutRef.current = setTimeout(() => {
       setIsTyping(false);
-      socket.emit('typing', {
+      socket.emit("typing", {
         conversationId: conversation.id,
         isTyping: false,
       });
@@ -344,7 +344,7 @@ function SupportPage() {
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   const formatDate = (dateString: string) => {
@@ -354,9 +354,9 @@ function SupportPage() {
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (date.toDateString() === today.toDateString()) {
-      return 'Today';
+      return "Today";
     } else if (date.toDateString() === yesterday.toDateString()) {
-      return 'Yesterday';
+      return "Yesterday";
     } else {
       return date.toLocaleDateString();
     }
@@ -373,10 +373,7 @@ function SupportPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <MessageCircle
-                className="text-[#037F44]"
-                size={24}
-              />
+              <MessageCircle className="text-[#037F44]" size={24} />
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">
                   Support Chat
@@ -389,11 +386,11 @@ function SupportPage() {
             <div className="flex items-center gap-2">
               <div
                 className={`w-3 h-3 rounded-full ${
-                  isConnected ? 'bg-green-500' : 'bg-red-500'
+                  isConnected ? "bg-green-500" : "bg-red-500"
                 }`}
               ></div>
               <span className="text-sm text-gray-600">
-                {isConnected ? 'Connected' : 'Connecting...'}
+                {isConnected ? "Connected" : "Connecting..."}
               </span>
             </div>
           </div>
@@ -404,10 +401,7 @@ function SupportPage() {
           <div className="flex-1 p-6 overflow-y-auto space-y-4">
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <MessageCircle
-                  size={48}
-                  className="mb-4 opacity-50"
-                />
+                <MessageCircle size={48} className="mb-4 opacity-50" />
                 <p className="text-lg font-medium">Welcome to Support Chat</p>
                 <p className="text-sm">
                   Send a message to start the conversation
@@ -434,24 +428,24 @@ function SupportPage() {
 
                       <div
                         className={`flex ${
-                          isCurrentUser ? 'justify-end' : 'justify-start'
+                          isCurrentUser ? "justify-end" : "justify-start"
                         } mb-4`}
                       >
                         <div
                           className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                             isCurrentUser
-                              ? 'bg-[#037F44] text-white'
-                              : 'bg-gray-100 text-gray-800'
+                              ? "bg-[#037F44] text-white"
+                              : "bg-gray-100 text-gray-800"
                           }`}
                         >
                           {!isCurrentUser && (
                             <div className="flex items-center gap-2 mb-1">
                               <User size={14} />
                               <span className="text-xs font-medium">
-                                {message.Sender.firstName}{' '}
+                                {message.Sender.firstName}{" "}
                                 {message.Sender.lastName}
                               </span>
-                              {message.Sender.role !== 'user' && (
+                              {message.Sender.role !== "user" && (
                                 <span className="text-xs opacity-75 bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
                                   Support
                                 </span>
@@ -463,21 +457,15 @@ function SupportPage() {
 
                           <div
                             className={`flex items-center gap-1 mt-1 ${
-                              isCurrentUser ? 'justify-end' : 'justify-start'
+                              isCurrentUser ? "justify-end" : "justify-start"
                             }`}
                           >
-                            <Clock
-                              size={12}
-                              className="opacity-60"
-                            />
+                            <Clock size={12} className="opacity-60" />
                             <span className={`text-xs opacity-75`}>
                               {formatTime(message.createdAt)}
                             </span>
                             {isCurrentUser && message.isRead && (
-                              <CheckCheck
-                                size={12}
-                                className="opacity-75"
-                              />
+                              <CheckCheck size={12} className="opacity-75" />
                             )}
                           </div>
                         </div>
@@ -494,11 +482,11 @@ function SupportPage() {
                           <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                           <div
                             className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                            style={{ animationDelay: '0.1s' }}
+                            style={{ animationDelay: "0.1s" }}
                           ></div>
                           <div
                             className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                            style={{ animationDelay: '0.2s' }}
+                            style={{ animationDelay: "0.2s" }}
                           ></div>
                         </div>
                         <span className="text-xs">
@@ -520,9 +508,9 @@ function SupportPage() {
                 value={input}
                 onChange={handleInputChange}
                 placeholder={
-                  isConnected ? 'Type your message...' : 'Connecting...'
+                  isConnected ? "Type your message..." : "Connecting..."
                 }
-                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 disabled={!isConnected}
               />
               <button

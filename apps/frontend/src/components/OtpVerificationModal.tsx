@@ -8,7 +8,7 @@ import {
   renderResendButton,
 } from "@/components/auth/OtpRenderers";
 import Button from "@/components/ui/Button";
-import { X, Lock, ShieldCheck, RefreshCw } from "lucide-react";
+import { ShieldCheck, RefreshCw } from "lucide-react";
 
 interface OtpVerificationModalProps {
   email: string;

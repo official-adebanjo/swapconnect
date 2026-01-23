@@ -238,6 +238,7 @@ const MobilePhonesPage: React.FC = () => {
     formData.storage,
     formData.ram,
     formData.phoneAge,
+    hasCalculated,
   ]);
 
   const calculateValue = async () => {

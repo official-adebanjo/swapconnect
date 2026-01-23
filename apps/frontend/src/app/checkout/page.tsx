@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type React from 'react';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import useCartStore from '@/stores/CartStore';
-import Image from 'next/image';
+import type React from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import useCartStore from "@/stores/CartStore";
+import Image from "next/image";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
@@ -14,9 +14,9 @@ interface ShippingOption {
 }
 
 const shippingOptions: ShippingOption[] = [
-  { label: 'Standard (₦1,000)', value: 1000 },
-  { label: 'Express (₦2,500)', value: 2500 },
-  { label: 'Pickup (₦0)', value: 0 },
+  { label: "Standard (₦1,000)", value: 1000 },
+  { label: "Express (₦2,500)", value: 2500 },
+  { label: "Pickup (₦0)", value: 0 },
 ];
 
 const CheckoutPage: React.FC = () => {
@@ -24,10 +24,10 @@ const CheckoutPage: React.FC = () => {
   const { carts, clearCart } = useCartStore();
 
   const [form, setForm] = useState({
-    address: '',
-    paymentMethod: 'paystack', // paystack or wallet
-    paymentMode: 'full', // full or installment
-    installmentPlanName: '',
+    address: "",
+    paymentMethod: "paystack", // paystack or wallet
+    paymentMode: "full", // full or installment
+    installmentPlanName: "",
     shipping: shippingOptions[0].value,
   });
 
@@ -39,13 +39,13 @@ const CheckoutPage: React.FC = () => {
   // Calculate totals
   const subtotal = carts.reduce(
     (sum, item) => sum + Number(item.price) * item.quantity,
-    0
+    0,
   );
   const total = subtotal + form.shipping;
 
   useEffect(() => {
     // Get user info from localStorage
-    const userData = localStorage.getItem('userId');
+    const userData = localStorage.getItem("userId");
 
     if (userData) {
       setUserId(userData);
@@ -53,7 +53,7 @@ const CheckoutPage: React.FC = () => {
 
     // Redirect if cart is empty
     if (carts.length === 0) {
-      router.push('/cart');
+      router.push("/cart");
     }
   }, [carts.length, router]);
 
@@ -64,13 +64,13 @@ const CheckoutPage: React.FC = () => {
     setMessage(null);
 
     if (!form.address.trim()) {
-      setError('Shipping address is required.');
+      setError("Shipping address is required.");
       setLoading(false);
       return;
     }
 
     if (!userId) {
-      setError('Please log in to complete your order.');
+      setError("Please log in to complete your order.");
       setLoading(false);
       return;
     }
@@ -78,13 +78,13 @@ const CheckoutPage: React.FC = () => {
     try {
       // Calculate installment amount if applicable
       let installmentAmount = 0;
-      if (form.paymentMode === 'installment') {
+      if (form.paymentMode === "installment") {
         const numberOfPayments =
-          form.installmentPlanName === '3-months'
+          form.installmentPlanName === "3-months"
             ? 3
-            : form.installmentPlanName === '6-months'
-            ? 6
-            : 12;
+            : form.installmentPlanName === "6-months"
+              ? 6
+              : 12;
         installmentAmount = total / numberOfPayments;
       }
 
@@ -101,18 +101,18 @@ const CheckoutPage: React.FC = () => {
         paymentMethod: form.paymentMethod,
         paymentMode: form.paymentMode,
         installmentPlanName:
-          form.paymentMode === 'installment'
+          form.paymentMode === "installment"
             ? form.installmentPlanName
             : undefined,
         installmentAmount:
-          form.paymentMode === 'installment' ? installmentAmount : undefined,
+          form.paymentMode === "installment" ? installmentAmount : undefined,
       };
 
       const response = await fetch(`${backendUrl}/api/orders/create-and-pay`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(orderData),
       });
@@ -120,28 +120,32 @@ const CheckoutPage: React.FC = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to process order and payment');
+        throw new Error(result.error || "Failed to process order and payment");
       }
 
       // Handle payment result
-      if (form.paymentMethod === 'paystack' && result.paymentUrl) {
+      if (form.paymentMethod === "paystack" && result.paymentUrl) {
         // Redirect to Paystack payment page
         clearCart();
         window.location.href = result.paymentUrl;
-      } else if (form.paymentMethod === 'wallet') {
+      } else if (form.paymentMethod === "wallet") {
         // Wallet payment completed
         setMessage(
-          form.paymentMode === 'full'
-            ? 'Order placed and paid successfully!'
-            : 'First installment paid successfully! Order placed.'
+          form.paymentMode === "full"
+            ? "Order placed and paid successfully!"
+            : "First installment paid successfully! Order placed.",
         );
         clearCart();
         setTimeout(() => {
           router.push(`/dashboard/orders`);
         }, 2000);
       }
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during checkout');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "An error occurred during checkout");
+      } else {
+        setError("An error occurred during checkout");
+      }
     } finally {
       setLoading(false);
     }
@@ -149,15 +153,15 @@ const CheckoutPage: React.FC = () => {
 
   // Calculate first installment amount for display
   const getFirstInstallmentAmount = () => {
-    if (form.paymentMode !== 'installment' || !form.installmentPlanName)
+    if (form.paymentMode !== "installment" || !form.installmentPlanName)
       return 0;
 
     const numberOfPayments =
-      form.installmentPlanName === '3-months'
+      form.installmentPlanName === "3-months"
         ? 3
-        : form.installmentPlanName === '6-months'
-        ? 6
-        : 12;
+        : form.installmentPlanName === "6-months"
+          ? 6
+          : 12;
     return total / numberOfPayments;
   };
 
@@ -166,7 +170,7 @@ const CheckoutPage: React.FC = () => {
       <div className="max-w-2xl mx-auto py-10 px-4 text-center">
         <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
         <button
-          onClick={() => router.push('/shop')}
+          onClick={() => router.push("/shop")}
           className="bg-green-600 text-white px-6 py-3 rounded font-semibold hover:bg-green-700"
         >
           Continue Shopping
@@ -186,13 +190,10 @@ const CheckoutPage: React.FC = () => {
 
           <div className="space-y-4 mb-6">
             {carts.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center gap-4"
-              >
+              <div key={item.id} className="flex items-center gap-4">
                 <div className="relative h-16 w-16">
                   <Image
-                    src={item.image || '/placeholder.svg'}
+                    src={item.image || "/placeholder.svg"}
                     alt={item.name}
                     fill
                     className="object-contain rounded"
@@ -224,7 +225,7 @@ const CheckoutPage: React.FC = () => {
               <span>Total:</span>
               <span className="text-green-700">₦{total.toLocaleString()}</span>
             </div>
-            {form.paymentMode === 'installment' && form.installmentPlanName && (
+            {form.paymentMode === "installment" && form.installmentPlanName && (
               <div className="text-sm text-gray-600 mt-2">
                 <p>Installment Plan: {form.installmentPlanName}</p>
                 <p>
@@ -237,10 +238,7 @@ const CheckoutPage: React.FC = () => {
 
         {/* Checkout Form */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-6"
-          >
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Shipping Address */}
             <div>
               <label className="block mb-2 font-medium">
@@ -267,10 +265,7 @@ const CheckoutPage: React.FC = () => {
                 className="w-full border px-3 py-2 rounded"
               >
                 {shippingOptions.map((option) => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                  >
+                  <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
                 ))}
@@ -286,7 +281,7 @@ const CheckoutPage: React.FC = () => {
                     type="radio"
                     name="paymentMethod"
                     value="paystack"
-                    checked={form.paymentMethod === 'paystack'}
+                    checked={form.paymentMethod === "paystack"}
                     onChange={(e) =>
                       setForm({ ...form, paymentMethod: e.target.value })
                     }
@@ -299,7 +294,7 @@ const CheckoutPage: React.FC = () => {
                     type="radio"
                     name="paymentMethod"
                     value="wallet"
-                    checked={form.paymentMethod === 'wallet'}
+                    checked={form.paymentMethod === "wallet"}
                     onChange={(e) =>
                       setForm({ ...form, paymentMethod: e.target.value })
                     }
@@ -319,7 +314,7 @@ const CheckoutPage: React.FC = () => {
                     type="radio"
                     name="paymentMode"
                     value="full"
-                    checked={form.paymentMode === 'full'}
+                    checked={form.paymentMode === "full"}
                     onChange={(e) =>
                       setForm({ ...form, paymentMode: e.target.value })
                     }
@@ -332,7 +327,7 @@ const CheckoutPage: React.FC = () => {
                     type="radio"
                     name="paymentMode"
                     value="installment"
-                    checked={form.paymentMode === 'installment'}
+                    checked={form.paymentMode === "installment"}
                     onChange={(e) =>
                       setForm({ ...form, paymentMode: e.target.value })
                     }
@@ -344,7 +339,7 @@ const CheckoutPage: React.FC = () => {
             </div>
 
             {/* Installment Plan (if installment selected) */}
-            {form.paymentMode === 'installment' && (
+            {form.paymentMode === "installment" && (
               <div>
                 <label className="block mb-2 font-medium">
                   Installment Plan *
@@ -355,7 +350,7 @@ const CheckoutPage: React.FC = () => {
                     setForm({ ...form, installmentPlanName: e.target.value })
                   }
                   className="w-full border px-3 py-2 rounded"
-                  required={form.paymentMode === 'installment'}
+                  required={form.paymentMode === "installment"}
                 >
                   <option value="">Select a plan</option>
                   <option value="3-months">3 Months (3 payments)</option>
@@ -372,18 +367,18 @@ const CheckoutPage: React.FC = () => {
               type="submit"
               disabled={
                 loading ||
-                (form.paymentMode === 'installment' &&
+                (form.paymentMode === "installment" &&
                   !form.installmentPlanName)
               }
               className="w-full bg-green-600 text-white py-3 rounded font-semibold hover:bg-green-700 transition disabled:opacity-50"
             >
               {loading
-                ? 'Processing...'
-                : form.paymentMode === 'full'
-                ? `Pay Now - ₦${total.toLocaleString()}`
-                : form.installmentPlanName
-                ? `Pay First Installment - ₦${getFirstInstallmentAmount().toLocaleString()}`
-                : 'Select Installment Plan'}
+                ? "Processing..."
+                : form.paymentMode === "full"
+                  ? `Pay Now - ₦${total.toLocaleString()}`
+                  : form.installmentPlanName
+                    ? `Pay First Installment - ₦${getFirstInstallmentAmount().toLocaleString()}`
+                    : "Select Installment Plan"}
             </button>
 
             {message && (

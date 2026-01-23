@@ -1,10 +1,10 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { Clock, User } from 'lucide-react';
-import Link from 'next/link';
-import { API_URL } from '@/lib/config';
-import Image from 'next/image';
-import { useAuthToken } from '@/hooks/useAuthToken';
+"use client";
+import { useEffect, useState } from "react";
+import { Clock, User } from "lucide-react";
+import Link from "next/link";
+import { API_URL } from "@/lib/config";
+import Image from "next/image";
+import { useAuthToken } from "@/hooks/useAuthToken";
 
 interface Bid {
   id: string;
@@ -46,7 +46,7 @@ function BidTable() {
   });
   const [loading, setLoading] = useState(true);
   const token = useAuthToken();
-  const [activeTab, setActiveTab] = useState<'received' | 'sent'>('received');
+  const [activeTab, setActiveTab] = useState<"received" | "sent">("received");
 
   useEffect(() => {
     if (!token) {
@@ -57,21 +57,21 @@ function BidTable() {
     const fetchBids = async () => {
       try {
         const response = await fetch(`${API_URL}/bid/users`, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
         const data = await response.json();
-        console.log('API Response:', data);
+        console.log("API Response:", data);
 
         setBids({
           sellerBids: Array.isArray(data.sellerBids) ? data.sellerBids : [],
           buyerBids: Array.isArray(data.buyerBids) ? data.buyerBids : [],
         });
       } catch (error) {
-        console.error('Error fetching bids:', error);
+        console.error("Error fetching bids:", error);
         setBids({ sellerBids: [], buyerBids: [] });
       } finally {
         setLoading(false);
@@ -82,31 +82,31 @@ function BidTable() {
   }, [token]);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
       minimumFractionDigits: 0,
     }).format(price);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'accepted':
-        return 'bg-green-100 text-green-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "accepted":
+        return "bg-green-100 text-green-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -117,13 +117,13 @@ function BidTable() {
       className="bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-shadow"
     >
       <div className="flex gap-4">
-        <div className="w-20 h-20 relative flex-shrink-0">
+        <div className="w-20 h-20 relative shrink-0">
           <Image
             src={
               bid.Product?.imageUrl ||
-              '/placeholder.svg?height=80&width=80&query=product'
+              "/placeholder.svg?height=80&width=80&query=product"
             }
-            alt={bid.Product?.name || 'Product'}
+            alt={bid.Product?.name || "Product"}
             fill
             className="object-cover rounded-lg"
           />
@@ -132,11 +132,11 @@ function BidTable() {
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-start mb-2">
             <h3 className="font-semibold text-[#353535] truncate">
-              {bid.Product?.name || 'Unknown Product'}
+              {bid.Product?.name || "Unknown Product"}
             </h3>
             <span
               className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                bid.status
+                bid.status,
               )}`}
             >
               {bid.status.charAt(0).toUpperCase() + bid.status.slice(1)}
@@ -177,7 +177,7 @@ function BidTable() {
 
           {bid.metaData?.message && (
             <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-700 truncate">
-              "{bid.metaData.message}"
+              &quot;{bid.metaData.message}&quot;
             </div>
           )}
         </div>
@@ -197,21 +197,21 @@ function BidTable() {
         <div className="flex gap-2">
           <button
             className={`px-6 py-2 rounded-t-md text-[16px] font-semibold transition-colors ${
-              activeTab === 'received'
-                ? 'bg-[#037F44] text-white'
-                : 'bg-white text-[#037F44] hover:bg-gray-50'
+              activeTab === "received"
+                ? "bg-[#037F44] text-white"
+                : "bg-white text-[#037F44] hover:bg-gray-50"
             }`}
-            onClick={() => setActiveTab('received')}
+            onClick={() => setActiveTab("received")}
           >
             Received Bids ({bids.sellerBids.length})
           </button>
           <button
             className={`px-6 py-2 rounded-t-md text-[16px] font-semibold transition-colors ${
-              activeTab === 'sent'
-                ? 'bg-[#037F44] text-white'
-                : 'bg-white text-[#037F44] hover:bg-gray-50'
+              activeTab === "sent"
+                ? "bg-[#037F44] text-white"
+                : "bg-white text-[#037F44] hover:bg-gray-50"
             }`}
-            onClick={() => setActiveTab('sent')}
+            onClick={() => setActiveTab("sent")}
           >
             Sent Bids ({bids.buyerBids.length})
           </button>
@@ -226,7 +226,7 @@ function BidTable() {
         </div>
       ) : (
         <div className="bg-white rounded-lg shadow-sm p-6">
-          {activeTab === 'received' ? (
+          {activeTab === "received" ? (
             bids.sellerBids.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-4">
@@ -248,7 +248,7 @@ function BidTable() {
                   No bids received yet
                 </h3>
                 <p className="text-gray-600">
-                  When someone makes a bid on your products, they'll appear
+                  When someone makes a bid on your products, they&apos;ll appear
                   here.
                 </p>
               </div>

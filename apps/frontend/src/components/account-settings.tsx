@@ -35,7 +35,7 @@ export default function AccountSettings() {
         setError(null);
         const response = await api.get<{ twoFactorEnabled?: boolean }>(
           "/users/",
-          token
+          token,
         );
 
         if (
@@ -78,7 +78,7 @@ export default function AccountSettings() {
         } else {
           // If disabling, update state immediately
           setUser2FA((prev) =>
-            prev ? { ...prev, twoFactorEnabled: false } : null
+            prev ? { ...prev, twoFactorEnabled: false } : null,
           );
         }
       } else {
@@ -102,12 +102,12 @@ export default function AccountSettings() {
         {
           verificationCode: otpCode.trim(),
         },
-        token
+        token,
       );
 
       if (response.success) {
         setUser2FA((prev) =>
-          prev ? { ...prev, twoFactorEnabled: true } : null
+          prev ? { ...prev, twoFactorEnabled: true } : null,
         );
         setShowOTPInput(false);
         setOtpCode("");
@@ -245,8 +245,8 @@ export default function AccountSettings() {
             </div>
 
             <p className="text-sm text-gray-600 mb-4">
-              We've sent a 6-digit verification code to your email. Enter it
-              below to enable 2FA.
+              We&apos;ve sent a 6-digit verification code to your email. Enter
+              it below to enable 2FA.
             </p>
 
             {error && (
@@ -314,18 +314,18 @@ export default function AccountSettings() {
           <h3 className="font-medium text-gray-800 mb-3">How 2FA Works:</h3>
           <div className="space-y-2 text-sm text-gray-600">
             <div className="flex items-start gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
+              <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 shrink-0"></span>
               <span>
-                When enabled, you'll need to enter a code sent to your email
-                during login
+                When enabled, you&apos;ll need to enter a code sent to your
+                email during login
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
+              <span className="w-2 h-2 bg-green-500 rounded-full mt-2 shrink-0"></span>
               <span>Codes expire after 10 minutes for security</span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></span>
+              <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 shrink-0"></span>
               <span>
                 This prevents unauthorized access even if your password is
                 compromised

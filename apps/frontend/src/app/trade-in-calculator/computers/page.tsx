@@ -226,6 +226,7 @@ const ComputersPage: React.FC = () => {
     formData.ram,
     formData.storageSize,
     formData.storageType,
+    hasCalculated,
   ]);
 
   const calculateValue = async () => {
