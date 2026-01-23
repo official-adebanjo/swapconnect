@@ -25,6 +25,7 @@
     "firebase": "^11.10.0",
     "framer-motion": "^11.13.1",
     "husky": "^9.1.7",
+    "jquery": "^3.7.1",
     "lucide-react": "^0.511.0",
     "next": "^16.0.10",
     "otp-input-react": "^0.3.0",
