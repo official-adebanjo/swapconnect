@@ -48,7 +48,7 @@ const ResetPassword: React.FC = () => {
 
       if (res.ok) {
         toast.success("Password reset successful! Redirecting...");
-        setTimeout(() => router.replace("/auth/login"), 2000);
+        setTimeout(() => router.replace("/login"), 2000);
       } else {
         toast.error(data.message || "Failed to reset password.");
       }

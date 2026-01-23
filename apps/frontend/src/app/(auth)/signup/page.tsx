@@ -9,19 +9,19 @@ import { FaEye, FaEyeSlash, FaCheck } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import dynamic from "next/dynamic";
 
-import CenterCard from "@/app/auth/CenterCard";
+import CenterCard from "../CenterCard";
 import { api } from "@/lib/api";
 import { useUserStore } from "@/stores/AuthStore";
 import type { AuthUser } from "@/stores/AuthStore";
 
 // OTP Components
 const OTPInput = dynamic(
-  () => import("otp-input-react").then((mod) => mod.OTPInput || mod.default),
-  { ssr: false }
+  () => import("otp-input-react").then((mod) => mod.OTPInput),
+  { ssr: false },
 );
 const ResendOTP = dynamic(
   () => import("otp-input-react").then((mod) => mod.ResendOTP),
-  { ssr: false }
+  { ssr: false },
 );
 
 interface UserData {
@@ -103,8 +103,7 @@ const Signup: React.FC = () => {
     const error = searchParams.get("error");
 
     if (error) {
-      toast.error(`Google Sign-up failed: ${error}`, { id: "google-auth" });
-      router.replace("/auth/signup");
+      router.replace("/signup");
       return;
     }
 
@@ -177,8 +176,7 @@ const Signup: React.FC = () => {
           toast.error(`Failed to complete Google sign-up: ${errorMessage}`, {
             id: "google-auth",
           });
-          localStorage.removeItem("authToken");
-          router.replace("/auth/signup");
+          router.replace("/signup");
         }
       };
 
@@ -212,7 +210,7 @@ const Signup: React.FC = () => {
           id: "verify",
         });
         setShowOtpPopup(false);
-        setTimeout(() => router.push("/auth/login"), 1500);
+        setTimeout(() => router.push("/login"), 1500);
       } else {
         toast.error(res.message || "Unexpected response from server.", {
           id: "verify",
@@ -251,14 +249,11 @@ const Signup: React.FC = () => {
       toast.loading("Sending OTP...", { id: "otp-send" });
 
       try {
-        const res = await fetch(
-          `${backendUrl}/auth/send-verification-otp`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          }
-        );
+        const res = await fetch(`${backendUrl}/auth/send-verification-otp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
 
         const result: { message: string } = await res.json();
 
@@ -279,7 +274,7 @@ const Signup: React.FC = () => {
         setIsProcessing(false);
       }
     },
-    [backendUrl]
+    [backendUrl],
   );
 
   const handleSubmit = useCallback(
@@ -288,7 +283,7 @@ const Signup: React.FC = () => {
 
       if (!isTermsAccepted) {
         toast.error(
-          "You must accept the terms and privacy policy to continue."
+          "You must accept the terms and privacy policy to continue.",
         );
         return;
       }
@@ -316,7 +311,7 @@ const Signup: React.FC = () => {
             "Account created successfully! Please verify your email.",
             {
               id: "signup-toast",
-            }
+            },
           );
           setEmailForVerification(email);
           setShowOtpPopup(true);
@@ -325,7 +320,7 @@ const Signup: React.FC = () => {
             data.message?.includes("already exists")
               ? "Account with this email already exists. Please login."
               : data.message || "Account creation failed.",
-            { id: "signup-toast" }
+            { id: "signup-toast" },
           );
         }
       } catch {
@@ -344,7 +339,7 @@ const Signup: React.FC = () => {
       backendUrl,
       isPasswordValid,
       isTermsAccepted,
-    ]
+    ],
   );
 
   const inputClass =
@@ -525,9 +520,9 @@ const Signup: React.FC = () => {
           </button>
 
           <div className="relative flex justify-center items-center my-4">
-            <div className="flex-grow border-t border-gray-300"></div>
-            <span className="flex-shrink mx-4 text-gray-500 text-sm">or</span>
-            <div className="flex-grow border-t border-gray-300"></div>
+            <div className="grow border-t border-gray-300"></div>
+            <span className="shrink mx-4 text-gray-500 text-sm">or</span>
+            <div className="grow border-t border-gray-300"></div>
           </div>
 
           <button
@@ -549,7 +544,7 @@ const Signup: React.FC = () => {
 
         <p className="mt-4 text-xs text-gray-600 text-center">
           Already have an account?{" "}
-          <Link href="/auth/login" className="text-blue-600 hover:underline">
+          <Link href="/login" className="text-blue-600 hover:underline">
             Login
           </Link>
         </p>

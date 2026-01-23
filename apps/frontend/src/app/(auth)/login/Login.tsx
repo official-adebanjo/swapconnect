@@ -18,11 +18,11 @@ import { api } from "@/lib/api";
 // OTP Components
 const OTPInput = dynamic(
   () => import("otp-input-react").then((mod) => mod.OTPInput),
-  { ssr: false }
+  { ssr: false },
 );
 const ResendOTP = dynamic(
   () => import("otp-input-react").then((mod) => mod.ResendOTP),
-  { ssr: false }
+  { ssr: false },
 );
 
 // Form Schema
@@ -153,7 +153,7 @@ const Login: React.FC = () => {
         setIsProcessing(false);
       }
     },
-    [backendUrl]
+    [backendUrl],
   );
 
   const send2FACode = useCallback(async (email: string) => {
@@ -164,7 +164,7 @@ const Login: React.FC = () => {
       const res = await api.post(
         "/users/2fa/initiate",
         {},
-        localStorage.getItem("tempToken") || ""
+        localStorage.getItem("tempToken") || "",
       );
 
       if (res.success) {
@@ -193,7 +193,7 @@ const Login: React.FC = () => {
     try {
       const res = await api.post<AuthResponse, LoginFormInputs>(
         "/auth/login",
-        formData
+        formData,
       );
 
       toast.dismiss("login");
@@ -218,7 +218,7 @@ const Login: React.FC = () => {
         } else {
           toast.error(
             res.data?.message ||
-              "Unauthorized access. Please check your credentials."
+              "Unauthorized access. Please check your credentials.",
           );
         }
         setIsProcessing(false);
@@ -232,7 +232,7 @@ const Login: React.FC = () => {
         const { user, token } = res.data!;
         loginUser({ ...user }, token); // Store all user fields and token
         localStorage.setItem("authToken", token);
-        localStorage.setItem("userId", JSON.stringify(user.id));
+        localStorage.setItem("userId", user.id.toString());
         localStorage.removeItem("tempToken");
 
         toast.success("Login successful!");
@@ -269,7 +269,7 @@ const Login: React.FC = () => {
           : "/dashboard"; // Default live URL redirect
 
       window.location.href = `${backendUrl}/auth/google/login?redirect=${encodeURIComponent(
-        redirectUrl
+        redirectUrl,
       )}`;
     } catch (error) {
       console.error("Error initiating Google sign-in redirect:", error);
@@ -303,7 +303,7 @@ const Login: React.FC = () => {
       ) {
         toast.success("Email verified successfully!", { id: "verify" });
         setShowOtpPopup(false);
-        router.push("/auth/login");
+        router.push("/login");
       } else {
         toast.error(res.message || "Unexpected response from server.", {
           id: "verify",
@@ -350,22 +350,19 @@ const Login: React.FC = () => {
     toast.loading("Verifying 2FA code...", { id: "verify-2fa" });
 
     try {
-      const res: any = await api.post<
-        AuthResponse,
-        { verificationCode: string }
-      >(
+      const res = await api.post<AuthResponse, { verificationCode: string }>(
         "/users/2fa/verify",
         {
           verificationCode: twoFactorOtp.toString(),
         },
-        localStorage.getItem("tempToken") || ""
+        localStorage.getItem("tempToken") || "",
       );
 
       if (res.success && res.data?.token && res.data?.user) {
         const { user, token } = res.data;
         loginUser({ ...user }, token);
         localStorage.setItem("authToken", token);
-        localStorage.setItem("userId", user.id);
+        localStorage.setItem("userId", user.id.toString());
         localStorage.removeItem("tempToken");
 
         toast.success("2FA verification successful!", { id: "verify-2fa" });
@@ -497,7 +494,7 @@ const Login: React.FC = () => {
 
         <p className="mt-4 text-xs text-center text-gray-600">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/signup" className="text-blue-600 hover:underline">
+          <Link href="/signup" className="text-blue-600 hover:underline">
             Sign up
           </Link>
         </p>

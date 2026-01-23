@@ -159,7 +159,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     logoutUser();
-    router.push("/auth/login");
+    router.push("/login");
   };
 
   // --- Search Handlers ---
@@ -172,7 +172,7 @@ const Navbar: React.FC = () => {
     const filteredResults = mockSearchableItems.filter(
       (item) =>
         item.title.toLowerCase().includes(query.toLowerCase()) ||
-        item.category.toLowerCase().includes(query.toLowerCase())
+        item.category.toLowerCase().includes(query.toLowerCase()),
     );
     setSearchResults(filteredResults);
     setShowSearchPopup(true);
@@ -268,7 +268,7 @@ const Navbar: React.FC = () => {
               {!isLoggedIn && (
                 <li>
                   <Link
-                    href="/auth/login"
+                    href="/login"
                     className="nav-link text-black font-medium transition-colors duration-300 hover:text-yellow-600 hover:border-b-2 hover:border-yellow-600 py-1"
                   >
                     Login
@@ -527,7 +527,7 @@ const Navbar: React.FC = () => {
             {!isLoggedIn && (
               <li>
                 <Link
-                  href="/auth/login"
+                  href="/login"
                   className="nav-link text-lg font-medium block py-2 text-foreground"
                   onClick={handleSelect}
                 >

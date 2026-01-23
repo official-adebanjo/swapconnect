@@ -78,7 +78,7 @@ const Sidebar: React.FC = () => (
             className="flex items-center w-full cursor-pointer py-3 text-[17px] transition-colors duration-200 hover:text-brand-primary bg-transparent border-none outline-none"
             onClick={() => {
               localStorage.removeItem("token");
-              window.location.replace("/auth/login");
+              window.location.replace("/login");
             }}
           >
             <span className="text-[20px] mr-[16px]">

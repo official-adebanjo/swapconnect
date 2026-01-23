@@ -88,9 +88,8 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
           if (response.status === 401) {
             localStorage.removeItem("authToken");
             logoutUser();
-            const currentUrl = window.location.href;
-            window.location.href = `http://localhost:3000/auth/login?redirect=${encodeURIComponent(
-              currentUrl
+            window.location.href = `/login?redirect=${encodeURIComponent(
+              window.location.pathname,
             )}`;
             return;
           }
@@ -114,7 +113,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
               avatar: sanitizedAvatar,
               email: data.data.email || "",
             },
-            token
+            token,
           );
         } else {
           logoutUser();
@@ -144,7 +143,7 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
   const displayAvatarUrl = getValidAvatarUrl(user?.avatar || user?.photoURL);
 
   return (
-    <nav className="fixed top-0 right-0 left-0 h-[85px] bg-card-bg border-b border-border-color flex items-center justify-between md:left-[220px] px-4 md:px-8 z-[101]">
+    <nav className="fixed top-0 right-0 left-0 h-[85px] bg-card-bg border-b border-border-color flex items-center justify-between md:left-[220px] px-4 md:px-8 z-101">
       <div className="hidden md:flex items-center justify-between w-full">
         <h2 className="text-[24px] font-bold text-text-primary">{title}</h2>
         <div className="flex items-center gap-[32px]">
@@ -160,8 +159,8 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
               {userLoading
                 ? "Loading..."
                 : typeof user?.name === "string" && user?.name.trim() !== ""
-                ? user.name
-                : "Guest"}
+                  ? user.name
+                  : "Guest"}
             </span>
             <Image
               src={displayAvatarUrl || "/placeholder.svg"}
@@ -200,8 +199,8 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
             {userLoading
               ? "Loading..."
               : typeof user?.name === "string" && user?.name.trim() !== ""
-              ? user.name
-              : "Guest"}
+                ? user.name
+                : "Guest"}
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -248,8 +247,8 @@ const Navbar: React.FC<NavProps> = ({ title }) => {
             <button
               className="mt-8 w-full py-2 bg-[#F87171] text-white rounded font-semibold hover:bg-[#d32f2f] transition"
               onClick={() => {
-                localStorage.removeItem("token");
-                window.location.href = "/auth/login";
+                logoutUser();
+                window.location.href = "/login";
               }}
             >
               Logout

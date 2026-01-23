@@ -20,10 +20,10 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
   }, []);
 
   const noNavFooterPaths = [
-    "/auth/login",
-    "/auth/signup",
-    "/auth/reset-password",
-    "/auth/forget-password",
+    "/login",
+    "/signup",
+    "/reset-password",
+    "/forget-password",
   ];
 
   const shouldShowNavAndFooter =
