@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type React from 'react';
-import { useState } from 'react';
-import { API_URL } from '../lib/config';
+import type React from "react";
+import { useState } from "react";
+import { API_URL } from "../lib/config";
 
 interface SwapOfferDialogProps {
   isOpen: boolean;
@@ -18,16 +18,16 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
   targetProductName,
 }) => {
   const [form, setForm] = useState({
-    name: '',
-    categoryId: '',
-    description: '',
-    brand: '',
-    rom: '',
-    ram: '',
-    price: '',
-    displayType: '',
-    displaySize: '',
-    stock: '1',
+    name: "",
+    categoryId: "",
+    description: "",
+    brand: "",
+    rom: "",
+    ram: "",
+    price: "",
+    displayType: "",
+    displaySize: "",
+    stock: "1",
   });
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -36,7 +36,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -47,48 +47,48 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
 
     // Basic validation
     if (!form.name.trim()) {
-      alert('Product name is required');
+      alert("Product name is required");
       setLoading(false);
       return;
     }
     if (Number(form.price) <= 0) {
-      alert('Price must be a positive number');
+      alert("Price must be a positive number");
       setLoading(false);
       return;
     }
     if (!imageFile) {
-      alert('Product image is required');
+      alert("Product image is required");
       setLoading(false);
       return;
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
       if (!token) {
-        alert('You must be logged in to make a swap offer');
+        alert("You must be logged in to make a swap offer");
         setLoading(false);
         return;
       }
 
       const formData = new FormData();
 
-      formData.append('targetProductId', targetProductId);
-      formData.append('name', form.name.trim());
-      formData.append('categoryId', form.categoryId);
-      formData.append('description', form.description);
-      formData.append('brand', form.brand);
-      formData.append('ram', form.ram);
-      formData.append('rom', form.rom);
-      formData.append('price', String(Number(form.price)));
-      formData.append('displayType', form.displayType);
-      formData.append('displaySize', form.displaySize);
-      formData.append('stock', form.stock);
-      formData.append('message', `Swap offer for ${targetProductName}`);
-      formData.append('image', imageFile);
+      formData.append("targetProductId", targetProductId);
+      formData.append("name", form.name.trim());
+      formData.append("categoryId", form.categoryId);
+      formData.append("description", form.description);
+      formData.append("brand", form.brand);
+      formData.append("ram", form.ram);
+      formData.append("rom", form.rom);
+      formData.append("price", String(Number(form.price)));
+      formData.append("displayType", form.displayType);
+      formData.append("displaySize", form.displaySize);
+      formData.append("stock", form.stock);
+      formData.append("message", `Swap offer for ${targetProductName}`);
+      formData.append("image", imageFile);
 
       const response = await fetch(`${API_URL}/bid/swap-offer`, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -101,24 +101,24 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
         setShowSuccess(true);
         // Reset form
         setForm({
-          name: '',
-          categoryId: '',
-          description: '',
-          brand: '',
-          rom: '',
-          ram: '',
-          price: '',
-          displayType: '',
-          displaySize: '',
-          stock: '1',
+          name: "",
+          categoryId: "",
+          description: "",
+          brand: "",
+          rom: "",
+          ram: "",
+          price: "",
+          displayType: "",
+          displaySize: "",
+          stock: "1",
         });
         setImageFile(null);
       } else {
-        alert(data.error || data.message || 'Failed to create swap offer.');
+        alert(data.error || data.message || "Failed to create swap offer.");
       }
     } catch (error) {
       console.error(error);
-      alert('An error occurred. Please try again.');
+      alert("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -134,7 +134,12 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dialog-title"
+    >
       <div className="bg-white rounded-xl shadow-lg p-6 relative w-11/12 max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Success Popup */}
         {showSuccess && (
@@ -170,19 +175,20 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
 
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-[#353535] mb-2">
+          <h2
+            id="dialog-title"
+            className="text-2xl font-bold text-[#353535] mb-2"
+          >
             Make Swap Offer
           </h2>
           <p className="text-gray-600">
-            Add details of your product to swap with "{targetProductName}"
+            Add details of your product to swap with &quot;{targetProductName}
+            &quot;
           </p>
         </div>
 
         {/* Form */}
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-4"
-        >
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <select
@@ -191,6 +197,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
                 onChange={handleChange}
                 required
                 className="w-full border border-[#E5E7EB] rounded-md px-4 py-2 bg-white text-[#212121] text-[16px] focus:outline-none focus:ring-2 focus:ring-[#037F44]"
+                aria-label="Product category"
               >
                 <option value="">Product category</option>
                 <option value="1">Phones</option>
@@ -209,6 +216,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
                 placeholder="Product Name"
                 required
                 className="w-full border border-[#E5E7EB] text-[#212121] text-[16px] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#037F44]"
+                aria-label="Product Name"
               />
             </div>
 
@@ -221,6 +229,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
                 required
                 placeholder="Product Brand"
                 className="w-full border border-[#E5E7EB] text-[#212121] text-[16px] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#037F44]"
+                aria-label="Product Brand"
               />
             </div>
 
@@ -233,6 +242,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
                 required
                 placeholder="Estimated Value (₦)"
                 className="w-full border border-[#E5E7EB] text-[#212121] text-[16px] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#037F44]"
+                aria-label="Estimated Value"
                 min="0"
                 step="0.01"
               />
@@ -246,6 +256,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
                 onChange={handleChange}
                 className="w-full border border-[#E5E7EB] text-[#212121] text-[16px] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#037F44]"
                 placeholder="RAM (optional)"
+                aria-label="RAM"
               />
             </div>
 
@@ -257,6 +268,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
                 onChange={handleChange}
                 className="w-full border border-[#E5E7EB] text-[#212121] text-[16px] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#037F44]"
                 placeholder="Storage (optional)"
+                aria-label="Storage"
               />
             </div>
 
@@ -268,6 +280,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
                 onChange={handleChange}
                 className="w-full border border-[#E5E7EB] text-[#212121] text-[16px] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#037F44]"
                 placeholder="Display Size (optional)"
+                aria-label="Display Size"
               />
             </div>
 
@@ -279,6 +292,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
                 onChange={handleChange}
                 className="w-full border border-[#E5E7EB] text-[#212121] text-[16px] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#037F44]"
                 placeholder="Display Type (optional)"
+                aria-label="Display Type"
               />
             </div>
           </div>
@@ -291,6 +305,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
               required
               placeholder="Product Description"
               className="w-full border border-[#E5E7EB] text-[#212121] text-[16px] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#037F44] resize-none"
+              aria-label="Product Description"
               rows={3}
             />
           </div>
@@ -327,7 +342,7 @@ const SwapOfferDialog: React.FC<SwapOfferDialogProps> = ({
               className="flex-1 bg-[#037F44] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#025c32] transition disabled:opacity-50"
               disabled={loading}
             >
-              {loading ? 'Creating Swap Offer...' : 'Make Swap Offer'}
+              {loading ? "Creating Swap Offer..." : "Make Swap Offer"}
             </button>
             <button
               type="button"

@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FaEye, FaEyeSlash, FaCheck } from "react-icons/fa";
+import { Eye, EyeOff, Check } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import dynamic from "next/dynamic";
 
@@ -376,6 +376,7 @@ const Signup: React.FC = () => {
               className={inputClass}
               required
               disabled={isProcessing}
+              aria-label="First Name"
             />
             <input
               type="text"
@@ -385,6 +386,7 @@ const Signup: React.FC = () => {
               className={inputClass}
               required
               disabled={isProcessing}
+              aria-label="Last Name"
             />
           </div>
 
@@ -396,6 +398,7 @@ const Signup: React.FC = () => {
             className={inputClass}
             required
             disabled={isProcessing}
+            aria-label="Email Address"
           />
 
           <div className="relative">
@@ -407,15 +410,19 @@ const Signup: React.FC = () => {
               className="w-full p-2 border border-gray-300 rounded-md pr-10 disabled:bg-gray-200"
               required
               disabled={isProcessing}
+              aria-label="Password"
             />
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-600"
-              tabIndex={-1}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
             </button>
           </div>
 
@@ -425,38 +432,40 @@ const Signup: React.FC = () => {
                 passwordValidation.length ? "text-green-600" : "text-red-500"
               }`}
             >
-              {passwordValidation.length && <FaCheck />} Minimum 8 characters
+              {passwordValidation.length && <Check className="h-3 w-3" />}{" "}
+              Minimum 8 characters
             </li>
             <li
               className={`flex items-center gap-1 ${
                 passwordValidation.uppercase ? "text-green-600" : "text-red-500"
               }`}
             >
-              {passwordValidation.uppercase && <FaCheck />} At least one
-              uppercase letter
+              {passwordValidation.uppercase && <Check className="h-3 w-3" />} At
+              least one uppercase letter
             </li>
             <li
               className={`flex items-center gap-1 ${
                 passwordValidation.lowercase ? "text-green-600" : "text-red-500"
               }`}
             >
-              {passwordValidation.lowercase && <FaCheck />} At least one
-              lowercase letter
+              {passwordValidation.lowercase && <Check className="h-3 w-3" />} At
+              least one lowercase letter
             </li>
             <li
               className={`flex items-center gap-1 ${
                 passwordValidation.number ? "text-green-600" : "text-red-500"
               }`}
             >
-              {passwordValidation.number && <FaCheck />} At least one number
+              {passwordValidation.number && <Check className="h-3 w-3" />} At
+              least one number
             </li>
             <li
               className={`flex items-center gap-1 ${
                 passwordValidation.special ? "text-green-600" : "text-red-500"
               }`}
             >
-              {passwordValidation.special && <FaCheck />} At least one special
-              character
+              {passwordValidation.special && <Check className="h-3 w-3" />} At
+              least one special character
             </li>
           </ul>
 
