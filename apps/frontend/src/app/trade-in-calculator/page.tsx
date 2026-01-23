@@ -1,11 +1,13 @@
-"use client";
-
-export const dynamic = "force-dynamic";
-
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaAngleRight } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Trade-In Calculator | SwapConnect",
+  description: "Calculate the trade-in value of your device instantly.",
+};
 
 const SelectSwapCategory = () => {
   return (
@@ -27,6 +29,7 @@ const SelectSwapCategory = () => {
               width={300}
               height={200}
               className="mb-4"
+              priority
             />
             <h5 className="text-xl font-semibold text-gray-800">Computer: </h5>
             <p className="text-gray-600 mb-4">
@@ -35,9 +38,9 @@ const SelectSwapCategory = () => {
             <Link href="/trade-in-calculator/computers" passHref>
               <button className="bg-green-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-green-700 transition duration-200 flex items-center justify-center cursor-pointer">
                 Swap
-                <FaAngleRight className="ml-2" />
-                <FaAngleRight className="ml-0.5" />
-                <FaAngleRight className="ml-0.5" />
+                <ChevronRight className="ml-2 h-4 w-4" />
+                <ChevronRight className="-ml-1 h-4 w-4" />
+                <ChevronRight className="-ml-1 h-4 w-4" />
               </button>
             </Link>
           </div>
@@ -50,6 +53,7 @@ const SelectSwapCategory = () => {
               width={300}
               height={200}
               className="mb-4"
+              priority
             />
             <h5 className="text-xl font-semibold text-gray-800">
               Mobile Phones:{" "}
@@ -58,9 +62,9 @@ const SelectSwapCategory = () => {
             <Link href="/trade-in-calculator/mobile-phones" passHref>
               <button className="bg-green-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-green-700 transition duration-200 flex items-center justify-center cursor-pointer">
                 Swap
-                <FaAngleRight className="ml-2" />
-                <FaAngleRight className="ml-0.5" />
-                <FaAngleRight className="ml-0.5" />
+                <ChevronRight className="ml-2 h-4 w-4" />
+                <ChevronRight className="-ml-1 h-4 w-4" />
+                <ChevronRight className="-ml-1 h-4 w-4" />
               </button>
             </Link>
           </div>

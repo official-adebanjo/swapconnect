@@ -37,3 +37,25 @@ export interface Product {
   isTopSale: boolean;
   tag: string;
 }
+
+export interface MobileFormData {
+  brand: string;
+  model: string;
+  storage: string;
+  ram: string;
+  batteryCapacity: string;
+  batteryHours: string;
+  phoneAge: string;
+  deviceImage: string | File;
+  autoOnOff: string;
+  bodyCondition: string;
+  screenCondition: string;
+  repairVisits: string;
+  biometricFunction: string;
+}
+
+export interface CalculationBreakdown {
+  baseValue?: number;
+  conditionMultiplier?: number;
+  finalValue?: number;
+}

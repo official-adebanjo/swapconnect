@@ -5,14 +5,13 @@ import { useState, useEffect } from "react";
 import { useUserStore } from "@/stores/AuthStore";
 // import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import Link from "next/link";
-import Image from "next/image";
 import TradeInForm from "@/components/trade-in-calculator/TradeInForm";
 import RecentlyUploadedProducts from "@/components/trade-in-calculator/RecentlyUploaded";
+import TradeInSidebar from "@/components/trade-in-calculator/Sidebar";
 import AdditionalDetails from "@/components/trade-in-calculator/AdditionalDetails";
 import type { ComputerFormData, TradeInField, Product } from "@/types/trade-in";
-import { FaChevronRight } from "react-icons/fa";
 import { api } from "@/lib/api";
+import { formatPrice } from "@/lib/utils";
 
 interface CalculationBreakdown {
   baseValue?: number;
@@ -36,7 +35,7 @@ const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
   try {
     const response = await api.get<{ data: ProductApiData[] }>(
       "/products/top?limit=6",
-      token
+      token,
     );
     if (response.success && response.data?.data) {
       // Check for the nested 'data' property
@@ -175,7 +174,6 @@ const ComputersPage: React.FC = () => {
   const { token } = useUserStore();
 
   const [recentlyUploaded, setRecentlyUploaded] = useState<Product[]>([]);
-  const [startIndex, setStartIndex] = useState(0);
   const [estimatedValue, setEstimatedValue] = useState<number>(0);
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationBreakdown, setCalculationBreakdown] =
@@ -197,11 +195,14 @@ const ComputersPage: React.FC = () => {
     repairVisits: "",
     biometricFunction: "",
   });
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
   // Load recently uploaded products
   useEffect(() => {
-    if (!token) return;
-    fetchRecentlyUploaded(token).then(setRecentlyUploaded);
+    setIsLoadingProducts(true);
+    fetchRecentlyUploaded(token)
+      .then(setRecentlyUploaded)
+      .finally(() => setIsLoadingProducts(false));
   }, [token]);
 
   // Restore saved form data if redirected from login
@@ -242,7 +243,7 @@ const ComputersPage: React.FC = () => {
       !formData.storageType
     ) {
       toast.error(
-        "Please fill in all required fields (Brand, Model, Storage, RAM, Phone Age"
+        "Please fill in all required fields (Brand, Model, Storage, RAM, Phone Age",
       );
       return;
     }
@@ -295,13 +296,13 @@ const ComputersPage: React.FC = () => {
         if (calculatedValue > 0) {
           toast.success(
             `Your computer is estimated to be worth ${formatPrice(
-              calculatedValue
+              calculatedValue,
             )}!`,
-            { duration: 5000 }
+            { duration: 5000 },
           );
         } else {
           toast.error(
-            "Unable to calculate value. Please check your device details."
+            "Unable to calculate value. Please check your device details.",
           );
         }
       } else {
@@ -311,7 +312,7 @@ const ComputersPage: React.FC = () => {
     } catch (error) {
       console.error("Error calculating value:", error);
       toast.error(
-        "An error occurred while calculating the value. Please try again."
+        "An error occurred while calculating the value. Please try again.",
       );
     } finally {
       setIsCalculating(false);
@@ -334,42 +335,14 @@ const ComputersPage: React.FC = () => {
     await calculateValue();
   };
 
-  const itemsPerPage = 3;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = recentlyUploaded.slice(startIndex, endIndex);
-  const isPrevDisabled = startIndex === 0;
-  const isNextDisabled = endIndex >= recentlyUploaded.length;
-
-  const handlePrev = () =>
-    setStartIndex((prev) => Math.max(prev - itemsPerPage, 0));
-  const handleNext = () =>
-    setStartIndex((prev) =>
-      Math.min(prev + itemsPerPage, recentlyUploaded.length - itemsPerPage)
-    );
-
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type, files } = e.target as HTMLInputElement;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "file" ? files?.[0] || "" : value,
     }));
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
-
-  const getEstimateDisplayText = () => {
-    if (isCalculating) return "Calculating...";
-    if (hasCalculated && estimatedValue > 0) return formatPrice(estimatedValue);
-    if (hasCalculated && estimatedValue === 0) return "Unable to estimate";
-    return "Click 'Get Final Estimate' to calculate";
   };
 
   return (
@@ -391,82 +364,13 @@ const ComputersPage: React.FC = () => {
 
           {/* Sidebar */}
           <div className="w-full md:w-4/12 lg:w-1/4">
-            <div className="rounded-lg border border-yellow-600 shadow-md p-4 bg-white">
-              <h4 className="text-xl font-semibold mb-2">
-                Estimated Trade-In Value
-              </h4>
-              <p className="text-sm text-gray-600 mb-4">
-                Note: Values are estimated and may vary after physical
-                inspection.
-              </p>
-              <div className="relative w-full h-40 mb-4">
-                <Image
-                  src="https://res.cloudinary.com/ds83mhjcm/image/upload/v1720178194/SwapConnect/swap/laptop_swap_e3epz6.png"
-                  alt="Trade-in illustration"
-                  fill
-                  className="object-contain rounded-md"
-                />
-              </div>
-              <strong className="block mt-3 text-gray-800">
-                Estimated Value
-              </strong>
-              <div className="bg-gray-200 p-3 rounded-md mt-2 text-gray-700 min-h-[60px] flex items-center justify-center">
-                {isCalculating ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                    <span className="text-sm">Calculating...</span>
-                  </div>
-                ) : (
-                  <span
-                    className={`text-lg font-bold ${
-                      hasCalculated && estimatedValue > 0
-                        ? "text-green-600"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    {getEstimateDisplayText()}
-                  </span>
-                )}
-              </div>
-
-              {calculationBreakdown && hasCalculated && (
-                <div className="mt-4 p-3 bg-blue-50 rounded-md">
-                  <h5 className="text-sm font-semibold text-blue-800 mb-2">
-                    Calculation Breakdown
-                  </h5>
-                  <div className="text-xs text-blue-700 space-y-1">
-                    <div>
-                      Base Value:{" "}
-                      {formatPrice(calculationBreakdown.baseValue || 0)}
-                    </div>
-                    {calculationBreakdown.conditionMultiplier && (
-                      <div>
-                        Condition Factor:{" "}
-                        {(
-                          calculationBreakdown.conditionMultiplier * 100
-                        ).toFixed(0)}
-                        %
-                      </div>
-                    )}
-                    <div className="font-semibold border-t pt-1">
-                      Final Value:{" "}
-                      {formatPrice(
-                        calculationBreakdown.finalValue || estimatedValue
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <Link
-                href="/trade-in-calculator"
-                className="flex items-center text-yellow-600 hover:text-yellow-700 mt-4 text-sm font-medium"
-              >
-                see other categories <FaChevronRight className="ml-1 text-xs" />
-                <FaChevronRight className="text-xs" />
-                <FaChevronRight className="text-xs" />
-              </Link>
-            </div>
+            <TradeInSidebar
+              deviceType="computer"
+              isCalculating={isCalculating}
+              hasCalculated={hasCalculated}
+              estimatedValue={estimatedValue}
+              calculationBreakdown={calculationBreakdown}
+            />
           </div>
         </div>
 
@@ -548,27 +452,10 @@ const ComputersPage: React.FC = () => {
             <h3 className="mb-6 text-xl font-bold text-gray-800">
               Recently Listed Computers
             </h3>
-            <RecentlyUploadedProducts products={currentItems} />
-            <div className="flex justify-between mt-4">
-              <button
-                disabled={isPrevDisabled}
-                onClick={handlePrev}
-                className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                Previous
-              </button>
-              <span className="px-3 py-1 text-sm text-gray-600">
-                {Math.floor(startIndex / itemsPerPage) + 1} of{" "}
-                {Math.ceil(recentlyUploaded.length / itemsPerPage)}
-              </span>
-              <button
-                disabled={isNextDisabled}
-                onClick={handleNext}
-                className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                Next
-              </button>
-            </div>
+            <RecentlyUploadedProducts
+              products={recentlyUploaded}
+              isLoading={isLoadingProducts}
+            />
           </div>
         </div>
       </form>

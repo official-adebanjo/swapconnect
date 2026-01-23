@@ -5,27 +5,13 @@ import { useState, useEffect } from "react";
 import { useUserStore } from "@/stores/AuthStore";
 // import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import Link from "next/link";
-import Image from "next/image";
-import {
-  ChevronRight,
-  ArrowLeft,
-  ArrowRight,
-  ShoppingCart,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import TradeInSidebar from "@/components/trade-in-calculator/Sidebar";
+import RecentlyUploadedProducts from "@/components/trade-in-calculator/RecentlyUploaded";
 import { api } from "@/lib/api";
+import { formatPrice } from "@/lib/utils";
 
-interface Product {
-  id: string;
-  name: string;
-  image: string;
-  price: number;
-  description: string;
-  availability: "in stock" | "out of stock";
-  stock: number;
-  isTopSale: boolean;
-  tag: string;
-}
+import { Product } from "@/types/trade-in";
 
 interface CalculationBreakdown {
   baseValue?: number;
@@ -98,7 +84,7 @@ const fetchRecentlyUploaded = async (token?: string): Promise<Product[]> => {
     );
     if (response.success && response.data) {
       return response.data.map((product: ProductApiData) => ({
-        id: product.id.toString(),
+        id: product.id,
         name: product.name,
         image: product.imageUrl || "/placeholder.svg?height=200&width=200",
         price: product.price,
@@ -121,7 +107,7 @@ const MobilePhonesPage: React.FC = () => {
   const { token } = useUserStore();
 
   const [recentlyUploaded, setRecentlyUploaded] = useState<Product[]>([]);
-  const [startIndex, setStartIndex] = useState(0);
+  // const [startIndex, setStartIndex] = useState(0);
   const [estimatedValue, setEstimatedValue] = useState<number>(0);
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationBreakdown, setCalculationBreakdown] =
@@ -142,14 +128,14 @@ const MobilePhonesPage: React.FC = () => {
     repairVisits: "",
     biometricFunction: "",
   });
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
   useEffect(() => {
-    if (!token) {
-      return;
-    }
     const loadProducts = async () => {
+      setIsLoadingProducts(true);
       const products = await fetchRecentlyUploaded(token);
       setRecentlyUploaded(products);
+      setIsLoadingProducts(false);
     };
     loadProducts();
   }, [token]);
@@ -290,41 +276,6 @@ const MobilePhonesPage: React.FC = () => {
       ...prev,
       [name]: type === "file" ? files?.[0] || "" : value,
     }));
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
-
-  const itemsPerPage = 3;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = recentlyUploaded.slice(startIndex, endIndex);
-
-  const handlePrev = () => {
-    setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPage, 0));
-  };
-
-  const handleNext = () => {
-    setStartIndex((prevIndex) =>
-      Math.min(
-        prevIndex + itemsPerPage,
-        recentlyUploaded.length - itemsPerPage,
-      ),
-    );
-  };
-
-  const isPrevDisabled = startIndex === 0;
-  const isNextDisabled = endIndex >= recentlyUploaded.length;
-
-  const getEstimateDisplayText = () => {
-    if (isCalculating) return "Calculating...";
-    if (hasCalculated && estimatedValue > 0) return formatPrice(estimatedValue);
-    if (hasCalculated && estimatedValue === 0) return "Unable to estimate";
-    return "Click 'Get Final Estimate' to calculate";
   };
 
   return (
@@ -548,83 +499,13 @@ const MobilePhonesPage: React.FC = () => {
 
           {/* Right Column: Estimated Value */}
           <div className="w-full md:w-4/12 lg:w-1/4">
-            <div className="rounded-lg border border-yellow-600 shadow-md p-4 bg-white">
-              <h4 className="text-xl font-semibold mb-2">
-                Estimated Trade-In Value
-              </h4>
-              <p className="text-sm text-gray-600 mb-4">
-                Note: Values are estimated and may vary after physical
-                inspection.
-              </p>
-              <div className="relative w-full h-40 mb-4">
-                <Image
-                  src="https://res.cloudinary.com/ds83mhjcm/image/upload/v1720182137/SwapConnect/swap/trade-in-calculator_value_kjsuxr.png"
-                  alt="Trade-in value illustration"
-                  fill
-                  style={{ objectFit: "contain" }}
-                  className="rounded-md"
-                />
-              </div>
-              <strong className="block mt-3 text-gray-800">
-                Estimated Value
-              </strong>
-              <div className="bg-gray-200 p-3 rounded-md mt-2 text-gray-700 min-h-[60px] flex items-center justify-center">
-                {isCalculating ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                    <span className="text-sm">Calculating...</span>
-                  </div>
-                ) : (
-                  <span
-                    className={`text-lg font-bold ${
-                      hasCalculated && estimatedValue > 0
-                        ? "text-green-600"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    {getEstimateDisplayText()}
-                  </span>
-                )}
-              </div>
-
-              {calculationBreakdown && hasCalculated && (
-                <div className="mt-4 p-3 bg-blue-50 rounded-md">
-                  <h5 className="text-sm font-semibold text-blue-800 mb-2">
-                    Calculation Breakdown
-                  </h5>
-                  <div className="text-xs text-blue-700 space-y-1">
-                    <div>
-                      Base Value:{" "}
-                      {formatPrice(calculationBreakdown.baseValue || 0)}
-                    </div>
-                    {calculationBreakdown.conditionMultiplier && (
-                      <div>
-                        Condition Factor:{" "}
-                        {(
-                          calculationBreakdown.conditionMultiplier * 100
-                        ).toFixed(0)}
-                        %
-                      </div>
-                    )}
-                    <div className="font-semibold border-t pt-1">
-                      Final Value:{" "}
-                      {formatPrice(
-                        calculationBreakdown.finalValue || estimatedValue,
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <Link
-                href="/trade-in-calculator"
-                className="flex items-center text-yellow-600 hover:text-yellow-700 mt-4 text-sm font-medium"
-              >
-                see other categories <ChevronRight className="ml-1 text-xs" />
-                <ChevronRight className="text-xs" />
-                <ChevronRight className="text-xs" />
-              </Link>
-            </div>
+            <TradeInSidebar
+              deviceType="mobile"
+              isCalculating={isCalculating}
+              hasCalculated={hasCalculated}
+              estimatedValue={estimatedValue}
+              calculationBreakdown={calculationBreakdown}
+            />
           </div>
         </div>
 
@@ -827,95 +708,10 @@ const MobilePhonesPage: React.FC = () => {
             <h3 className="mb-6 text-xl font-bold text-gray-800">
               Recently Listed Mobile Phones
             </h3>
-            <div className="flex items-center justify-center mb-6 gap-4">
-              <button
-                onClick={handlePrev}
-                disabled={isPrevDisabled}
-                className={`flex items-center justify-center w-10 h-10 rounded-lg text-lg transition-colors duration-200
-                ${
-                  isPrevDisabled
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    : "bg-yellow-600 text-white hover:bg-yellow-700"
-                }`}
-                aria-label="Previous products"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </button>
-              <span className="text-sm text-gray-600">
-                {Math.floor(startIndex / itemsPerPage) + 1} of{" "}
-                {Math.ceil(recentlyUploaded.length / itemsPerPage)}
-              </span>
-              <button
-                onClick={handleNext}
-                disabled={isNextDisabled}
-                className={`flex items-center justify-center w-10 h-10 rounded-lg text-lg transition-colors duration-200
-                ${
-                  isNextDisabled
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    : "bg-yellow-600 text-white hover:bg-yellow-700"
-                }`}
-                aria-label="Next products"
-              >
-                <ArrowRight className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {currentItems.map((product) => (
-                <div
-                  key={product.id}
-                  className="relative rounded-lg shadow-md overflow-hidden flex flex-col items-center p-3 border border-gray-200"
-                >
-                  <div className="relative w-full h-32 mb-2">
-                    <Image
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.name}
-                      fill
-                      style={{ objectFit: "contain" }}
-                      className="rounded-t-lg"
-                    />
-                  </div>
-                  <div className="p-2 w-full text-center">
-                    <h4 className="text-sm font-semibold mb-1 text-gray-800 truncate">
-                      {product.name}
-                    </h4>
-                    <p className="text-xs text-gray-600 mb-1 truncate">
-                      {product.description}
-                    </p>
-                    <p className="text-xs text-gray-700 mb-2">
-                      Price:{" "}
-                      <strong className="font-bold">
-                        {formatPrice(product.price)}
-                      </strong>
-                    </p>
-                    <p
-                      className={`text-xs font-medium ${
-                        product.availability === "in stock"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      {product.availability}
-                    </p>
-                    <div className="mt-3 flex items-center justify-center gap-2">
-                      <Link
-                        href={`/product/${product.id}`}
-                        className="bg-green-600 text-white text-xs px-3 py-1 rounded-md hover:bg-green-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        View More
-                      </Link>
-                      {product.availability === "out of stock" ? (
-                        <ShoppingCart className="text-gray-400 opacity-50 h-4 w-4" />
-                      ) : (
-                        <button className="text-green-600 border border-green-600 p-1 rounded-md text-base hover:text-green-700 hover:border-green-700 transition duration-200">
-                          <ShoppingCart className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <RecentlyUploadedProducts
+              products={recentlyUploaded}
+              isLoading={isLoadingProducts}
+            />
           </div>
         </div>
       </form>
