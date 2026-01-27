@@ -29,21 +29,21 @@ const TradeInSidebar: React.FC<TradeInSidebarProps> = ({
   const linkHref = "/trade-in-calculator";
 
   return (
-    <div className="rounded-3xl border border-gray-100 dark:border-gray-800 shadow-2xl p-6 bg-white dark:bg-gray-900 sticky top-24 overflow-hidden">
+    <div className="rounded-2xl md:rounded-3xl border border-gray-100 dark:border-gray-800 shadow-2xl p-5 md:p-6 bg-white dark:bg-gray-900 sticky top-24 overflow-hidden">
       {/* Background Accent */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-green-50 dark:bg-green-900/10 rounded-bl-full -mr-16 -mt-16 z-0" />
+      <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-green-50 dark:bg-green-900/10 rounded-bl-full -mr-12 -mt-12 md:-mr-16 md:-mt-16 z-0" />
 
       <div className="relative z-10">
         <div className="flex items-center gap-2 mb-4">
-          <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg text-green-700 dark:text-green-400">
-            <TrendingUp size={18} />
+          <div className="p-1.5 md:p-2 bg-green-100 dark:bg-green-900/20 rounded-lg text-green-700 dark:text-green-400">
+            <TrendingUp size={16} className="md:w-[18px] md:h-[18px]" />
           </div>
-          <h4 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
+          <h4 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white tracking-tight">
             Your Estimate
           </h4>
         </div>
 
-        <div className="relative w-full h-44 mb-6 group">
+        <div className="relative w-full h-32 md:h-44 mb-4 md:mb-6 group">
           <Image
             src={imageSrc}
             alt="Trade-in illustration"
@@ -53,11 +53,11 @@ const TradeInSidebar: React.FC<TradeInSidebarProps> = ({
         </div>
 
         <div className="space-y-4">
-          <div className="space-y-2">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <div className="space-y-1.5 md:space-y-2">
+            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
               Estimated Trade-In Value
             </span>
-            <div className="relative h-24 rounded-2xl bg-linear-to-br from-gray-900 to-gray-800 p-1 shadow-inner overflow-hidden flex items-center justify-center">
+            <div className="relative h-20 md:h-24 rounded-xl md:rounded-2xl bg-linear-to-br from-gray-900 to-gray-800 p-1 shadow-inner overflow-hidden flex items-center justify-center">
               <AnimatePresence mode="wait">
                 {isCalculating ? (
                   <motion.div
@@ -93,11 +93,11 @@ const TradeInSidebar: React.FC<TradeInSidebarProps> = ({
                     className="text-center"
                   >
                     {hasCalculated && estimatedValue > 0 ? (
-                      <span className="text-3xl md:text-3xl font-black text-white tracking-tight">
+                      <span className="text-2xl md:text-3xl font-black text-white tracking-tight">
                         {formatPrice(estimatedValue)}
                       </span>
                     ) : (
-                      <span className="text-sm font-medium text-gray-400 px-4 leading-normal">
+                      <span className="text-xs md:text-sm font-medium text-gray-400 px-4 leading-normal">
                         Fill properties to see your device value
                       </span>
                     )}

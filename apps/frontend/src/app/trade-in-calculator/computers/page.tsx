@@ -326,7 +326,7 @@ const ComputersPage: React.FC = () => {
       <Toaster position="top-right" />
 
       {/* Premium Header */}
-      <div className="bg-linear-to-r from-gray-900 via-gray-800 to-green-900 text-white pt-16 pb-24 relative overflow-hidden">
+      <div className="bg-linear-to-r from-gray-900 via-gray-800 to-green-900 text-white pt-10 pb-20 md:pt-16 md:pb-24 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_50%_120%,rgba(0,255,100,0.3),transparent_50%)]" />
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-green-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -337,7 +337,7 @@ const ComputersPage: React.FC = () => {
           >
             <Link
               href="/trade-in-calculator"
-              className="inline-flex items-center text-green-400 font-bold mb-6 hover:text-green-300 transition-colors uppercase tracking-widest text-xs gap-2"
+              className="inline-flex items-center text-green-400 font-bold mb-4 md:mb-6 hover:text-green-300 transition-colors uppercase tracking-widest text-[10px] md:text-xs gap-2"
             >
               <ArrowLeft size={14} /> Back to Categories
             </Link>
@@ -348,12 +348,12 @@ const ComputersPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="flex items-center gap-4 mb-4"
+              className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4"
             >
-              <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl">
-                <Laptop size={32} className="text-green-400" />
+              <div className="p-2.5 md:p-3 bg-white/10 backdrop-blur-md rounded-xl md:rounded-2xl">
+                <Laptop size={24} className="text-green-400 md:w-8 md:h-8" />
               </div>
-              <h1 className="text-3xl md:text-5xl font-black tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight">
                 Computer <span className="text-green-400">Trade-In</span>
               </h1>
             </motion.div>
@@ -361,7 +361,7 @@ const ComputersPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-gray-300 text-lg md:text-xl font-medium max-w-2xl leading-relaxed"
+              className="text-gray-300 text-base md:text-xl font-medium max-w-2xl leading-relaxed"
             >
               Get a professional valuation for your laptop or desktop in
               minutes. Our AI evaluates the latest market data to give you the
@@ -371,23 +371,23 @@ const ComputersPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 -mt-12 relative z-20">
+      <div className="container mx-auto px-4 -mt-10 md:-mt-12 relative z-20">
         <form onSubmit={handleSubmit}>
-          <div className="flex flex-col lg:flex-row gap-8 items-start">
+          <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-start">
             {/* Left Main Pillar */}
-            <div className="w-full lg:w-3/4 space-y-8">
+            <div className="w-full lg:w-3/4 space-y-6 md:space-y-8">
               {/* Form Section 1: Specs */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none p-8 border border-gray-100 dark:border-gray-800"
+                className="bg-white dark:bg-gray-900 rounded-2xl md:rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none p-5 md:p-8 border border-gray-100 dark:border-gray-800"
               >
-                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-50 dark:border-gray-800">
-                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-700 dark:text-green-400 font-bold text-sm">
+                <div className="flex items-center gap-3 mb-6 md:mb-8 pb-4 border-b border-gray-50 dark:border-gray-800">
+                  <div className="w-7 h-7 md:w-8 md:h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-700 dark:text-green-400 font-bold text-xs md:text-sm">
                     1
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
                     Device Specifications
                   </h3>
                 </div>
@@ -403,13 +403,13 @@ const ComputersPage: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none p-8 border border-gray-100 dark:border-gray-800"
+                className="bg-white dark:bg-gray-900 rounded-2xl md:rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none p-5 md:p-8 border border-gray-100 dark:border-gray-800"
               >
-                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-50 dark:border-gray-800">
-                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-700 dark:text-green-400 font-bold text-sm">
+                <div className="flex items-center gap-3 mb-6 md:mb-8 pb-4 border-b border-gray-50 dark:border-gray-800">
+                  <div className="w-7 h-7 md:w-8 md:h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-700 dark:text-green-400 font-bold text-xs md:text-sm">
                     2
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
                     Physical & Functionality Condition
                   </h3>
                 </div>
@@ -418,15 +418,15 @@ const ComputersPage: React.FC = () => {
                   onChange={handleChange}
                 />
 
-                <div className="mt-12 p-6 bg-orange-50 dark:bg-orange-900/10 rounded-3xl border border-orange-100 dark:border-orange-900/20 flex gap-4 items-start">
-                  <div className="p-2 bg-orange-200 dark:bg-orange-900/30 rounded-xl text-orange-700 dark:text-orange-400 mt-1">
-                    <Info size={20} />
+                <div className="mt-8 md:mt-12 p-4 md:p-6 bg-orange-50 dark:bg-orange-900/10 rounded-2xl md:rounded-3xl border border-orange-100 dark:border-orange-900/20 flex gap-3 md:gap-4 items-start">
+                  <div className="p-2 bg-orange-200 dark:bg-orange-900/30 rounded-lg md:rounded-xl text-orange-700 dark:text-orange-400 mt-1 shrink-0">
+                    <Info size={18} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-orange-900 dark:text-orange-100 mb-1">
+                    <h4 className="font-bold text-orange-900 dark:text-orange-100 mb-1 text-sm md:text-base">
                       Professional Inspection Required
                     </h4>
-                    <p className="text-sm text-orange-800 dark:text-orange-300/80 leading-relaxed font-medium opacity-80">
+                    <p className="text-xs md:text-sm text-orange-800 dark:text-orange-300/80 leading-relaxed font-medium opacity-80">
                       This estimate is based on the details you provided. A
                       final binding offer will be made after our technicians
                       complete a 50-point physical evaluation of your device.
@@ -434,7 +434,7 @@ const ComputersPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-8 space-y-4">
+                <div className="mt-6 md:mt-8 space-y-3 md:space-y-4">
                   {[
                     "I confirm all personal data has been backed up and will be wiped.",
                     "Device will be safely packaged to avoid transit damage.",
@@ -442,31 +442,31 @@ const ComputersPage: React.FC = () => {
                   ].map((text, i) => (
                     <label
                       key={i}
-                      className="flex items-start gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer group"
+                      className="flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer group"
                     >
-                      <div className="relative flex items-center pt-1">
+                      <div className="relative flex items-center pt-1 shrink-0">
                         <input
                           type="checkbox"
                           required
-                          className="peer appearance-none w-6 h-6 border-2 border-gray-200 dark:border-gray-700 rounded-lg checked:bg-green-600 checked:border-green-600 transition-all cursor-pointer"
+                          className="peer appearance-none w-5 h-5 md:w-6 md:h-6 border-2 border-gray-200 dark:border-gray-700 rounded-lg checked:bg-green-600 checked:border-green-600 transition-all cursor-pointer"
                         />
-                        <CheckCircle2 className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 text-white w-4 h-4 ml-1 transition-opacity" />
+                        <CheckCircle2 className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 text-white w-3.5 h-3.5 md:w-4 md:h-4 ml-0.5 md:ml-1 transition-opacity" />
                       </div>
-                      <span className="text-gray-700 dark:text-gray-300 font-medium text-sm group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                      <span className="text-gray-700 dark:text-gray-300 font-medium text-xs md:text-sm group-hover:text-gray-900 dark:group-hover:text-white transition-colors leading-snug">
                         {text}
                       </span>
                     </label>
                   ))}
                 </div>
 
-                <div className="mt-10 flex justify-end">
+                <div className="mt-8 md:mt-10 flex justify-end">
                   <button
                     type="submit"
                     disabled={isCalculating}
-                    className="group relative bg-gray-900 dark:bg-green-600 text-white px-10 py-5 rounded-2xl font-bold hover:bg-green-600 dark:hover:bg-green-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-gray-400 dark:shadow-none active:scale-95"
+                    className="w-full sm:w-auto group relative bg-gray-900 dark:bg-green-600 text-white px-6 py-4 md:px-10 md:py-5 rounded-xl md:rounded-2xl font-bold hover:bg-green-600 dark:hover:bg-green-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-gray-400 dark:shadow-none active:scale-95 text-sm md:text-base"
                   >
                     {isCalculating ? (
-                      <span className="flex items-center gap-2">
+                      <span className="flex items-center justify-center gap-2">
                         <svg
                           className="animate-spin h-5 w-5 text-white"
                           xmlns="http://www.w3.org/2000/svg"
@@ -490,7 +490,7 @@ const ComputersPage: React.FC = () => {
                         Evaluating...
                       </span>
                     ) : (
-                      <span className="flex items-center gap-2">
+                      <span className="flex items-center justify-center gap-2">
                         Get Final Estimate
                         <CheckCircle2 className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                       </span>
@@ -505,15 +505,15 @@ const ComputersPage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+                <div className="flex items-center justify-between mb-6 md:mb-8">
+                  <h3 className="text-lg md:text-2xl font-black text-gray-900 dark:text-white tracking-tight">
                     Recently Listed Computers
                   </h3>
                   <Link
                     href="/shop"
-                    className="text-green-600 dark:text-green-400 font-bold text-sm hover:underline"
+                    className="text-green-600 dark:text-green-400 font-bold text-xs md:text-sm hover:underline shrink-0"
                   >
-                    View All Shop
+                    View All
                   </Link>
                 </div>
                 <RecentlyUploadedProducts

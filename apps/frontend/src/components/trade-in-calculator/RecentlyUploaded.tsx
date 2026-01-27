@@ -88,9 +88,9 @@ const RecentlyUploadedProducts: React.FC<RecentlyUploadedProductsProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="group rounded-2xl p-4 border border-gray-100 flex flex-row items-center bg-white w-full gap-5 transition-all duration-300 hover:shadow-xl hover:border-green-100 active:scale-[0.98]"
+              className="group rounded-xl md:rounded-2xl p-3 md:p-4 border border-gray-100 dark:border-gray-800 flex flex-row items-center bg-white dark:bg-gray-900 w-full gap-3 md:gap-5 transition-all duration-300 hover:shadow-xl hover:border-green-100 dark:hover:border-green-900/30 active:scale-[0.98]"
             >
-              <div className="relative w-20 h-20 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden flex items-center justify-center p-2 group-hover:bg-green-50 dark:group-hover:bg-green-900/20 transition-colors">
+              <div className="relative w-16 h-16 md:w-20 md:h-20 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-lg md:rounded-xl overflow-hidden flex items-center justify-center p-2 group-hover:bg-green-50 dark:group-hover:bg-green-900/20 transition-colors">
                 <Image
                   src={product.image || "/placeholder.svg"}
                   alt={product.name}
@@ -103,45 +103,45 @@ const RecentlyUploadedProducts: React.FC<RecentlyUploadedProductsProps> = ({
               <div className="grow flex flex-col justify-between min-w-0">
                 <div>
                   <div className="flex items-start justify-between gap-2">
-                    <h4 className="text-sm font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-green-600 transition-colors">
+                    <h4 className="text-xs md:text-sm font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-green-600 transition-colors">
                       {product.name}
                     </h4>
-                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded-full">
+                    <span className="shrink-0 text-[8px] md:text-[10px] font-bold uppercase tracking-wider text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-1.5 md:px-2 py-0.5 rounded-full">
                       {product.tag || "New"}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-0.5">
+                  <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-0.5">
                     {product.description}
                   </p>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between">
+                <div className="mt-2 md:mt-3 flex items-center justify-between">
                   <div>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-[10px] font-bold text-gray-400">
+                    <div className="flex items-baseline gap-0.5 md:gap-1">
+                      <span className="text-[8px] md:text-[10px] font-bold text-gray-400">
                         ₦
                       </span>
-                      <p className="text-sm font-black text-gray-900 dark:text-white">
+                      <p className="text-xs md:text-sm font-black text-gray-900 dark:text-white">
                         {product.price.toLocaleString()}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 md:gap-2">
                     <Link
                       href={`/product/${product.id}`}
-                      className="bg-gray-900 dark:bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-green-600 dark:hover:bg-green-500 transition-all duration-300 flex items-center gap-1.5 shadow-lg shadow-gray-200 dark:shadow-none"
+                      className="bg-gray-900 dark:bg-green-600 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl hover:bg-green-600 dark:hover:bg-green-500 transition-all duration-300 flex items-center gap-1 md:gap-1.5 shadow-lg shadow-gray-200 dark:shadow-none"
                     >
-                      <Eye size={14} />
+                      <Eye size={12} className="md:w-3.5 md:h-3.5" />
                       View
                     </Link>
                     {product.availability !== "out of stock" && (
                       <button
-                        className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 rounded-xl transition-all duration-300"
+                        className="p-1.5 md:p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 rounded-lg md:rounded-xl transition-all duration-300"
                         title="Add to Cart"
                         aria-label="Add to Cart"
                       >
-                        <ShoppingCart className="h-4 w-4" />
+                        <ShoppingCart className="h-3.5 w-3.5 md:h-4 md:w-4" />
                       </button>
                     )}
                   </div>
