@@ -11,7 +11,7 @@ const SelectSwapCategory = () => {
     {
       title: "Computer",
       description: "Desktops, Laptops & Peripherals",
-      icon: <Laptop className="w-6 h-6" />,
+      icon: Laptop,
       image:
         "https://res.cloudinary.com/ds83mhjcm/image/upload/v1720178194/SwapConnect/swap/laptop_swap_e3epz6.png",
       href: "/trade-in-calculator/computers",
@@ -21,7 +21,7 @@ const SelectSwapCategory = () => {
     {
       title: "Mobile Phones",
       description: "iOS, Androids & Peripherals",
-      icon: <Smartphone className="w-6 h-6" />,
+      icon: Smartphone,
       image:
         "https://res.cloudinary.com/ds83mhjcm/image/upload/v1720178193/SwapConnect/swap/mobile-phone_swap_lgpc3d.png",
       href: "/trade-in-calculator/mobile-phones",
@@ -82,10 +82,7 @@ const SelectSwapCategory = () => {
                       <div
                         className={`p-2 rounded-xl sm:p-2.5 sm:rounded-2xl ${category.accent} text-white shadow-lg`}
                       >
-                        {React.cloneElement(
-                          category.icon as React.ReactElement,
-                          { className: "w-5 h-5 sm:w-6 sm:h-6" },
-                        )}
+                        <category.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
                       <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight">
                         {category.title}
