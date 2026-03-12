@@ -95,7 +95,16 @@ const Signup: React.FC = () => {
 
     toast.loading("Redirecting to Google...", { id: "google-redirect" });
     try {
-      window.location.href = `${backendUrl}/auth/google/register`;
+      // Determine redirect URL based on environment
+      const hostname = window.location.hostname;
+      const redirectUrl =
+        hostname === "localhost" || hostname === "127.0.0.1"
+          ? "http://localhost:3000"
+          : "/dashboard"; // Default live URL redirect
+
+      window.location.href = `${backendUrl}/auth/google/register?redirect=${encodeURIComponent(
+        redirectUrl,
+      )}`;
     } catch (error) {
       console.error("Error initiating Google sign-in redirect:", error);
       toast.error("Failed to start Google sign-up. Please try again.", {
