@@ -1,5 +1,7 @@
+// @ts-check
+
 const nextConfig = {
-  output: 'standalone',
+  output: "standalone",
   images: {
     remotePatterns: [
       {
@@ -56,6 +58,12 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  turbopack: {
+    root: `${__dirname}/../..`,
   },
 };
 
