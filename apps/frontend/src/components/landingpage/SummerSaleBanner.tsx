@@ -26,7 +26,7 @@ const SummerSaleBanner: React.FC = () => {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-white text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight tracking-tighter"
+            className="text-white text-5xl md:text-6xl lg:text-6xl font-black mb-6 leading-tight tracking-tighter"
           >
             Summer <br className="hidden md:block" />
             <span className="text-white/80">Sale</span>
