@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import GlobalLayoutContent from "@/components/GlobalLayoutContent";
-
-import Bugsnag from "@bugsnag/js";
-import BugsnagPerformance from "@bugsnag/browser-performance";
+import BugsnagInitializer from "@/components/BugsnagInitializer";
 
 import { Inter } from "next/font/google";
 import { ASSETS } from "@/lib/constants";
@@ -14,12 +12,6 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-// Bugsnag initialization remains here as it's typically client-side setup
-if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_BUGSNAG_API_KEY) {
-  // Ensure Bugsnag runs only in the browser environment
-  Bugsnag.start({ apiKey: process.env.NEXT_PUBLIC_BUGSNAG_API_KEY });
-  BugsnagPerformance.start({ apiKey: process.env.NEXT_PUBLIC_BUGSNAG_API_KEY });
-}
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -108,6 +100,7 @@ export default function RootLayout({
         <link rel="icon" href={ASSETS.FAVICON} type="image/png" />
       </head>
       <body className={`${inter.variable} antialiased`}>
+        <BugsnagInitializer />
         {/* Render the Client Component here */}
         <GlobalLayoutContent>{children}</GlobalLayoutContent>
       </body>
