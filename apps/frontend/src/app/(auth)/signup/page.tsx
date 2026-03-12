@@ -267,11 +267,20 @@ const Signup: React.FC = () => {
       try {
         const res = await fetch(`${backendUrl}/auth/send-verification-otp`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          credentials: "include",
           body: JSON.stringify({ email }),
         });
 
-        const result: { message: string } = await res.json();
+        let result;
+        try {
+          result = await res.json();
+        } catch {
+          result = { message: `Server error: ${res.status}` };
+        }
 
         if (res.ok) {
           setEmailForVerification(email);
@@ -280,12 +289,25 @@ const Signup: React.FC = () => {
             id: "otp-send",
           });
         } else {
-          toast.error(result.message || "Failed to send OTP.", {
+          toast.error(
+            result.message || "Failed to send OTP. Please try again.",
+            {
+              id: "otp-send",
+            },
+          );
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        console.error("OTP send error:", error);
+
+        if (errorMessage.includes("Failed to fetch")) {
+          toast.error("Unable to reach the server. Please try again.", {
             id: "otp-send",
           });
+        } else {
+          toast.error("Network error while sending OTP.", { id: "otp-send" });
         }
-      } catch {
-        toast.error("Network error while sending OTP.", { id: "otp-send" });
       } finally {
         setIsProcessing(false);
       }
@@ -317,10 +339,21 @@ const Signup: React.FC = () => {
       try {
         const res = await fetch(`${backendUrl}/auth/register`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          credentials: "include",
           body: JSON.stringify({ firstName, lastName, email, password }),
         });
-        const data = await res.json();
+
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          // Handle non-JSON responses
+          data = { message: `Server error: ${res.status}` };
+        }
 
         if (res.status === 201 && data.user) {
           toast.success(
@@ -331,18 +364,46 @@ const Signup: React.FC = () => {
           );
           setEmailForVerification(email);
           setShowOtpPopup(true);
-        } else {
+        } else if (res.status === 409) {
+          toast.error("Account with this email already exists. Please login.", {
+            id: "signup-toast",
+          });
+        } else if (res.status === 400) {
           toast.error(
-            data.message?.includes("already exists")
-              ? "Account with this email already exists. Please login."
-              : data.message || "Account creation failed.",
+            data.message || "Invalid input. Please check your details.",
+            { id: "signup-toast" },
+          );
+        } else if (res.status >= 500) {
+          toast.error("Server error. Please try again later.", {
+            id: "signup-toast",
+          });
+        } else if (!res.ok) {
+          toast.error(
+            data.message || "Account creation failed. Please try again.",
             { id: "signup-toast" },
           );
         }
-      } catch {
-        toast.error("A network error occurred. Please try again.", {
-          id: "signup-toast",
-        });
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "A network error occurred";
+
+        if (errorMessage.includes("CORS")) {
+          toast.error(
+            "Connection error. The API server may not be properly configured. Please contact support.",
+            { id: "signup-toast" },
+          );
+        } else if (errorMessage.includes("Failed to fetch")) {
+          toast.error(
+            "Unable to reach the server. Please check your internet connection or try again later.",
+            { id: "signup-toast" },
+          );
+        } else {
+          toast.error("An unexpected error occurred. Please try again.", {
+            id: "signup-toast",
+          });
+        }
+
+        console.error("Signup error:", error);
       } finally {
         setIsProcessing(false);
       }
